@@ -1,54 +1,49 @@
 require("dotenv").config();
-
 const express = require("express");
 const app = express();
 const cors = require("cors");
-
 const mongoose = require("mongoose");
+
 const userrouter = require("./routes/userrouter");
 const Documentrouter = require("./routes/documentrouter");
 const Budgetrouter = require("./routes/budgetrouter");
-app.use(express.json());
-app.use(cors());
 
-const port = process.env.PORT || 3000; // CHANGED: Use Render's port
+app.use(express.json());
+
+app.use(cors({
+  origin: [
+    "http://localhost:3000",
+    "https://your-vercel-app-url.vercel.app"
+  ],
+  credentials: true
+}));
 
 app.get("/home", (req, res) => {
   res.send("thank you for using backend");
 });
+
 app.use("/uploads", express.static("uploads"));
 
 app.use("/user", userrouter);
 app.use("/documents", Documentrouter);
 app.use("/budget", Budgetrouter);
 
-// MongoDB Connection
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/ayudar';
+// NO LOCAL FALLBACK
+const MONGODB_URI = process.env.MONGODB_URI;
 
-mongoose.connect(MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => console.log('✅ Connected to MongoDB'))
-.catch((err) => console.error('❌ MongoDB connection error:', err));
-
-// Log whether JWT secret is loaded
-if (process.env.JWT_SECRET) {
-  console.log("✅ JWT_SECRET is set");
-} else {
-  console.warn("⚠️ JWT_SECRET is NOT set. Auth will fail without it.");
+if (!MONGODB_URI) {
+  throw new Error("MONGODB_URI not set");
 }
 
-// CHANGED: Listen on 0.0.0.0 for Render
-app.listen(port, '0.0.0.0', () => {
-  console.log(`🚀 Server is running on port ${port}`);
-});
+mongoose.connect(MONGODB_URI)
+  .then(() => console.log("MongoDB Atlas connected"))
+  .catch(err => console.error("MongoDB error:", err));
 
-// Error handling middleware for multer and other errors
-app.use((err, req, res, next) => {
-  console.error(err);
-  if (err.code === "LIMIT_FILE_SIZE") {
-    return res.status(400).json({ message: "File too large" });
-  }
-  return res.status(400).json({ message: err.message });
+if (!process.env.JWT_SECRET) {
+  console.warn("JWT_SECRET is missing");
+}
+
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });
