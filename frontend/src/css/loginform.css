@@ -1,0 +1,31 @@
+.loginform {
+  width: 1440px;
+  height: 100vh;
+  position: relative;
+}
+.loginpage {
+  background: linear-gradient(to right, #73af6f, #007e6e);
+}
+.signupform {
+  height: 100vh;
+  position: relative;
+}
+.showpassword {
+  position: absolute;
+  z-index: 4;
+  top: 198px;
+  right: 650px;
+}
+.showpassword2 {
+  position: absolute;
+  z-index: 4;
+  top: 405px;
+  right: 525px;
+}
+.showpassword3 {
+  position: absolute;
+  z-index: 4;
+  top: 450px;
+  right: 525px;
+  background: none;
+}

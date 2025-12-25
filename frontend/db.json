@@ -1,0 +1,39 @@
+{
+  "expanses": [
+    {
+      "id": 1,
+      "expansename": "dairy milk",
+      "category": "Chocolate",
+      "amount": 200,
+      "date": "25/11/2025"
+    },
+    {
+      "id": 2,
+      "expansename": "petrol",
+      "category": "travel",
+      "amount": 500,
+      "date": "30/11/2025"
+    },
+    {
+      "id": 2,
+      "expansename": "dinner",
+      "category": "food",
+      "amount": 1000,
+      "date": "11/11/2025"
+    },
+    {
+      "id": 2,
+      "expansename": "glass",
+      "category": "household",
+      "amount": 100,
+      "date": "17/11/2025"
+    },
+    {
+      "id": 2,
+      "expansename": "tyre",
+      "category": "travel",
+      "amount": 800,
+      "date": "22/11/2025"
+    }
+  ]
+}
