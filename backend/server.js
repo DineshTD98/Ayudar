@@ -1,7 +1,17 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
+
 const cors = require("cors");
+
+app.use(cors({
+  origin: [
+    "http://localhost:3000",
+    "https://ayudar-delta.vercel.app"
+  ],
+  credentials: true
+}));
+
 const mongoose = require("mongoose");
 
 const userrouter = require("./routes/userrouter");
@@ -10,13 +20,7 @@ const Budgetrouter = require("./routes/budgetrouter");
 
 app.use(express.json());
 
-app.use(cors({
-  origin: [
-    "http://localhost:3000",
-    "https://your-vercel-app-url.vercel.app"
-  ],
-  credentials: true
-}));
+
 
 app.get("/home", (req, res) => {
   res.send("thank you for using backend");
