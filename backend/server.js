@@ -10,7 +10,9 @@ const Documentrouter = require("./routes/documentrouter");
 const Budgetrouter = require("./routes/budgetrouter");
 app.use(express.json());
 app.use(cors());
-const port = 3000;
+
+const port = process.env.PORT || 3000; // CHANGED: Use Render's port
+
 app.get("/home", (req, res) => {
   res.send("thank you for using backend");
 });
@@ -19,20 +21,27 @@ app.use("/uploads", express.static("uploads"));
 app.use("/user", userrouter);
 app.use("/documents", Documentrouter);
 app.use("/budget", Budgetrouter);
-//db connection
-mongoose.connect("mongodb://127.0.0.1:27017/ayudar").then(() => {
-  console.log("mongodb connected");
-});
 
-// log whether JWT secret is loaded
+// MongoDB Connection
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/ayudar';
+
+mongoose.connect(MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log('✅ Connected to MongoDB'))
+.catch((err) => console.error('❌ MongoDB connection error:', err));
+
+// Log whether JWT secret is loaded
 if (process.env.JWT_SECRET) {
-  console.log("JWT_SECRET is set");
+  console.log("✅ JWT_SECRET is set");
 } else {
-  console.warn("JWT_SECRET is NOT set. auth will fail without it.");
+  console.warn("⚠️ JWT_SECRET is NOT set. Auth will fail without it.");
 }
 
-app.listen(port, () => {
-  console.log("server is running");
+// CHANGED: Listen on 0.0.0.0 for Render
+app.listen(port, '0.0.0.0', () => {
+  console.log(`🚀 Server is running on port ${port}`);
 });
 
 // Error handling middleware for multer and other errors
