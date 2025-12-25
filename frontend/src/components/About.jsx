@@ -42,7 +42,7 @@ function About({ getstarted, setIsloggedin }) {
                 Learn More
               </button>
               <button
-                onClick={() => navigate("/login")}
+                onClick={() =>{ navigate("/login"),setIsloggedin(false)}}
                 className="px-5 py-2.5 bg-gradient-to-r from-gray-500 to-gray-800 text-white font-medium rounded-full transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
               >
                 Login
