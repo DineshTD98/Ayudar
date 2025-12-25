@@ -21,7 +21,7 @@ function Login({ setIsloggedin, setGetstarted }) {
       return;
     }
     try {
-      const response = await axios.post("http://localhost:3000/user/login", {
+      const response = await axios.post("https://ayudar.onrender.com/user/login", {
         username,
         password,
       });

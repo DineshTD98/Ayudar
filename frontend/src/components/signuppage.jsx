@@ -43,7 +43,7 @@ function Signuppage({ setIsloggedin }) {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/user/createuser",
+        "https://ayudar.onrender.com/user/createuser",
         profile,
       );
       console.log(response.data);
