@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import useapi from "../customehooks/useapi";
-
-function Expenses({ setExpense, setAmount }) {
+import { useOutletContext } from "react-router-dom";
+function Expenses() {
   const { request, error, loading } = useapi();
-
+  const { setExpense, setAmount } = useOutletContext();
   const [rows, setRows] = useState([
     { title: "", category: "", amount: "", date: "" },
   ]);
