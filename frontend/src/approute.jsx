@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 
 import Loginpage from "./pages/loginpage";
 import Home from "./pages/home";
@@ -18,6 +18,7 @@ import Subscriptions from "./components/subscriptions";
 import Transactions from "./components/transactions";
 import Uploaddocuments from "./components/uploaddocuments";
 import Viewdocuments from "./components/viewdocuments";
+import { userContext } from "./App";
 
 
 function AppRoutes({
@@ -27,8 +28,10 @@ function AppRoutes({
   setGetstarted,
 }) {
   const navigate = useNavigate();
-
-  // ✅ LocalStorage → URL sync
+  const {setCreateshopping,setViewshopping}=useContext(userContext)
+ 
+ 
+  // LocalStorage → URL sync
   useEffect(() => {
     const page = localStorage.getItem("currentpage");
 
@@ -50,8 +53,8 @@ function AppRoutes({
          setCreateshopping(true);
          setViewshopping(false);
     }
-
-     if(page === "viewshopping"){
+   
+    if(page === "viewshopping"){
          setCreateshopping(false);
          setViewshopping(true);
     }

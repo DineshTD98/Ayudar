@@ -4,8 +4,6 @@ import { useContext, useEffect } from "react";
 import Navbarimage from "../assets/navbarimage2.webp";
 function Navbar({ setGetstarted }) {
   const {
-    setViewdocuments,
-    setOpendocuments,
     setActive,
     dropdown,
     setDropdown,
