@@ -9,6 +9,7 @@ import Documents from "./pages/document";
 import Events from "./pages/events";
 import Budget from "./pages/budget";
 import Shopping from "./pages/Shopping";
+import About from "./components/About";
 
 import Layout from "./components/layout";
 import ProtecteRoute from "./components/protectedroute";
@@ -64,15 +65,16 @@ function AppRoutes({
   return (
     <Routes>
       <Route
-        path="/"
-        element={
-          <Firstpage
+        path="/" element={<Firstpage
             isloggedin={isloggedin}
             setIsloggedin={setIsloggedin}
-            getstarted={getstarted}
-          />
+            getstarted={getstarted} />
         }
-      />
+      >
+           <Route index element={<Navigate to="about"/>}/>
+           <Route path="/about" element={<About/>}/>
+
+      </Route>
 
       <Route
         path="/login"

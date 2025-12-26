@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import Firstpageimage from "../assets/family-creating-digital-content.jpg";
-
-function About({ getstarted, setIsloggedin }) {
+import { useOutletContext } from "react-router-dom";
+function About() {
   const navigate = useNavigate();
-
+  const {getstarted,setIsloggedin}=useOutletContext()
   const handlesignup = () => {
     setIsloggedin(true);
     navigate("/login");
