@@ -12,7 +12,7 @@ function Budget() {
   const [totalexpense, setAmount] = useState(null);
   const [creditcardamount, setCreditcardamount] = useState(0);
 
-  const subscriptionlist=useSelector((state)=>state.subscriptionlist.value)
+  const subscriptionlist=useSelector((state)=>state.Subscriptionlist.value)
   console.log(subscriptionlist)
 
   const totalsubmoney = subscriptionlist.reduce(
