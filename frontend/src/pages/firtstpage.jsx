@@ -3,12 +3,12 @@ function Firstpage({ getstarted, setIsloggedin }) {
   return (
     <>
       <div>
-        <Outlet>
+        <Outlet
            context={{
               getstarted,
               setIsloggedin
            }}
-        </Outlet>
+        />
       </div>
     </>
   );
