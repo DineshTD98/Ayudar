@@ -4,10 +4,9 @@ function MyPieChart({ expense }) {
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
   const data = expense.map((item) => ({
-    name: item.category?.name,
-    amount: item.amount,
-    title: item.title,
-  }));
+  name: item.category?.name || "Others",
+  amount: Number(item.amount) || 0,
+}));
 
   return (
     <div>

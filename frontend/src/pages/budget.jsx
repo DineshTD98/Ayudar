@@ -5,11 +5,20 @@ import MyPieChart from "../components/piechart";
 import useapi from "../customehooks/useapi";
 import Expensetable from "../components/expensetable";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function Budget() {
   const [expense, setExpense] = useState([]);
   const [totalexpense, setAmount] = useState(null);
   const [creditcardamount, setCreditcardamount] = useState(0);
+
+  const subscriptionlist=useSelector((state)=>state.subscriptionlist.value)
+  console.log(subscriptionlist)
+
+  const totalsubmoney = subscriptionlist.reduce(
+    (sum, item) => sum + (item.price || 0), 
+    0
+  );
 
   const { request, error, loading } = useapi();
   const location = useLocation();
@@ -22,14 +31,8 @@ function Budget() {
           method: "GET",
         });
 
-        if (data) {
-          const totalamount = data.Expense.reduce(
-            (sum, item) => sum + item.amount,
-            0
-          );
-          setAmount(totalamount);
-          setExpense(data.Expense);
-        }
+        setExpense(data.Expense);
+        
       } catch (err) {
         console.log(err.message);
       }
@@ -37,6 +40,13 @@ function Budget() {
 
     fetchexpense();
   }, []);
+
+  // useeffect to add subscription expenses from the subscription 
+
+  useEffect(()=>{
+       const overallexpense=expense.reduce((exp,sum)=>(exp.amount+sum || 0),0)
+       setAmount(overallexpense + totalsubmoney)
+  },[totalsubmoney,expense])
 
   const navClass = ({ isActive }) =>
     `text-left px-4 py-2 rounded-lg font-semibold transition-all ${
