@@ -86,7 +86,6 @@ exports.createCategory = async (req, res) => {
 
     const docs = categories.map((cat) => ({
       name: cat.name,
-      userId: req.user.id,
     }));
 
     const created = await Categories.insertMany(docs);
@@ -103,9 +102,7 @@ exports.createCategory = async (req, res) => {
 //GET CATEGORIES (for dropdown)
 exports.getCategories = async (req, res) => {
   try {
-    const categories = await Categories.find({
-      userId: req.user.id,
-    }).sort({ createdAt: -1 });
+    const categories = await Categories.find().sort({ createdAt: -1 });
 
     return res.status(200).json(categories);
   } catch (err) {

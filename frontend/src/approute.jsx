@@ -74,7 +74,7 @@ function AppRoutes({
             }
         >
             <Route index element={<Navigate to="about"/>}/>
-            <Route path="/about" element={<About/>}/>
+            <Route path="about" element={<About/>}/>
 
         </Route>
 
