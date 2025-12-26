@@ -19,7 +19,7 @@ function Expenses({ setExpense, setAmount }) {
           url: "/Budget/categories",
           method: "get",
         });
-        setCategories(res.categories || res);
+        setCategories(res.categories);
       } catch (err) {
         console.log(err.message);
       }

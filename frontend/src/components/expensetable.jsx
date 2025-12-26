@@ -34,7 +34,7 @@ function Expensetable({expense}) {
                   ₹{exp.amount}
                 </td>
                 <td className="px-4 py-2 text-gray-700">
-                  {exp.category.name}
+                  {exp.category?.name|| "others"}
                 </td>
                 <td className="px-4 py-2 text-gray-600">
                   {new Date(exp.date).toLocaleDateString()}

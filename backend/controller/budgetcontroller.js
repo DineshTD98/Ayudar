@@ -25,7 +25,6 @@ exports.createexpense = async (req, res) => {
       // Validate category
       const categoryExists = await Categories.findOne({
         _id: category,
-        userId: req.user.id,
       });
 
       if (!categoryExists) {
@@ -127,14 +126,16 @@ exports.getCategories = async (req, res) => {
       },
       {
         $project: {
-          safeName: 0 // remove temp field
+          safeName: 0 
         }
       }
     ]);
 
 
 
-    return res.status(200).json(categories);
+    return res.status(200).json({
+      categories
+    });
   } catch (err) {
     return res.status(500).json({
       message: err.message,
