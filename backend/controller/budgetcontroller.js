@@ -102,7 +102,26 @@ exports.createCategory = async (req, res) => {
 //GET CATEGORIES (for dropdown)
 exports.getCategories = async (req, res) => {
   try {
-    const categories = await Categories.find().sort({ createdAt: -1 });
+    const categories = await Categories.aggregate([
+    {
+      $addFields: {
+        isOthers: {
+          $cond: [
+            { $eq: ["$name", "Others"] },
+            1,
+            0
+          ]
+        }
+      }
+    },
+    {
+      $sort: {
+        isOthers: 1,
+        name: 1      
+      }
+    }
+  ]);
+
 
     return res.status(200).json(categories);
   } catch (err) {
