@@ -2,11 +2,35 @@ import { useSelector, useDispatch } from "react-redux";
 import { setDocument } from "../redux/slices/documentslice";
 import useapi from "../customehooks/useapi";
 import Search from "../assets/search-icon.jpg";
-function Viewdocuments() {
+function Viewdocuments({reload}) {
   const { request, error, loading } = useapi();
   const dispatch = useDispatch();
 
   const Documentlist = useSelector((state) => state.Documentlist.value);
+
+  //fetching document from backend
+
+   useEffect(() => {
+    async function documentfetch() {
+      try {
+        const response = await request({
+          url: "/documents/getdocument",
+          method: "GET",
+        });
+        console.log(response);
+        if (Array.isArray(response.document)) {
+          dispatch(setDocument(response.document));
+          console.log(response);
+        } else {
+          dispatch(setDocument([]));
+        }
+      } catch (err) {
+        console.log(err.message);
+      }
+    }
+    documentfetch();
+  }, [reload]);
+
   const handledelete = async (id) => {
     try {
       const response = await request({

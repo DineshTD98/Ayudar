@@ -4,7 +4,8 @@ import { useEffect } from "react";
 import Loginpage from "./pages/loginpage";
 import Home from "./pages/home";
 import Firstpage from "./pages/firtstpage";
-import Document from "./pages/documents";
+import Documents from "./pages/document";
+
 import Events from "./pages/events";
 import Budget from "./pages/budget";
 import Shopping from "./pages/Shopping";
@@ -16,6 +17,7 @@ import Expenses from "./components/expenses";
 import Subscriptions from "./components/subscriptions";
 import Transactions from "./components/transactions";
 import Uploaddocuments from "./components/uploaddocuments";
+
 
 function AppRoutes({
   isloggedin,
@@ -82,8 +84,9 @@ function AppRoutes({
       <Route element={<ProtecteRoute />}>
         <Route element={<Layout setGetstarted={setGetstarted} />}>
           <Route path="/home" element={<Home />} />
-          <Route path="/document" element={<Document />}>
+          <Route path="/document" element={<Documents/>}>
               <Route index element={<Navigate to="viewdocuments"/>}/>
+              <Route path="viewdocuments" element={<></>}/>
               <Route path="uploaddocuments" element={<Uploaddocuments/>}/>
           </Route>
 

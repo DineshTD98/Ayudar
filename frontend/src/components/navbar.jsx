@@ -119,7 +119,7 @@ function Navbar({ setGetstarted }) {
                   <button
                     className="block w-full text-left text-white px-4 py-2 hover:bg-green-800"
                     onClick={() => {
-                      navigate("/document");
+                      navigate("/document/viewdocuments")
                       setDropdown("");
                       localStorage.setItem("currentpage", "viewdocuments");
                     }}
@@ -129,9 +129,8 @@ function Navbar({ setGetstarted }) {
                   <button
                     className="block w-full text-left text-white px-4 py-2 hover:bg-green-800"
                     onClick={() => {
-                      navigate("/document");
                       setDropdown("");
-                      navigate('/documents/uploaddocuments')
+                      navigate('/document/uploaddocuments')
                       localStorage.setItem("currentpage", "uploaddocuments");
                     }}
                   >

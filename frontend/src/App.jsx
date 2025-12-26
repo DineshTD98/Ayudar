@@ -13,7 +13,7 @@ export const userContext = createContext();
 
 function App() {
   const [opendocuments, setOpendocuments] = useState(false);
-  const [viewdocuments, setViewdocuments] = useState(false);
+  
   const [isloggedin, setIsloggedin] = useState(false);
   const [getstarted, setGetstarted] = useState(false);
   const [showbudget, setShowbudget] = useState(false);
@@ -30,8 +30,6 @@ function App() {
         value={{
           opendocuments,
           setOpendocuments,
-          viewdocuments,
-          setViewdocuments,
           showbudget,
           setShowbudget,
           createbudget,
