@@ -44,7 +44,7 @@ function Budget() {
   // useeffect to add subscription expenses from the subscription 
 
   useEffect(()=>{
-       const overallexpense=expense.reduce((exp,sum)=>(exp.amount+sum || 0),0)
+       const overallexpense=expense.reduce((sum,exp)=>(sum +(exp.amount||0),0))
        setAmount(overallexpense + totalsubmoney)
   },[totalsubmoney,expense])
 
