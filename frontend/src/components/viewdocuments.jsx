@@ -1,8 +1,12 @@
 import { useSelector, useDispatch } from "react-redux";
 import { setDocument } from "../redux/slices/documentslice";
 import useapi from "../customehooks/useapi";
+import { useOutletContext } from "react-router-dom";
+import { useEffect } from "react";
 import Search from "../assets/search-icon.jpg";
-function Viewdocuments({reload}) {
+function Viewdocuments() {
+
+  const { reload, setReload } = useOutletContext();
   const { request, error, loading } = useapi();
   const dispatch = useDispatch();
 
@@ -21,8 +25,10 @@ function Viewdocuments({reload}) {
         if (Array.isArray(response.document)) {
           dispatch(setDocument(response.document));
           console.log(response);
+          setReload(false);
         } else {
           dispatch(setDocument([]));
+          setReload(false);
         }
       } catch (err) {
         console.log(err.message);

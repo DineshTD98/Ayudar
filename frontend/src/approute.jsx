@@ -17,6 +17,7 @@ import Expenses from "./components/expenses";
 import Subscriptions from "./components/subscriptions";
 import Transactions from "./components/transactions";
 import Uploaddocuments from "./components/uploaddocuments";
+import Viewdocuments from "./components/viewdocuments";
 
 
 function AppRoutes({
@@ -86,7 +87,7 @@ function AppRoutes({
           <Route path="/home" element={<Home />} />
           <Route path="/document" element={<Documents/>}>
               <Route index element={<Navigate to="viewdocuments"/>}/>
-              <Route path="viewdocuments" element={<></>}/>
+              <Route path="viewdocuments" element={<Viewdocuments/>}/>
               <Route path="uploaddocuments" element={<Uploaddocuments/>}/>
           </Route>
 

@@ -1,7 +1,9 @@
 import { useState } from "react";
 import useapi from "../customehooks/useapi";
+import { useOutletContext } from "react-router-dom";
 
-function Uploaddocuments({ setReload }) {
+function Uploaddocuments() {
+  const { setReload } = useOutletContext();
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
   const [date, setDate] = useState("");
