@@ -119,8 +119,6 @@ function Navbar({ setGetstarted }) {
                   <button
                     className="block w-full text-left text-white px-4 py-2 hover:bg-green-800"
                     onClick={() => {
-                      setViewdocuments(true);
-                      setOpendocuments(false);
                       navigate("/document");
                       setDropdown("");
                       localStorage.setItem("currentpage", "viewdocuments");
@@ -131,11 +129,10 @@ function Navbar({ setGetstarted }) {
                   <button
                     className="block w-full text-left text-white px-4 py-2 hover:bg-green-800"
                     onClick={() => {
-                      setViewdocuments(false);
-                      setOpendocuments(true);
                       navigate("/document");
                       setDropdown("");
-                      localStorage.setItem("currentpage", "opendocuments");
+                      navigate('/documents/uploaddocuments')
+                      localStorage.setItem("currentpage", "uploaddocuments");
                     }}
                   >
                     Upload documents

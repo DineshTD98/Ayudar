@@ -15,6 +15,7 @@ import Createbudget from "./components/createbudget";
 import Expenses from "./components/expenses";
 import Subscriptions from "./components/subscriptions";
 import Transactions from "./components/transactions";
+import Uploaddocuments from "./components/uploaddocuments";
 
 function AppRoutes({
   isloggedin,
@@ -35,23 +36,13 @@ function AppRoutes({
       subscriptions: "/budget/subscriptions",
       home:"/home",
       showbudget:'/budget/overview',
-
+      uploaddocuments:'/document/uploaddocuments'
     };
 
     if (routes[page]) {
       navigate(routes[page], { replace: true });
     }
-
-    if(page === "viewdocuments"){
-         setViewdocuments(true);
-         setOpendocuments(false);
-    }
-
-    if(page === "uploaddocuments"){
-         setViewdocuments(false);
-         setOpendocuments(true);
-    }
-
+    
     if(page === "createshopping"){
          setCreateshopping(true);
          setViewshopping(false);
@@ -91,7 +82,10 @@ function AppRoutes({
       <Route element={<ProtecteRoute />}>
         <Route element={<Layout setGetstarted={setGetstarted} />}>
           <Route path="/home" element={<Home />} />
-          <Route path="/document" element={<Document />} />
+          <Route path="/document" element={<Document />}>
+              <Route index element={<Navigate to="viewdocuments"/>}/>
+              <Route path="uploaddocuments" element={<Uploaddocuments/>}/>
+          </Route>
 
           <Route path="/budget" element={<Budget />}>
             <Route index element={<Navigate to="overview" replace />} />

@@ -5,7 +5,7 @@ import { userContext } from "../App";
 import { setDocument } from "../redux/slices/documentslice";
 import { useDispatch } from "react-redux";
 import useapi from "../customehooks/useapi";
-
+import { Outlet,NavLink } from "react-router-dom";
 function Document() {
   const dispatch = useDispatch();
   const [reload, setReload] = useState(false);
@@ -34,9 +34,15 @@ function Document() {
   return (
     <>
       <div className="bg-white min-h-[750px] max-h-fit w-full">
-        {opendocuments && <Uploaddocuments setReload={setReload} />}
-        {viewdocuments && <Viewdocuments />}
-      </div>
+        <Viewdocuments />
+        <Outlet>
+          context={{
+             opendocuments,
+             viewdocuments,
+             Uploaddocuments
+          }}
+        </Outlet>
+       </div>
     </>
   );
 }
