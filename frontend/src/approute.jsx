@@ -63,18 +63,20 @@ function AppRoutes({
    }, [navigate]);
 
   return (
-    <Routes>
-      <Route
-        path="/" element={<Firstpage
-            isloggedin={isloggedin}
-            setIsloggedin={setIsloggedin}
-            getstarted={getstarted} />
-        }
-      >
-           <Route index element={<Navigate to="about"/>}/>
-           <Route path="/about" element={<About/>}/>
+    // rotue creation for the url
+     <Routes>
+        {/* first route to landing page */}
+            <Route
+            path="/" element={<Firstpage
+                isloggedin={isloggedin}
+                setIsloggedin={setIsloggedin}
+                getstarted={getstarted} />
+            }
+        >
+            <Route index element={<Navigate to="about"/>}/>
+            <Route path="/about" element={<About/>}/>
 
-      </Route>
+        </Route>
 
       <Route
         path="/login"
@@ -86,15 +88,22 @@ function AppRoutes({
           />
         }
       />
+    
+    {/*protected routes */}
 
       <Route element={<ProtecteRoute />}>
         <Route element={<Layout setGetstarted={setGetstarted} />}>
           <Route path="/home" element={<Home />} />
+
+      {/*document page routes */} 
+
           <Route path="/document" element={<Documents/>}>
               <Route index element={<Navigate to="viewdocuments"/>}/>
               <Route path="viewdocuments" element={<Viewdocuments/>}/>
               <Route path="uploaddocuments" element={<Uploaddocuments/>}/>
           </Route>
+
+         {/*budget page routes */} 
 
           <Route path="/budget" element={<Budget />}>
             <Route index element={<Navigate to="overview" replace />} />
@@ -104,8 +113,12 @@ function AppRoutes({
             <Route path="transactions" element={<Transactions />} />
             <Route path="subscriptions" element={<Subscriptions />} />
           </Route>
+        
+
 
           <Route path="/events" element={<Events />} />
+
+          
           <Route path="/shopping" element={<Shopping />} />
         </Route>
       </Route>

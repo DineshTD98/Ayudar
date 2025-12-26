@@ -8,26 +8,35 @@ function Createbudget({ creditcardamount, setCreditcardamount }) {
   const { request, error, loading } = useapi();
   const [creditcard, setCreditcard] = useState("");
   const dispatch = useDispatch();
-  
   const [nettotal, setNettotal] = useState(0);
+ 
+ // form state creation to add the budget
   const [form, setForm] = useState({
     amount: "",
     createddate: "",
     source: "",
   });
+
+  // form to add the credit card budget
   const [creditcardform, setcreditcardForm] = useState({
     creditcardname: "",
     interest: "",
     limit: "",
     duedate: "",
   });
+
+  //budget form handle
   const handlechange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
+
+  // credit card form handle 
   const handlecreditchange = (e) => {
     setcreditcardForm({ ...creditcardform, [e.target.name]: e.target.value });
   };
 
+
+  // generate button handle
   const handlesubmit = async (e) => {
     e.preventDefault();
     try {
@@ -43,6 +52,8 @@ function Createbudget({ creditcardamount, setCreditcardamount }) {
       console.log(err.message);
     }
   };
+
+ //useeffect to add amount to the nettotal 
   useEffect(() => {
     setNettotal(
       Number(creditcardamount || 0) +
@@ -54,6 +65,8 @@ function Createbudget({ creditcardamount, setCreditcardamount }) {
     );
   }, [Createbudget, creditcardamount]);
 
+
+  // add button to handle the credit card
   const handlecreditsubmit = async (e) => {
     e.preventDefault();
     try {
@@ -90,11 +103,15 @@ function Createbudget({ creditcardamount, setCreditcardamount }) {
 
   return (
     <div>
+      
       <h1 className="text-center font-bold text-[24px] mt-10 mb-10">
         Create your budget here
       </h1>
+
+
       <div className="flex justify-center  items-start gap-3">
         <div className="flex flex-col border border-green-800">
+          {/*budget creation form */}
           <form
             action=""
             className={`w-[500px]  rounded flex flex-col origin-top overflow-hidden ${creditcard === "yes" ? "max-h-[2000px]" : "min-h-[200px]"} transition-all duration-800`}
@@ -165,6 +182,9 @@ function Createbudget({ creditcardamount, setCreditcardamount }) {
               </button>
             </div>
           </form>
+
+
+          {/*credit card budget creation form */}
           <div>
             <form action="" onSubmit={(e) => handlecreditsubmit(e)}>
               <h1 className="text-center font-bold text-[24px] mt-10 mb-10">
@@ -264,6 +284,9 @@ function Createbudget({ creditcardamount, setCreditcardamount }) {
             </form>
           </div>
         </div>
+
+
+        {/*calculating net total section */}
         <div className="w-[500px] border border-green-800  h-[400px] rounded flex flex-col">
           <div className="mb-3 mt-10 flex">
             <label

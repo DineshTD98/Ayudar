@@ -1,9 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import Firstpageimage from "../assets/family-creating-digital-content.jpg";
 import { useOutletContext } from "react-router-dom";
+
+
 function About() {
   const navigate = useNavigate();
   const {getstarted,setIsloggedin}=useOutletContext()
+
+//signup button handle to move to signup 
   const handlesignup = () => {
     setIsloggedin(true);
     navigate("/login");
@@ -109,7 +113,7 @@ function About() {
                             </div>
                         </div> */}
 
-            {/* CTA Button */}
+            {/*get started button to move to login page */}
             <div className="text-center">
               <button
                 onClick={() => {
