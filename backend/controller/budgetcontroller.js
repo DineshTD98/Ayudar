@@ -102,25 +102,36 @@ exports.createCategory = async (req, res) => {
 //GET CATEGORIES (for dropdown)
 exports.getCategories = async (req, res) => {
   try {
-    const categories = await Categories.aggregate([
-    {
-      $addFields: {
-        isOthers: {
-          $cond: [
-            { $eq: ["$name", "Others"] },
-            1,
-            0
-          ]
+     const categories = await Categories.aggregate([
+      {
+        $addFields: {
+          safeName: { $ifNull: ["$name", ""] }
+        }
+      },
+      {
+        $addFields: {
+          isOthers: {
+            $cond: [
+              { $eq: ["$safeName", "Others"] },
+              1,
+              0
+            ]
+          }
+        }
+      },
+      {
+        $sort: {
+          isOthers: 1,
+          safeName: 1
+        }
+      },
+      {
+        $project: {
+          safeName: 0 // remove temp field
         }
       }
-    },
-    {
-      $sort: {
-        isOthers: 1,
-        name: 1      
-      }
-    }
-  ]);
+    ]);
+
 
 
     return res.status(200).json(categories);
