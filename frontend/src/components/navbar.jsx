@@ -191,6 +191,7 @@ function Navbar({ setGetstarted }) {
             onClick={() => {
               navigate("/events");
               setDropdown(dropdown === "E" ? "" : "E");
+              
             }}
           >
             Events
