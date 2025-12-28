@@ -2,6 +2,7 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL: "https://ayudar.onrender.com",
+  withCredentials: true
 });
 
 //token for the header

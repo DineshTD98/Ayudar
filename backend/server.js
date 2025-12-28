@@ -4,13 +4,25 @@ const app = express();
 
 const cors = require("cors");
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://ayudar-delta.vercel.app"
+];
+
 app.use(cors({
-  origin: [
-    "http://localhost:3000",
-    "https://ayudar-delta.vercel.app"
-  ],
-  credentials: true
+  origin: function(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // allow these methods
+  allowedHeaders: ["Content-Type", "Authorization"] // allow these headers
 }));
+
+app.use(express.json());
 
 const mongoose = require("mongoose");
 
@@ -18,7 +30,7 @@ const userrouter = require("./routes/userrouter");
 const Documentrouter = require("./routes/documentrouter");
 const Budgetrouter = require("./routes/budgetrouter");
 
-app.use(express.json());
+
 
 
 
