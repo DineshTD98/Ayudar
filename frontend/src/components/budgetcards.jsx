@@ -33,10 +33,9 @@ function Budgetcards({ totalexpense }) {
 
  // total amount calculation using redux
 
-  const totalamount = Totalbudget.reduce(
-  (sum, item) => sum + Number(item.nettotal || 0),
-  0
-);
+  const totalamount = Array.isArray(Totalbudget) 
+    ? Totalbudget.reduce((sum, item) => sum + Number(item.nettotal || 0), 0)
+    : 0;
 
 // set remaining amount from budget
   
