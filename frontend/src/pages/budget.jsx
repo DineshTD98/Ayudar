@@ -44,8 +44,10 @@ function Budget() {
   // useeffect to add subscription expenses from the subscription 
 
   useEffect(()=>{
-       const overallexpense=expense.reduce((sum,exp)=>(sum +(exp.amount||0),0))
-       setAmount(overallexpense + totalsubmoney)
+       const overallexpense=Array.isArray(Totalbudget) ?
+          expense.reduce((sum,exp)=>(sum +(exp.amount||0),0)):
+          0;
+      setAmount(overallexpense + totalsubmoney)
   },[totalsubmoney,expense])
 
   const navClass = ({ isActive }) =>
