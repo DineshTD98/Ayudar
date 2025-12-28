@@ -20,7 +20,9 @@ import Transactions from "./components/transactions";
 import Uploaddocuments from "./components/uploaddocuments";
 import Viewdocuments from "./components/viewdocuments";
 import { userContext } from "./App";
-
+import Viewshopping from "./components/viewshopping";
+import Createshopping from "./components/createshopping";
+import Shoppinghistory from "./components/shoppinghistory";
 
 function AppRoutes({
   isloggedin,
@@ -30,7 +32,6 @@ function AppRoutes({
 }) {
   const navigate = useNavigate();
   const {setCreateshopping,setViewshopping}=useContext(userContext)
- 
  
   // LocalStorage → URL sync
   useEffect(() => {
@@ -43,25 +44,18 @@ function AppRoutes({
       subscriptions: "/budget/subscriptions",
       home:"/home",
       showbudget:'/budget/overview',
-      uploaddocuments:'/document/uploaddocuments'
+      uploaddocuments:'/document/uploaddocuments',
+      createshopping:'/shopping/createshopping',
+      viewshopping:'/shopping/viewshopping'
     };
 
     if (routes[page]) {
       navigate(routes[page], { replace: true });
     }
     
-    if(page === "createshopping"){
-         setCreateshopping(true);
-         setViewshopping(false);
-    }
-   
-    if(page === "viewshopping"){
-         setCreateshopping(false);
-         setViewshopping(true);
-    }
+}, [navigate]);
 
-   }, [navigate]);
-
+    
   return (
     // rotue creation for the url
      <Routes>
@@ -117,9 +111,14 @@ function AppRoutes({
 
 
           <Route path="/events" element={<Events />} />
-
-          
-          <Route path="/shopping" element={<Shopping />} />
+     
+        {/*shopping route creation */}
+           <Route path="/shopping" element={<Shopping />}>
+                <Route index element={<Navigate to="viewshopping" replace/>}/>
+                <Route path="viewshopping" element={<Viewshopping/>}/>
+                <Route path="createshopping" element={<Createshopping/>}/>
+                <Route path="shoppinghistory" element={<Shoppinghistory/>}/>
+           </Route>
         </Route>
       </Route>
     </Routes>

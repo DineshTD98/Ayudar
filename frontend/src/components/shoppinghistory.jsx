@@ -1,14 +1,14 @@
-function Shoppinghistory({ activeshopping, setActiveshopping }) {
-  const history = JSON.parse(localStorage.getItem("history")) || [];
+function Shoppinghistory() {
+  
   const date = new Date().toLocaleDateString();
   return (
     <div>
-      {activeshopping === "A" && (
+      
         <div>
           <div className=" text-right mt-5">
             <button
               type="button"
-              onClick={() => setActiveshopping("")}
+              onClick={() => navigate('/shopping/viewshopping')}
               className="border border-green-800 mr-14 bg-red-600 p-1 text-white rounded"
             >
               back
@@ -36,7 +36,7 @@ function Shoppinghistory({ activeshopping, setActiveshopping }) {
             </tbody>
           </table>
         </div>
-      )}
+      
     </div>
   );
 }

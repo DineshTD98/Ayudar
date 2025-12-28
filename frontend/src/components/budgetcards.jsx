@@ -44,7 +44,7 @@ function Budgetcards({ totalexpense }) {
           const totalremaining=totalamount - totalexpense
           return totalremaining;
       })
-  })
+  },[])
      
   return (
     <div>

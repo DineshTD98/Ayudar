@@ -44,23 +44,7 @@ function Subscriptions() {
     }
   };
 
-  useEffect(() => {
-    async function datafetch() {
-      try {
-        const data = await request({
-          url: "/budget/getsubscription",
-          method: "GET",
-        });
-        console.log(data);
-        if (data.subscription) {
-          dispatch(setSubscription(data.subscription));
-        }
-      } catch (err) {
-        console.log(err.message);
-      }
-    }
-    datafetch();
-  }, []);
+  
 
   const handledelete = async (id) => {
     try {

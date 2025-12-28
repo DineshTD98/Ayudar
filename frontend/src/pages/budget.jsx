@@ -1,27 +1,28 @@
 import Budgetcards from "../components/budgetcards";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import MyPieChart from "../components/piechart";
 import useapi from "../customehooks/useapi";
 import Expensetable from "../components/expensetable";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
+import { setSubscription } from "../redux/slices/subscriptionslice";
 
 function Budget() {
   const [expense, setExpense] = useState([]);
   const [totalexpense, setAmount] = useState(null);
-  const [creditcardamount, setCreditcardamount] = useState(0);
+  const [creditcardamount, setCreditcardamount] =useState(0);
+  const { request, error, loading } = useapi();
+  const location = useLocation();
+  
+  const dispatch=useDispatch()
 
   const subscriptionlist=useSelector((state)=>state.Subscriptionlist.value)
   console.log(subscriptionlist)
 
-  const totalsubmoney = subscriptionlist.reduce(
-    (sum, item) => sum + (item.price || 0), 
-    0
-  );
-
-  const { request, error, loading } = useapi();
-  const location = useLocation();
+   const totalsubmoney=useMemo(()=>{
+       return subscriptionlist.reduce((sum,sub)=>sum + (sub.price||0),0)
+   },[subscriptionlist])
 
   useEffect(() => {
     const fetchexpense = async () => {
@@ -45,10 +46,10 @@ function Budget() {
 
   useEffect(()=>{
        const overallexpense=Array.isArray(expense) ?
-          expense.reduce((sum,exp)=>sum +(exp.amount||0),0):
+          expense.reduce((sum,exp)=> sum + (exp.amount||0), 0):
           0;
       setAmount(overallexpense + totalsubmoney)
-  },[totalsubmoney,expense])
+  },[expense,totalsubmoney])
 
   const navClass = ({ isActive }) =>
     `text-left px-4 py-2 rounded-lg font-semibold transition-all ${
@@ -56,6 +57,26 @@ function Budget() {
         ? "bg-green-700 text-white"
         : "hover:bg-green-100 text-gray-700"
     }`;
+
+  // getting the subscription list
+   
+       useEffect(() => {
+           async function datafetch() {
+             try {
+               const data = await request({
+                 url: "/budget/getsubscription",
+                 method: "GET",
+               });
+               if (data.subscription) {
+                 dispatch(setSubscription(data.subscription));
+               }
+             } catch (err) {
+               console.log(err.message);
+             }
+           }
+           datafetch();
+         }, []);
+   
 
   return (
     <div className="min-h-screen bg-gray-100 flex">

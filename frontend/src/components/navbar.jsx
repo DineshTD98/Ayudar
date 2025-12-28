@@ -7,10 +7,8 @@ function Navbar({ setGetstarted }) {
     setActive,
     dropdown,
     setDropdown,
-    setCreateshopping,
     setShowbudget,
     setCreatebudget,
-    setViewshopping,
   } = useContext(userContext);
 
   const navigate = useNavigate();
@@ -153,10 +151,8 @@ function Navbar({ setGetstarted }) {
                   <button
                     className="block w-full text-left text-white px-4 py-2 hover:bg-green-800"
                     onClick={() => {
-                      navigate("/shopping");
+                      navigate("/shopping/createshopping");
                       setDropdown("");
-                      setCreateshopping(true);
-                      setViewshopping(false);
                       localStorage.setItem("currentpage", "createshopping");
                     }}
                   >
@@ -165,10 +161,8 @@ function Navbar({ setGetstarted }) {
                   <button
                     className="block w-full text-left text-white px-4 py-2 hover:bg-green-800"
                     onClick={() => {
-                      navigate("/shopping");
+                      navigate("/shopping/viewshopping");
                       setDropdown("");
-                      setCreateshopping(false);
-                      setViewshopping(true);
                       localStorage.setItem("currentpage", "viewshopping");
                     }}
                   >

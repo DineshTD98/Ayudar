@@ -10,16 +10,10 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-  origin: function(origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+  origin: allowedOrigins,
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // allow these methods
-  allowedHeaders: ["Content-Type", "Authorization"] // allow these headers
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
+  allowedHeaders: ["Content-Type", "Authorization"] 
 }));
 
 app.use(express.json());
@@ -29,9 +23,7 @@ const mongoose = require("mongoose");
 const userrouter = require("./routes/userrouter");
 const Documentrouter = require("./routes/documentrouter");
 const Budgetrouter = require("./routes/budgetrouter");
-
-
-
+const Shoppingrouter=require("./routes/shoppingrouter")
 
 
 app.get("/home", (req, res) => {
@@ -43,6 +35,7 @@ app.use("/uploads", express.static("uploads"));
 app.use("/user", userrouter);
 app.use("/documents", Documentrouter);
 app.use("/budget", Budgetrouter);
+app.use("/shopping",Shoppingrouter)
 
 // NO LOCAL FALLBACK
 const MONGODB_URI = process.env.MONGODB_URI;

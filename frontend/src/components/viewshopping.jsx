@@ -1,44 +1,59 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch,useSelector} from "react-redux";
+import { setShoppingcart,togglecomplete,clearshoppingcart} from "../redux/slices/shoppingslice";
 
-function Viewshopping({ setActiveshopping, activeshopping }) {
-  const [itemlist, setItemlist] = useState([]);
+function Viewshopping() {
+  
+  const navigate=useNavigate();
+  const shoppingitems=useSelector((state)=>state.Shoppingcart.value)
+  const dispatch=useDispatch()
 
-  useEffect(() => {
-    const shoppingitems = JSON.parse(localStorage.getItem("shopping")) || [];
-    const withstatus = shoppingitems.map((items) => ({
-      ...items,
-      completed: false,
-    }));
-    console.log(withstatus);
-    setItemlist(withstatus);
-  }, []);
-  const togglecomplete = (index) => {
-    const updatedlist = itemlist.map((item, i) =>
-      index === i ? { ...item, completed: !item.completed } : item,
-    );
-    setItemlist(updatedlist);
-  };
-  const handlecomplete = () => {
-    const checkeditems = itemlist.filter((items) => items.completed);
-    const cleanitems = checkeditems.map(({ completed, ...rest }) => rest);
+  useEffect(()=>{
+    async function datafetch(){
+      try{
+        const response=await request({
+          url:"/shopping/getshopping",
+          method:'GET'
+        })
+        dispatch(setShoppingcart(response.Getshoppinglist))
+      }
+      catch(err){
+        console.log(err.message)
+      }
+    }
+    datafetch()
+  },[])
+   
+   const togglecomplete=(index)=>{
+       dispatch(togglecomplete(index))
+  }
 
-    const oldhistory = JSON.parse(localStorage.getItem("history")) || [];
-    const updatedhistory = [...oldhistory, ...cleanitems];
-    localStorage.setItem("history", JSON.stringify(updatedhistory));
+ const handlecomplete=async()=>{
 
-    localStorage.removeItem("shopping");
-    setItemlist([]);
-    alert("shopping completed");
-    console.log(cleanitems);
-  };
-  return (
+    const Shoppedlist=shoppingitems.filter((items)=>items.completed===true)
+     try{
+        const response=await request({
+          url:"/shopping/createhistory",
+          post:"post",
+          data:Shoppedlist
+        })
+        console.log(response)
+        dispatch(clearshoppingcart())
+     }
+     catch(err){
+         console.log(err.message)
+     }
+  }
+  
+return (
     <>
-      {activeshopping === "" && (
+     
         <div>
           <div className="text-right mt-5 mr-10">
             <button
               className="border border-black bg-green-300 text-black p-1 rounded"
-              onClick={() => setActiveshopping("A")}
+              onClick={() => navigate('/shopping/shoppinghistory')}
             >
               History
             </button>
@@ -63,8 +78,8 @@ function Viewshopping({ setActiveshopping, activeshopping }) {
                 </tr>
               </thead>
               <tbody>
-                {itemlist.length > 0 &&
-                  itemlist.map((items, index) => (
+                {shoppingitems.length > 0 &&
+                  shoppingitems.map((items) => (
                     <tr
                       key={index}
                       className={`hover:bg-gray-50 text-center ${items.completed ? "opacity-60 blur-[1px]" : ""}`}
@@ -80,7 +95,7 @@ function Viewshopping({ setActiveshopping, activeshopping }) {
                       </td>
                     </tr>
                   ))}
-                {itemlist.length == 0 && (
+                {shoppingitems.length == 0 && (
                   <tr>
                     <td colSpan={3} className="text-center p-2">
                       No item to shop
@@ -89,7 +104,7 @@ function Viewshopping({ setActiveshopping, activeshopping }) {
                 )}
               </tbody>
             </table>
-            {itemlist.length > 0 && (
+            {shoppingitems.length > 0 && (
               <div className="text-center mt-5">
                 <button
                   onClick={() => handlecomplete()}
@@ -101,7 +116,7 @@ function Viewshopping({ setActiveshopping, activeshopping }) {
             )}
           </div>
         </div>
-      )}
+      
     </>
   );
 }

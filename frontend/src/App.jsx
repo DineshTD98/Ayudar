@@ -9,6 +9,8 @@ import { createContext, useState } from "react";
 
 import AppRoutes from "./approute";
 
+
+
 export const userContext = createContext();
 
 function App() {
@@ -24,7 +26,7 @@ function App() {
   const [viewshopping, setViewshopping] = useState(false);
   const [remainingbudget, setRemainingbudget] = useState(0);
 
-  return (
+return (
     <BrowserRouter>
       <userContext.Provider
         value={{
