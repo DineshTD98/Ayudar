@@ -45,7 +45,7 @@ function Budget() {
 
   useEffect(()=>{
        const overallexpense=Array.isArray(expense) ?
-          expense.reduce((sum,exp)=>(sum +(exp.amount||0),0)):
+          expense.reduce((sum,exp)=>sum +(exp.amount||0),0):
           0;
       setAmount(overallexpense + totalsubmoney)
   },[totalsubmoney,expense])
