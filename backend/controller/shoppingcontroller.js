@@ -16,12 +16,12 @@ exports.createshopping=async(req,res)=>{
         }
     }
 
-     const shoppingitems=await Shoppinglist.insertMany(
-        data.map((items)=>({
-          ...items,
-          userId:req.user.id
-         })
-       ))
+     const shoppingitems=await Shoppinglist.create(data)
+        // data.map((items)=>({
+        //   ...items,
+        //   userId:req.user.id
+        //  }))
+
 
        return res.status(200).json({
            message:"successfully saved",
