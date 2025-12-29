@@ -1,4 +1,4 @@
-const {Shoppinglist}=require('../model/shopping')
+const Shoppinglist=require('../model/shopping')
 
 // shoppinglist creation
 
