@@ -1,6 +1,9 @@
 const mongoose=require('mongoose')
 
 const Shoppingschema=new mongoose.Schema({
+    Slno:{
+        type:String,
+    },
     productname:{
         type:String,
         required:true
