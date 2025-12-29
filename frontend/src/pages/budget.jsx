@@ -18,11 +18,17 @@ function Budget() {
   const dispatch=useDispatch()
 
   const subscriptionlist=useSelector((state)=>state.Subscriptionlist.value)
-  console.log(subscriptionlist)
+  
 
-   const totalsubmoney=useMemo(()=>{
+  
+   
+    // used usememo to do the complex logic dont run again and again
+ 
+         const totalsubmoney=useMemo(()=>{
        return subscriptionlist.reduce((sum,sub)=>sum + (sub.price||0),0)
    },[subscriptionlist])
+
+  // getting expense from the backend 
 
   useEffect(() => {
     const fetchexpense = async () => {
@@ -51,6 +57,9 @@ function Budget() {
       setAmount(overallexpense + totalsubmoney)
   },[expense,totalsubmoney])
 
+
+
+  // to add a color to find out which page is active
   const navClass = ({ isActive }) =>
     `text-left px-4 py-2 rounded-lg font-semibold transition-all ${
       isActive
@@ -58,25 +67,7 @@ function Budget() {
         : "hover:bg-green-100 text-gray-700"
     }`;
 
-  // getting the subscription list
-   
-       useEffect(() => {
-           async function datafetch() {
-             try {
-               const data = await request({
-                 url: "/budget/getsubscription",
-                 method: "GET",
-               });
-               if (data.subscription) {
-                 dispatch(setSubscription(data.subscription));
-               }
-             } catch (err) {
-               console.log(err.message);
-             }
-           }
-           datafetch();
-         }, []);
-   
+  
 
   return (
     <div className="min-h-screen bg-gray-100 flex">

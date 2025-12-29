@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch,useSelector} from "react-redux";
 import { setShoppingcart,togglecomplete,clearshoppingcart} from "../redux/slices/shoppingslice";
-
+import useApi from "../customehooks/useapi";
 function Viewshopping() {
-  
+  const {request}=useApi();
   const navigate=useNavigate();
   const shoppingitems=useSelector((state)=>state.Shoppingcart.value)
   const dispatch=useDispatch()
@@ -25,7 +25,7 @@ function Viewshopping() {
     datafetch()
   },[])
    
-   const togglecomplete=(index)=>{
+   const toggleshopping=(index)=>{
        dispatch(togglecomplete(index))
   }
 
@@ -35,7 +35,7 @@ function Viewshopping() {
      try{
         const response=await request({
           url:"/shopping/createhistory",
-          post:"post",
+          method:"post",
           data:Shoppedlist
         })
         console.log(response)
@@ -79,7 +79,7 @@ return (
               </thead>
               <tbody>
                 {shoppingitems.length > 0 &&
-                  shoppingitems.map((items) => (
+                  shoppingitems.map((items,index) => (
                     <tr
                       key={index}
                       className={`hover:bg-gray-50 text-center ${items.completed ? "opacity-60 blur-[1px]" : ""}`}
@@ -90,7 +90,7 @@ return (
                       <td className="border px-4 py-2">
                         <input
                           type="checkbox"
-                          onChange={() => togglecomplete(index)}
+                          onChange={() => toggleshopping(index)}
                         />
                       </td>
                     </tr>

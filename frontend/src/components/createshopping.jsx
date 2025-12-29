@@ -5,8 +5,8 @@ import useApi from "../customehooks/useapi";
 function Createshopping() {
   const [form, setForm] = useState({
     Slno: "",
-    Productname: "",
-    Quantity: "",
+    productname: "",
+    quantity: "",
   });
   const {request,error,loading}=useApi()
   const navigate=useNavigate();
@@ -22,7 +22,7 @@ function Createshopping() {
     e.preventDefault();
     const newlist = [...list, form];
     setList(newlist);
-    setForm({ Id: "", Productname: "", Quantity: "" });
+    setForm({ Slno: "", productname: "", quantity: "" });
   };
 
   const keys = Object.keys(form);
@@ -40,7 +40,7 @@ function Createshopping() {
            method:"post",
            data:list
          })
-         
+        setList([])
         console.log(response.shoppinglist)
       }
       catch(err){
@@ -105,8 +105,8 @@ function Createshopping() {
                    <input
                       type="text"
                       required
-                      name="Productname"
-                      value={form.Productname}
+                      name="productname"
+                      value={form.productname}
                       onChange={handlechange}
                       className="w-full pl-10 pr-4 py-3 border-2 border-green-900 rounded-xl focus:border-green-900 focus:ring-opacity-50 focus:outline-none transition-colors text-lg"
                       placeholder="Enter product name"
@@ -120,8 +120,8 @@ function Createshopping() {
                   <input
                      type="text"
                       required
-                      name="Quantity"
-                      value={form.Quantity}
+                      name="quantity"
+                      value={form.quantity}
                       onChange={handlechange}
                       className="w-full pl-10 pr-4 py-3 border-2 border-green-900 rounded-xl focus:border-green-900  focus:outline-none transition-colors text-lg"
                       placeholder="e.g., 2 kg, 5 pieces"
@@ -202,11 +202,11 @@ function Createshopping() {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="font-lg text-lg text-black">{item.Productname}</div>
+                          <div className="font-lg text-lg text-black">{item.productname}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium  text-black">
-                            {item.Quantity}
+                            {item.quantity}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right">
