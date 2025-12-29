@@ -34,6 +34,7 @@ function Createshopping() {
   }
 
  const handlesave =async() => {
+      alert("url is triggered")
       try{
          const response=await request({
            url:'/shopping/createshopping',

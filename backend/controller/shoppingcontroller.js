@@ -16,11 +16,11 @@ exports.createshopping=async(req,res)=>{
         }
     }
 
-     const shoppingitems=await Shoppinglist.create(data)
-        // data.map((items)=>({
-        //   ...items,
-        //   userId:req.user.id
-        //  }))
+     const shoppingitems=await Shoppinglist.create(
+        data.map((items)=>({
+          ...items,
+          userId:req.user.id
+         })))
 
 
        return res.status(200).json({

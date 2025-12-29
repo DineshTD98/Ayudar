@@ -74,7 +74,7 @@ function Budget() {
       {/* SIDEBAR */}
       <aside className="w-[260px] bg-white shadow-lg p-4">
         <h1 className="text-2xl font-bold text-green-700 mb-8 text-center">
-          Budget App
+          Budget
         </h1>
 
         <nav className="flex flex-col gap-3">
