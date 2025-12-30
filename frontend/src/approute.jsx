@@ -46,7 +46,8 @@ function AppRoutes({
       showbudget:'/budget/overview',
       uploaddocuments:'/document/uploaddocuments',
       createshopping:'/shopping/createshopping',
-      viewshopping:'/shopping/viewshopping'
+      viewshopping:'/shopping/viewshopping',
+      shoppinghistory:"/shopping/shoppinghistory"
     };
 
     if (routes[page]) {

@@ -57,3 +57,62 @@ exports.getshopping=async(req,res)=>{
         })
     }
 }
+
+
+// shopping history creation
+
+const History = require("../model/shopping");
+
+exports.createhistory = async (req, res, next) => {
+  try {
+    const data = Array.isArray(req.body) ? req.body : [req.body];
+
+    if (data.length === 0) {
+      const error = new Error("No completed items found");
+      error.statuscode = 400;
+      return next(error);
+    }
+
+    // same date for all the group
+    const completedDate = new Date();
+
+    const historyItems = data.map((item) => ({
+      productname: item.productname,
+      quantity: item.quantity,
+      completedDate,
+      userId: req.user.id,
+    }));
+
+    const savedHistory = await History.insertMany(historyItems);
+
+    res.status(201).json({
+      message: "Shopping history saved successfully",
+      savedHistory,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+// get history 
+
+exports.gethistory=async(req,res,next)=>{
+  try{
+     const historyproducts=await History.find({userId:req.user.id})
+      
+     if(!historyproducts){
+        const error = new Error("No completed items found");
+        error.statuscode = 400;
+        return next(error);
+     }
+
+     return res.status(200).json({
+         message:"successfully received",
+         historyproducts
+     })
+  }
+  catch(error){
+      next(error)
+  }
+}

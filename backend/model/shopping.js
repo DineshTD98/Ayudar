@@ -22,3 +22,31 @@ const Shoppingschema=new mongoose.Schema({
 );
 
 module.exports=mongoose.model("Shoppinglist",Shoppingschema)
+
+
+
+// history
+const historySchema = new mongoose.Schema(
+  {
+    productname: {
+      type: String,
+      required: true,
+    },
+    quantity: {
+      type: Number,
+      required: true,
+    },
+    completedDate: {
+      type: Date,
+      required: true,
+    },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
+
+module.exports = mongoose.model("History", historySchema);

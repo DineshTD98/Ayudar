@@ -52,6 +52,12 @@ if (!process.env.JWT_SECRET) {
   console.warn("JWT_SECRET is missing");
 }
 
+//error handler
+
+const errorhandler=require("./middleware/errorhandler")
+ 
+app.use(errorhandler)
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

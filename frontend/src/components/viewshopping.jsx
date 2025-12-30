@@ -16,6 +16,7 @@ function Viewshopping() {
           url:"/shopping/getshopping",
           method:'GET'
         })
+        console.log(response.Getshoppinglist)
         dispatch(setShoppingcart(response.Getshoppinglist))
       }
       catch(err){
@@ -32,6 +33,7 @@ function Viewshopping() {
  const handlecomplete=async()=>{
 
     const Shoppedlist=shoppingitems.filter((items)=>items.completed===true)
+    console.log(Shoppedlist)
      try{
         const response=await request({
           url:"/shopping/createhistory",
@@ -47,77 +49,95 @@ function Viewshopping() {
   }
   
 return (
-    <>
-     
-        <div>
-          <div className="text-right mt-5 mr-10">
-            <button
-              className="border border-black bg-green-300 text-black p-1 rounded"
-              onClick={() => navigate('/shopping/shoppinghistory')}
-            >
-              History
-            </button>
-          </div>
-          <div className="mt-6 w-[800px] ms-80 overflow-x-auto">
-            <h1 className="text-center text-[22px] font-bold mb-5">
-              Shopping List
-            </h1>
-            <table className="w-full border border-gray-300 border-collapse">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="border px-4 py-2 font-semibold text-center">
-                    Slno
-                  </th>
-                  <th className="border px-4 py-2 font-semibold text-center">
-                    Productname
-                  </th>
-                  <th className="border px-4 py-2 font-semibold text-center">
-                    Quantity
-                  </th>
-                  <th>Completed</th>
-                </tr>
-              </thead>
-              <tbody>
-                {shoppingitems.length > 0 &&
-                  shoppingitems.map((items,index) => (
-                    <tr
-                      key={index}
-                      className={`hover:bg-gray-50 text-center ${items.completed ? "opacity-60 blur-[1px]" : ""}`}
-                    >
-                      <td className="border px-4 py-2">{index + 1}</td>
-                      <td className="border px-4 py-2">{items.Productname}</td>
-                      <td className="border px-4 py-2">{items.Quantity}</td>
-                      <td className="border px-4 py-2">
-                        <input
-                          type="checkbox"
-                          onChange={() => toggleshopping(index)}
-                        />
-                      </td>
-                    </tr>
-                  ))}
-                {shoppingitems.length == 0 && (
-                  <tr>
-                    <td colSpan={3} className="text-center p-2">
-                      No item to shop
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-            {shoppingitems.length > 0 && (
-              <div className="text-center mt-5">
-                <button
-                  onClick={() => handlecomplete()}
-                  className="border border-green-800 p-1 bg-green-800 text-white rounded"
-                >
-                  Complete
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
+  <>
+    <div className="min-h-screen bg-green-50 py-10 px-6">
       
-    </>
-  );
+      {/* Header */}
+      <div className="max-w-5xl mx-auto flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold text-green-900">
+          Shopping List
+        </h1>
+        <button
+          onClick={() => {navigate("/shopping/shoppinghistory"),localStorage.setItem("currentpage","shoppinghistory")}}
+          className="bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded-lg shadow transition"
+        >
+          View History
+        </button>
+      </div>
+
+      {/* Table Card */}
+      <div className="max-w-5xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+        <table className="w-full border-collapse">
+          <thead className="bg-green-100">
+            <tr>
+              <th className="px-6 py-4 text-left text-green-900 font-semibold">
+                #
+              </th>
+              <th className="px-6 py-4 text-left text-green-900 font-semibold">
+                Product
+              </th>
+              <th className="px-6 py-4 text-left text-green-900 font-semibold">
+                Quantity
+              </th>
+              <th className="px-6 py-4 text-center text-green-900 font-semibold">
+                Done
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {shoppingitems.length > 0 ? (
+              shoppingitems.map((items, index) => (
+                <tr
+                  key={index}
+                  className={`border-b last:border-none transition ${
+                    items.completed
+                      ? "bg-green-50 text-green-400 line-through"
+                      : "hover:bg-green-50"
+                  }`}
+                >
+                  <td className="px-6 py-4">{index + 1}</td>
+                  <td className="px-6 py-4 font-medium">
+                    {items.productname}
+                  </td>
+                  <td className="px-6 py-4">{items.quantity}</td>
+                  <td className="px-6 py-4 text-center">
+                    <input
+                      type="checkbox"
+                      checked={items.completed}
+                      onChange={() => toggleshopping(index)}
+                      className="w-5 h-5 accent-green-700 cursor-pointer"
+                    />
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan={4}
+                  className="text-center py-10 text-green-600 font-medium"
+                >
+                  No items to shop 🌱
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Complete Button */}
+      {shoppingitems.length > 0 && (
+        <div className="max-w-5xl mx-auto mt-6 text-center">
+          <button
+            onClick={handlecomplete}
+            className="bg-green-800 hover:bg-green-900 text-white px-8 py-3 rounded-xl shadow-lg transition"
+          >
+            Complete Selected
+          </button>
+        </div>
+      )}
+    </div>
+  </>
+);
 }
 export default Viewshopping;
