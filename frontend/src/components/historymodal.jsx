@@ -25,10 +25,10 @@ function Historymodal({data,onClose}){
             {data.items.map((item, index) => (
               <tr key={index}>
                 <td className="border text-center">
-                  {item.Productname}
+                  {item.productname}
                 </td>
                 <td className="border text-center">
-                  {item.Quantity}
+                  {item.quantity}
                 </td>
               </tr>
             ))}

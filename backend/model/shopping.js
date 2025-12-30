@@ -1,27 +1,27 @@
-const mongoose=require('mongoose')
+const mongoose = require('mongoose')
 
-const Shoppingschema=new mongoose.Schema({
-    Slno:{
-        type:String,
-    },
-    productname:{
-        type:String,
-        required:true
-    },
-    quantity:{
-        type:String,
-        required:true
-    },
-    userId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"User",
-        required:true
-    }
+const Shoppingschema = new mongoose.Schema({
+  Slno: {
+    type: String,
+  },
+  productname: {
+    type: String,
+    required: true
+  },
+  quantity: {
+    type: String,
+    required: true
+  },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true
+  }
 },
-    {timestamps:true},
+  { timestamps: true },
 );
 
-module.exports=mongoose.model("Shoppinglist",Shoppingschema)
+const Shoppinglist = mongoose.model("Shoppinglist", Shoppingschema);
 
 
 
@@ -33,7 +33,7 @@ const historySchema = new mongoose.Schema(
       required: true,
     },
     quantity: {
-      type: Number,
+      type: String,
       required: true,
     },
     completedDate: {
@@ -49,4 +49,6 @@ const historySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("History", historySchema);
+const History = mongoose.model("History", historySchema);
+
+module.exports = { Shoppinglist, History };

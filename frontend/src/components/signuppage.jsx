@@ -55,27 +55,27 @@ function Signuppage({ setIsloggedin }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl">
-        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-[700px]">
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
           {/* Header */}
-          <div className="bg-gradient-to-r from-emerald-600 to-green-600 px-8 py-6">
+          <div className="bg-green-900 px-6 py-4">
             <h1 className="text-3xl font-bold text-white text-center">
               Create Your Account
             </h1>
-            <p className="text-green-100 text-center mt-2">
+            <p className="text-gray-300 text-center mt-1 text-base">
               Join our community in just a few steps
             </p>
           </div>
 
           {/* Form */}
-          <div className="p-8">
-            <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="p-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
               {/* Name Row */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* First Name */}
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
+                <div className="space-y-1">
+                  <label className="block text-base font-medium text-gray-700">
                     First Name
                     <span className="text-red-500 ml-1">*</span>
                   </label>
@@ -104,20 +104,26 @@ function Signuppage({ setIsloggedin }) {
                         handleFullname(e);
                       }}
                       onBlur={(e) => {
+                        if (e.target.value !== "" && e.target.value.trim() === "") {
+                           if (e.target.value == "") {
+                             alert("Field cannot be empty");
+                             return;
+                           }
+                        }
                         if (e.target.value == "") {
-                          alert("Field cannot be empty");
-                          return;
+                            alert("Field cannot be empty");
+                            return;
                         }
                       }}
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition duration-200 outline-none"
+                      className="block w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black transition duration-200 outline-none text-base"
                       placeholder="Enter first name"
                     />
                   </div>
                 </div>
 
                 {/* Last Name */}
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
+                <div className="space-y-1">
+                  <label className="block text-base font-medium text-gray-700">
                     Last Name
                     <span className="text-red-500 ml-1">*</span>
                   </label>
@@ -151,7 +157,7 @@ function Signuppage({ setIsloggedin }) {
                           return;
                         }
                       }}
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition duration-200 outline-none"
+                      className="block w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black transition duration-200 outline-none text-base"
                       placeholder="Enter last name"
                     />
                   </div>
@@ -159,8 +165,8 @@ function Signuppage({ setIsloggedin }) {
               </div>
 
               {/* Full Name (Read-only) */}
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
+              <div className="space-y-1">
+                <label className="block text-base font-medium text-gray-700">
                   Full Name
                 </label>
                 <div className="relative">
@@ -184,17 +190,17 @@ function Signuppage({ setIsloggedin }) {
                     name="fullname"
                     value={profile.fullname}
                     readOnly
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-700 outline-none"
+                    className="block w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-700 outline-none text-base"
                     placeholder="Full name will appear here"
                   />
                 </div>
               </div>
 
               {/* Contact Row */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Email */}
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
+                <div className="space-y-1">
+                  <label className="block text-base font-medium text-gray-700">
                     Email Address
                     <span className="text-red-500 ml-1">*</span>
                   </label>
@@ -225,15 +231,15 @@ function Signuppage({ setIsloggedin }) {
                           return;
                         }
                       }}
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition duration-200 outline-none"
+                      className="block w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black transition duration-200 outline-none text-base"
                       placeholder="Enter your email"
                     />
                   </div>
                 </div>
 
                 {/* Mobile */}
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
+                <div className="space-y-1">
+                  <label className="block text-base font-medium text-gray-700">
                     Mobile Number
                     <span className="text-red-500 ml-1">*</span>
                   </label>
@@ -260,12 +266,12 @@ function Signuppage({ setIsloggedin }) {
                       value={profile.mobileno}
                       onChange={handleChange}
                       onBlur={(e) => {
-                        if (e.target.value.length !== 10) {
+                        if (e.target.value !== "" && e.target.value.length !== 10) {
                           alert("Mobile number must be 10 digits");
                           return;
                         }
                       }}
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition duration-200 outline-none"
+                      className="block w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black transition duration-200 outline-none text-base"
                       placeholder="10-digit mobile number"
                     />
                   </div>
@@ -273,8 +279,8 @@ function Signuppage({ setIsloggedin }) {
               </div>
 
               {/* Username */}
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
+              <div className="space-y-1">
+                <label className="block text-base font-medium text-gray-700">
                   Username
                   <span className="text-red-500 ml-1">*</span>
                 </label>
@@ -305,25 +311,25 @@ function Signuppage({ setIsloggedin }) {
                         return;
                       }
                     }}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition duration-200 outline-none"
+                    className="block w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black transition duration-200 outline-none text-base"
                     placeholder="Choose a username"
                   />
                 </div>
               </div>
 
               {/* Password Row */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Password */}
-                <div className="space-y-2">
+                <div className="space-y-1">
                   <div className="flex items-center justify-between">
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-base font-medium text-gray-700">
                       Password
                       <span className="text-red-500 ml-1">*</span>
                     </label>
                     <button
                       type="button"
                       onClick={() => setDisplay(!display)}
-                      className="text-sm text-emerald-600 hover:text-emerald-800 font-medium transition duration-200"
+                      className="text-xs text-black hover:text-gray-700 font-medium transition duration-200"
                     >
                       {display ? "Hide" : "Show"}
                     </button>
@@ -352,14 +358,14 @@ function Signuppage({ setIsloggedin }) {
                       onBlur={(e) => {
                         const pattern =
                           /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-                        if (!pattern.test(e.target.value)) {
+                        if (e.target.value !== "" && !pattern.test(e.target.value)) {
                           setAlert(true);
                         } else {
                           setAlert(false);
                         }
                       }}
-                      className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition duration-200 outline-none"
-                      placeholder="Create a strong password"
+                      className="block w-full pl-9 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black transition duration-200 outline-none text-base"
+                      placeholder="Create password"
                     />
                     <button
                       type="button"
@@ -374,27 +380,25 @@ function Signuppage({ setIsloggedin }) {
                     </button>
                   </div>
                   {msgalert && (
-                    <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg">
-                      <p className="text-sm text-red-600">
-                        Password must contain: uppercase letter, lowercase
-                        letter, one digit, one special character (@$!%*?&), and
-                        be at least 8 characters long.
+                    <div className="mt-1 p-2 bg-red-50 border border-red-200 rounded-lg">
+                      <p className="text-xs text-red-600 leading-tight">
+                        Password must have: Upper & lowercase, number, special char, 8+ chars.
                       </p>
                     </div>
                   )}
                 </div>
 
                 {/* Confirm Password */}
-                <div className="space-y-2">
+                <div className="space-y-1">
                   <div className="flex items-center justify-between">
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-base font-medium text-gray-700">
                       Confirm Password
                       <span className="text-red-500 ml-1">*</span>
                     </label>
                     <button
                       type="button"
                       onClick={() => setShowing(!showing)}
-                      className="text-sm text-emerald-600 hover:text-emerald-800 font-medium transition duration-200"
+                      className="text-xs text-black hover:text-gray-700 font-medium transition duration-200"
                     >
                       {showing ? "Hide" : "Show"}
                     </button>
@@ -421,12 +425,12 @@ function Signuppage({ setIsloggedin }) {
                       value={profile.confirmpassword}
                       onChange={handleChange}
                       onBlur={(e) => {
-                        if (profile.password !== e.target.value) {
+                        if (e.target.value !== "" && profile.password !== e.target.value) {
                           alert("Password does not match");
                         }
                       }}
-                      className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition duration-200 outline-none"
-                      placeholder="Confirm your password"
+                      className="block w-full pl-9 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black transition duration-200 outline-none text-base"
+                      placeholder="Confirm password"
                     />
                     <button
                       type="button"
@@ -444,10 +448,10 @@ function Signuppage({ setIsloggedin }) {
               </div>
 
               {/* Submit Button */}
-              <div className="pt-6">
+              <div className="pt-4 text-center">
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-emerald-600 to-green-600 text-white font-semibold py-4 px-4 rounded-lg hover:from-emerald-700 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition duration-200 transform hover:-translate-y-0.5 shadow-lg hover:shadow-xl text-lg"
+                  className="w-1/2 bg-green-800 text-white font-semibold py-3 px-4 rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 transition duration-200 transform hover:-translate-y-0.5 shadow-md hover:shadow-lg text-base"
                 >
                   Create Account
                 </button>
@@ -455,17 +459,17 @@ function Signuppage({ setIsloggedin }) {
             </form>
 
             {/* Footer Note */}
-            <div className="mt-8 pt-6 border-t border-gray-200">
+            <div className="mt-6 pt-4 border-t border-gray-200">
               <p className="text-center text-sm text-gray-600">
                 Already have an account?{" "}
                 <button
                   onClick={() => setIsloggedin(false)}
-                  className="text-emerald-600 hover:text-emerald-800 font-medium transition duration-200"
+                  className="text-blue-600 ms-6 text-[20px] hover:text-red-900 font-bold transition duration-200"
                 >
                   Sign in here
                 </button>
               </p>
-              <p className="text-center text-xs text-gray-500 mt-3">
+              <p className="text-center text-xs text-gray-500 mt-2">
                 By creating an account, you agree to our Terms of Service and
                 Privacy Policy
               </p>
@@ -473,15 +477,15 @@ function Signuppage({ setIsloggedin }) {
           </div>
         </div>
 
-        {/* Decorative elements */}
-        <div className="mt-8 text-center">
+        {/* Decorative elements - Grayscale or Black/White
+        {/* <div className="mt-6 text-center">
           <div className="flex items-center justify-center space-x-2 text-gray-500">
-            <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-            <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
-            <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-          </div>
-        </div>
+            <div className="w-2 h-2 bg-green-700 rounded-full"></div>
+            <div className="w-2 h-2 bg-green-700 rounded-full"></div>
+            <div className="w-2 h-2 bg-green-700 rounded-full"></div>
+            <div className="w-2 h-2 bg-green-700 rounded-full"></div>
+          </div> 
+        </div> */}
       </div>
     </div>
   );

@@ -20,13 +20,31 @@ function Budget() {
   const subscriptionlist=useSelector((state)=>state.Subscriptionlist.value)
   
 
+  // getting the subscription list
+     
+     useEffect(() => {
+         async function datafetch() {
+               try {
+                 const data = await request({
+                   url: "/budget/getsubscription",
+                   method: "GET",
+                 });
+                 if (data.subscription) {
+                   dispatch(setSubscription(data.subscription));
+                 }
+               } catch (err) {
+                 console.log(err.message);
+               }
+             }
+             datafetch();
+           }, []);
   
    
     // used usememo to do the complex logic dont run again and again
  
          const totalsubmoney=useMemo(()=>{
-       return subscriptionlist.reduce((sum,sub)=>sum + (sub.price||0),0)
-   },[subscriptionlist])
+           return Array.isArray(subscriptionlist) ? subscriptionlist.reduce((sum,sub)=>sum + (sub.price||0),0) : 0
+         },[subscriptionlist])
 
   // getting expense from the backend 
 

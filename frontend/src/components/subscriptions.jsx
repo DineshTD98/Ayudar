@@ -45,27 +45,7 @@ function Subscriptions() {
   };
 
 
-  // getting the subscription list
-     
-     useEffect(() => {
-         async function datafetch() {
-               try {
-                 const data = await request({
-                   url: "/budget/getsubscription",
-                   method: "GET",
-                 });
-                 if (data.subscription) {
-                   dispatch(setSubscription(data.subscription));
-                 }
-               } catch (err) {
-                 console.log(err.message);
-               }
-             }
-             datafetch();
-           }, []);
-  
-
-  const handledelete = async (id) => {
+const handledelete = async (id) => {
     try {
       const response = await request({
         url: `/budget/deletesubscription/${id}`,

@@ -40,6 +40,13 @@ function Viewshopping() {
           method:"post",
           data:Shoppedlist
         })
+
+        const deleteshoppinglist = await request({
+          url:"/shopping/deleteshoppinglist",
+          method:"post",
+          data:Shoppedlist
+        })  
+        console.log(deleteshoppinglist) 
         console.log(response)
         dispatch(clearshoppingcart())
      }

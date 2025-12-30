@@ -46,10 +46,10 @@ function Navbar({ setGetstarted }) {
         <div className="text-2xl font-bold text-emerald-100">Ayudar</div>
 
         {/* Right side - Navigation buttons */}
-        <div className="flex items-center space-x-4 relative">
+        <div className="flex items-center space-x-6 relative">
           {/* Home menu navbar */}
           <button
-            className={`${location.pathname === "/home" ? "text-white font-bold" : "text-black"} rounded p-1 hover:bg-yellow-800 hover:text-white transition-colors`}
+            className={`${location.pathname === "/home" ? "text-white font-bold" : "text-black"} rounded px-3 py-2 text-lg font-medium hover:bg-yellow-800 hover:text-white transition-colors`}
             onClick={() => {
               navigate("/home");
               setDropdown(dropdown === "A" ? "" : "A");
@@ -62,10 +62,19 @@ function Navbar({ setGetstarted }) {
           {/* Budget menu navbar */}
           <div className="relative dropdown-button">
             <button
-              className={`${location.pathname === "/budget" ? "text-white font-bold" : "text-black"} rounded p-1 hover:bg-yellow-800 hover:text-white transition-colors`}
+               className={`${location.pathname.includes("/budget") ? "text-white font-bold" : "text-black"} rounded px-3 py-2 text-lg font-medium hover:bg-yellow-800 hover:text-white transition-colors flex items-center gap-1`}
               onClick={() => handleDropdown("B")}
             >
               Budget
+              <svg
+                className={`w-4 h-4 transform transition-transform duration-200 ${dropdown === "B" ? "rotate-180" : ""}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
             </button>
             {dropdown === "B" && (
               <div className="absolute top-full left-0 mt-1 min-w-[140px] z-50 dropdown-menu">
@@ -104,10 +113,19 @@ function Navbar({ setGetstarted }) {
           {/* Documents menu navbar */}
           <div className="relative dropdown-button">
             <button
-              className={`${location.pathname === "/document" ? "text-white font-bold" : "text-black"} rounded p-1 hover:bg-yellow-800 hover:text-white transition-colors`}
+               className={`${location.pathname.includes("/document") ? "text-white font-bold" : "text-black"} rounded px-3 py-2 text-lg font-medium hover:bg-yellow-800 hover:text-white transition-colors flex items-center gap-1`}
               onClick={() => handleDropdown("C")}
             >
               Documents
+              <svg
+                className={`w-4 h-4 transform transition-transform duration-200 ${dropdown === "C" ? "rotate-180" : ""}`}
+                fill="none"
+                stroke="black"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
             </button>
             {dropdown === "C" && (
               <div className="absolute top-full left-0 mt-1 min-w-[160px] z-50 dropdown-menu">
@@ -140,10 +158,19 @@ function Navbar({ setGetstarted }) {
           {/* Shopping menu navbar */}
           <div className="relative dropdown-button">
             <button
-              className={`${location.pathname === "/shopping" ? "text-white font-bold" : "text-black"} rounded p-1 hover:bg-yellow-800 hover:text-white transition-colors`}
+               className={`${location.pathname.includes("/shopping") ? "text-white font-bold" : "text-black"} rounded px-3 py-2 text-lg font-medium hover:bg-yellow-800 hover:text-white transition-colors flex items-center gap-1`}
               onClick={() => handleDropdown("D")}
             >
               Shopping
+              <svg
+                className={`w-4 h-4 transform transition-transform duration-200 ${dropdown === "D" ? "rotate-180" : ""}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
             </button>
             {dropdown === "D" && (
               <div className="absolute top-full left-0 mt-1 min-w-[140px] z-50 dropdown-menu">
@@ -175,7 +202,7 @@ function Navbar({ setGetstarted }) {
 
           {/* Events menu navbar */}
           <button
-            className={`${location.pathname === "/events" ? "text-white font-bold" : "text-black"} rounded p-1 hover:bg-yellow-800 hover:text-white transition-colors`}
+             className={`${location.pathname.includes("/events") ? "text-white font-bold" : "text-black"} rounded px-3 py-2 text-lg font-medium hover:bg-yellow-800 hover:text-white transition-colors`}
             onClick={() => {
               navigate("/events");
               setDropdown(dropdown === "E" ? "" : "E");
@@ -188,10 +215,19 @@ function Navbar({ setGetstarted }) {
           {/* Profile menu navbar */}
           <div className="relative dropdown-button">
             <button
-              className={`${location.pathname === "/profile" ? "text-white font-bold" : "text-black"} rounded p-1 hover:bg-yellow-800 hover:text-white transition-colors`}
+               className={`${location.pathname.includes("/profile") ? "text-white font-bold" : "text-black"} rounded px-3 py-2 text-lg font-medium hover:bg-yellow-800 hover:text-white transition-colors flex items-center gap-1`}
               onClick={() => handleDropdown("F")}
             >
               Profile
+              <svg
+                className={`w-4 h-4 transform transition-transform duration-200 ${dropdown === "F" ? "rotate-180" : ""}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
             </button>
             {dropdown === "F" && (
               <div className="absolute top-full left-0 mt-1 min-w-[120px] z-50 dropdown-menu">

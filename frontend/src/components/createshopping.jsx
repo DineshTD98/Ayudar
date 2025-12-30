@@ -3,6 +3,10 @@ import { useNavigate } from "react-router-dom";
 import useApi from "../customehooks/useapi";
 
 function Createshopping() {
+
+  const [editQty,setEditQty]=useState('')
+  const [editIndex,setEditIndex]=useState(null)
+
   const [form, setForm] = useState({
     Slno: "",
     productname: "",
@@ -20,13 +24,36 @@ function Createshopping() {
 
   const handlesubmit = (e) => {
     e.preventDefault();
-    const newlist = [...list, form];
-    setList(newlist);
-    setForm({ Slno: "", productname: "", quantity: "" });
-  };
+    const exists = list.some(
+      (item) => item.productname.toLowerCase() === form.productname.toLowerCase()
+    );
 
+    if (!exists) {
+       setList([...list, form]);
+       setForm({ Slno: "", productname: "", quantity: "" });
+    }
+  else{
+    alert("item already exists")
+  }
+}
   const keys = Object.keys(form);
+  keys.push("update");
   keys.push("Delete");
+  
+
+  // handle update
+
+  const handleUpdateClick=(index,quantity)=>{
+       setEditQty(quantity)
+       setEditIndex(index)
+  }
+
+  const handlenewqnty=(index)=>{
+    const updated=list.map((item,i)=>i===index?{...item,quantity:editQty}:item)
+    setList(updated)
+    setEditIndex(null)
+    setEditQty('')
+   } 
 
   const handledelete=(index)=>{
       const updated=list.filter((_,i)=>i !== index)
@@ -49,11 +76,10 @@ function Createshopping() {
       }
   };
 
-
-  return (
+return (
   <>
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 p-4 md:p-8">
-      <div className="max-w-[1300px] mx-auto">
+      <div className="w-full max-w-[1400px] mx-auto">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 p-6 bg-white rounded-2xl shadow-lg border border-green-100">
           <div className="mb-6 md:mb-0">
@@ -86,9 +112,9 @@ function Createshopping() {
         </div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-8">
           {/* Form Section */}
-          <div className="bg-white p-8 rounded-2xl shadow-lg border border-green-800">
+          <div className="w-full bg-white p-8 rounded-2xl shadow-lg border border-green-800">
             <div className="mb-8">
               <h2 className="text-2xl font-bold text-green-800 mb-2 flex items-center">
                 <svg className="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -143,7 +169,7 @@ function Createshopping() {
           </div>
 
           {/* List Section */}
-          <div className="bg-white p-8 rounded-2xl shadow-lg border border-green-100">
+          <div className="w-full bg-white p-2 rounded-2xl shadow-lg border border-green-100">
             <div className="flex justify-between items-center mb-8">
               <h2 className="text-2xl font-bold text-green-800 flex items-center">
                 <svg className="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -208,9 +234,32 @@ function Createshopping() {
                           <div className="font-lg text-lg text-black">{item.productname}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium  text-black">
-                            {item.quantity}
-                          </span>
+                         {editIndex === index ? (
+                                <input
+                                  type="text"
+                                  value={editQty}
+                                  onChange={(e) => setEditQty(e.target.value)}
+                                />
+                              ) : (
+                                item.quantity
+                              )}
+                        </td>
+                        
+                       <td>
+                            {editIndex === index ? (
+                              <button onClick={() =>handlenewqnty(index)}>
+                                Save
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() =>
+                                  handleUpdateClick(index, item.quantity)
+                                }
+                                className="border border-green-700 text-white bg-black text-center font-bold px-4 py-2 rounded-lg"
+                              >
+                                Update
+                              </button>
+                            )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right">
                           <button

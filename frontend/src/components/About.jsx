@@ -6,8 +6,8 @@ import { useOutletContext } from "react-router-dom";
 function About() {
   const navigate = useNavigate();
   const {getstarted,setIsloggedin}=useOutletContext()
-
-//signup button handle to move to signup 
+  
+  //signup button handle to move to signup 
   const handlesignup = () => {
     setIsloggedin(true);
     navigate("/login");
