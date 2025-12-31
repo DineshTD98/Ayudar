@@ -38,7 +38,7 @@ function Navbar({ setGetstarted }) {
 
   return (
     <div
-      className="bg-green-200 p-3"
+      className="bg-green-200 p-3 fixed top-0 left-0 right-0 z-50"
       style={{ backgroundImage: "linear-gradient(to right, #4D8467, #BEDA7C)" }}
     >
       <div className="flex flex-row items-center justify-between p-8 h-12 relative text-black">
@@ -232,7 +232,13 @@ function Navbar({ setGetstarted }) {
             {dropdown === "F" && (
               <div className="absolute top-full left-0 mt-1 min-w-[120px] z-50 dropdown-menu">
                 <div className="bg-green-900 rounded shadow-lg py-1">
-                  <button className="block w-full text-left text-white px-4 py-2 hover:bg-green-800 rounded">
+                  <button className="block w-full text-left text-white px-4 py-2 hover:bg-green-800 rounded"
+                  onClick={() => {
+                    navigate("/profile/personal");
+                    setDropdown("");
+                    localStorage.setItem("currentpage", "personal");
+                  }}
+                  >
                     Settings
                   </button>
                   <button

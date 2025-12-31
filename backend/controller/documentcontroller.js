@@ -16,6 +16,10 @@ exports.createdocument = async (req, res) => {
       name,
       category,
       userId: req.user.id,
+      fileUrl: req.file.filename,
+      fileType: req.file.mimetype,
+      fileName: req.file.originalname,
+      fileSize: req.file.size,
     });
 
     if (exists) {
@@ -26,9 +30,12 @@ exports.createdocument = async (req, res) => {
       name,
       category,
       date,
-      fileUrl: req.file.path,
+      fileUrl: req.file.filename,
       userId: req.user.id,
-    });
+      fileType: req.file.mimetype,
+      fileName: req.file.originalname,
+      fileSize: req.file.size,
+      });
 
     res.status(201).json({
       success: true,

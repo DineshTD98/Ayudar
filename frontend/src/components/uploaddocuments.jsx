@@ -17,7 +17,10 @@ function Uploaddocuments() {
     setFiles(selected);
     if (selected && selected.type.startsWith("image")) {
       setPreview(URL.createObjectURL(selected));
-    } else {
+    } 
+    else if (selected && selected.type.startsWith("application/pdf")) {
+      setPreview("pdf")} 
+     else {
       setPreview("");
     }
   };
@@ -212,7 +215,7 @@ function Uploaddocuments() {
                             type="file"
                             onChange={handlechange}
                             className="sr-only"
-                            accept="image/*"
+                            accept="image/*,application/pdf"
                           />
                         </label>
                         <p className="pl-1">or drag and drop</p>
@@ -257,7 +260,7 @@ function Uploaddocuments() {
                 )}
 
                 {/* Upload Button */}
-                {preview && (
+                {files && (
                   <button
                     type="submit"
                     className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-4 px-6 rounded-xl hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 transform hover:-translate-y-0.5 shadow-lg hover:shadow-xl"
@@ -286,56 +289,24 @@ function Uploaddocuments() {
 
           {/* Right Column - Preview */}
           <div className="space-y-6">
-            {/* Preview Section */}
-            {preview && (
-              <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-800">
-                    Preview
-                  </h3>
-                  <span className="px-3 py-1 bg-blue-100 text-blue-600 text-xs font-medium rounded-full">
-                    Image Preview
-                  </span>
-                </div>
-                <div className="relative">
-                  <img
-                    src={preview}
-                    alt="Document preview"
-                    className="w-full h-auto max-h-[400px] object-contain rounded-lg border border-gray-200"
-                  />
-                  <div className="absolute top-4 right-4 bg-black/70 text-white text-xs px-3 py-1 rounded-full">
-                    Preview
-                  </div>
-                </div>
-                <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="text-gray-500">Name:</span>
-                      <span className="font-medium ml-2">
-                        {name || "Not specified"}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">Category:</span>
-                      <span className="font-medium ml-2">
-                        {category || "Not specified"}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">Date:</span>
-                      <span className="font-medium ml-2">
-                        {date || "Not specified"}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">Type:</span>
-                      <span className="font-medium ml-2">
-                        {files?.type || "Not specified"}
-                      </span>
-                    </div>
-                  </div>
-                </div>
+            {preview === "pdf" && (
+              <div className="flex items-center gap-3 p-6 border rounded-xl bg-gray-50">
+                <svg className="w-10 h-10 text-red-600" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M6 2a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6H6z" />
+                </svg>
+                <div>
+                  <p className="font-semibold">{files.name}</p>
+                  <p className="text-sm text-gray-500">PDF Document</p>
+                 </div>
               </div>
+            )}
+
+            {preview && preview !== "pdf" && (
+              <img
+                src={preview}
+                alt="Document preview"
+                className="w-full h-auto max-h-[400px] object-contain rounded-lg"
+              />
             )}
 
             {/* Instructions */}
@@ -371,7 +342,7 @@ function Uploaddocuments() {
                       d="M5 13l4 4L19 7"
                     />
                   </svg>
-                  Supported formats: PNG, JPG, JPEG, GIF
+                  Supported formats: PNG, JPG, JPEG, GIF,PDF
                 </li>
                 <li className="flex items-start">
                   <svg

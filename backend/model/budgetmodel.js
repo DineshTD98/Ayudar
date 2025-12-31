@@ -52,6 +52,7 @@ const subscriptions = mongoose.model("subscription", subscriptionschema);
 
 const createbudgetschema = new mongoose.Schema(
   {
+
     amount: Number,
     createddate: String,
     source: String,
@@ -109,18 +110,18 @@ const Creditcardbudget = mongoose.model("Creditcard", Creditcardschema);
 
 // creating the model for nettotal save
 
-const nettotalschema=new mongoose.Schema({
-    nettotal:{
-      type:Number,
-      required:true
-    },
-    userId:{
-      type:mongoose.Schema.Types.ObjectId,
-      required:true,
-      ref:'User'
-    }
+const nettotalschema = new mongoose.Schema({
+  nettotal: {
+    type: Number,
+    required: true
+  },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'User'
+  }
 });
-const monthlybudget=mongoose.model("nettotal",nettotalschema)
+const monthlybudget = mongoose.model("nettotal", nettotalschema)
 
 
 module.exports = {

@@ -4,8 +4,11 @@ import useapi from "../customehooks/useapi";
 import { useOutletContext } from "react-router-dom";
 import { useEffect } from "react";
 import Search from "../assets/search-icon.jpg";
+
+
 function Viewdocuments() {
 
+  const BASE_URL=import.meta.env.VITE_API_URL;
   const { reload, setReload } = useOutletContext();
   const { request, error, loading } = useapi();
   const dispatch = useDispatch();
@@ -133,19 +136,25 @@ function Viewdocuments() {
                 <td className="px-4 py-3">{data.date}</td>
 
                 <td className="px-4 py-3">
-                  <img
-                    src={`http://localhost:3000/uploads/${data.file}`}
-                    alt="document"
-                    className="w-20 h-24 object-cover mx-auto rounded border"
-                  />
+                  {data.fileType === "application/pdf" ? (
+                    <div className="w-20 h-24 mx-auto border rounded flex items-center justify-center bg-gray-100 text-red-500">
+                      <span className="text-xs font-bold">PDF</span>
+                    </div>
+                  ) : (
+                    <img
+                      src={`${BASE_URL}/uploads/${data.fileUrl}`}
+                      alt="document"
+                      className="w-20 h-24 object-cover mx-auto rounded border"
+                    />
+                  )}
                 </td>
 
                 <td className="px-4 py-3">
                   <button
                     onClick={() =>
                       handledownload(
-                        `http://localhost:3000/uploads/${data.file}`,
-                        data.category,
+                        `${BASE_URL}/uploads/${data.fileUrl}`,
+                        data.name,
                       )
                     }
                     className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 transition"

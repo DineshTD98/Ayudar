@@ -11,10 +11,17 @@ if (!fs.existsSync(uploadDir)) {
 
 // file filter (ONLY images)
 const fileFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith("image/")) {
+  const allowedtypes = ['image/jpeg',
+    'image/jpg',
+    'image/png',
+    "image/gif",
+    "image/webp",
+    "application/pdf"
+  ]
+  if (allowedtypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error("Only image files are allowed"), false);
+    cb(new Error("Invalid file type. Only images and PDFs are allowed"), false);
   }
 };
 

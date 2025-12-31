@@ -10,6 +10,11 @@ import Events from "./pages/events";
 import Budget from "./pages/budget";
 import Shopping from "./pages/Shopping";
 import About from "./components/About";
+import Profile from "./pages/profile";
+
+import Personal from "./components/personal";
+import Security from "./components/security";
+import Preferences from "./components/preference";
 
 import Layout from "./components/layout";
 import ProtecteRoute from "./components/protectedroute";
@@ -33,28 +38,31 @@ function AppRoutes({
   const navigate = useNavigate();
   const {setCreateshopping,setViewshopping}=useContext(userContext)
  
-  // LocalStorage → URL sync
-  useEffect(() => {
-    const page = localStorage.getItem("currentpage");
+//   // LocalStorage → URL sync
+//   useEffect(() => {
+//     const page = localStorage.getItem("currentpage");
 
-    const routes = {
-      expenses: "/budget/expenses",
-      createbudget: "/budget/create",
-      transactions: "/budget/transactions",
-      subscriptions: "/budget/subscriptions",
-      home:"/home",
-      showbudget:'/budget/overview',
-      uploaddocuments:'/document/uploaddocuments',
-      createshopping:'/shopping/createshopping',
-      viewshopping:'/shopping/viewshopping',
-      shoppinghistory:"/shopping/shoppinghistory"
-    };
+// //     const routes = {
+//       expenses: "/budget/expenses",
+//       createbudget: "/budget/create",
+//       transactions: "/budget/transactions",
+//       subscriptions: "/budget/subscriptions",
+//       // home:"/home",
+//       showbudget:'/budget/overview',
+//       uploaddocuments:'/document/uploaddocuments',
+//       createshopping:'/shopping/createshopping',
+//       viewshopping:'/shopping/viewshopping',
+//       shoppinghistory:"/shopping/shoppinghistory",
+//       // personal:"/profile/personal",
+//       // security:"/profile/security",
+//       // preferences:"/profile/preferences",
+//     };
 
-    if (routes[page]) {
-      navigate(routes[page], { replace: true });
-    }
+//     if (routes[page]) {
+//       navigate(routes[page], { replace: true });
+//     }
     
-}, [navigate]);
+// }, [navigate]);
 
     
   return (
@@ -120,6 +128,13 @@ function AppRoutes({
                 <Route path="createshopping" element={<Createshopping/>}/>
                 <Route path="shoppinghistory" element={<Shoppinghistory/>}/>
            </Route>
+
+           <Route path="/profile" element={<Profile />}>
+                <Route index element={<Navigate to="personal" replace/>}/>
+                <Route path="personal" element={<Personal/>}/>
+                <Route path="security" element={<Security/>}/>
+                <Route path="preferences" element={<Preferences/>}/>
+           </Route> 
         </Route>
       </Route>
     </Routes>

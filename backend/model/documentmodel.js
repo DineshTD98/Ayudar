@@ -10,7 +10,25 @@ const documentSchema = new mongoose.Schema(
     date: {
       type: Date,
     },
-    fileUrl: { type: String, required: true },
+     fileUrl: {
+      type: String,
+      required: true,
+    },
+
+    fileType: {
+      type: String,
+      required: true, 
+    },
+
+    fileName: {
+      type: String,
+      required: true,
+    },
+
+    fileSize: {
+      type: Number, 
+    },
+
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

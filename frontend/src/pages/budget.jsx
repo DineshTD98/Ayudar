@@ -7,13 +7,14 @@ import Expensetable from "../components/expensetable";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useSelector,useDispatch } from "react-redux";
 import { setSubscription } from "../redux/slices/subscriptionslice";
-
+import { setCreatebudget } from "../redux/slices/createbudgetslice";
 function Budget() {
   const [expense, setExpense] = useState([]);
   const [totalexpense, setAmount] = useState(null);
   const [creditcardamount, setCreditcardamount] =useState(0);
   const { request, error, loading } = useapi();
   const location = useLocation();
+  
   
   const dispatch=useDispatch()
 
@@ -39,12 +40,29 @@ function Budget() {
              datafetch();
            }, []);
   
+
+    useEffect(()=>{
+        async function datafetch() {
+            try {
+              const data = await request({
+                url: "/budget/getsalarydate",
+                method: "GET",
+              });
+              if (data.salarydatebudget) {
+                 dispatch(setCreatebudget(data.salarydatebudget));
+              }
+            } catch (err) {
+              console.log(err.message);
+            }
+          }
+          datafetch();
+    },[]) 
    
     // used usememo to do the complex logic dont run again and again
  
-         const totalsubmoney=useMemo(()=>{
+    const totalsubmoney=useMemo(()=>{
            return Array.isArray(subscriptionlist) ? subscriptionlist.reduce((sum,sub)=>sum + (sub.price||0),0) : 0
-         },[subscriptionlist])
+     },[subscriptionlist])
 
   // getting expense from the backend 
 
@@ -147,7 +165,7 @@ function Budget() {
             {/* Default Overview when route is /budget/overview */}
             {location.pathname.endsWith("/overview") && (
               <>
-                <Budgetcards totalexpense={totalexpense} />
+                <Budgetcards totalexpense={totalexpense}/>
 
                 <div className="mt-6 grid grid-cols-12 gap-6">
                   <div className="col-span-7 bg-white rounded-lg shadow p-4">
@@ -175,7 +193,7 @@ function Budget() {
                 setExpense,
                 setAmount,
                 creditcardamount,
-                setCreditcardamount,
+                setCreditcardamount
               }}
             />
           </>

@@ -101,7 +101,7 @@ exports.createCategory = async (req, res) => {
 //GET CATEGORIES (for dropdown)
 exports.getCategories = async (req, res) => {
   try {
-     const categories = await Categories.aggregate([
+    const categories = await Categories.aggregate([
       {
         $addFields: {
           safeName: { $ifNull: ["$name", ""] }
@@ -126,7 +126,7 @@ exports.getCategories = async (req, res) => {
       },
       {
         $project: {
-          safeName: 0 
+          safeName: 0
         }
       }
     ]);
@@ -179,19 +179,19 @@ exports.createsubscription = async (req, res) => {
 //get subscription
 exports.getsubscription = async (req, res) => {
   try {
-     
-  if (!req.user || !req.user.id) {
-  return res.status(401).json({
-    message: "Unauthorized",
-  });
-   }
-   const subscription = await subscriptions.find({ userId: req.user.id });
+
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({
+        message: "Unauthorized",
+      });
+    }
+    const subscription = await subscriptions.find({ userId: req.user.id });
 
     return res.status(200).json({
       subscription,
       message: "request successful",
     });
-    
+
   } catch (err) {
     return res.status(500).json({
       message: err.message,
@@ -302,26 +302,26 @@ exports.creditcard = async (req, res) => {
 
 // monthly total budget to add to the total amount
 
-exports.monthlybudget=async(req,res)=>{
-  try{
-      const {nettotal}=req.body
-      if(!nettotal){
-        return res.status(400).json({
-          message:'no nettotal to add'
-        })
-      }
-      const activebudget=await monthlybudget.create({
-        nettotal,
-        userId:req.user.id
+exports.monthlybudget = async (req, res) => {
+  try {
+    const { nettotal } = req.body
+    if (!nettotal) {
+      return res.status(400).json({
+        message: 'no nettotal to add'
       })
+    }
+    const activebudget = await monthlybudget.create({
+      nettotal,
+      userId: req.user.id
+    })
 
-      return res.status(200).json({
-        message:"successfully added",
-        activebudget
-      })
+    return res.status(200).json({
+      message: "successfully added",
+      activebudget
+    })
   }
-  catch(err){
-     return res.status(500).json({
+  catch (err) {
+    return res.status(500).json({
       message: err.message,
     });
   }
@@ -329,22 +329,43 @@ exports.monthlybudget=async(req,res)=>{
 
 //getting nettotal to add in the total amount
 
-exports.gettotalbudget=async(req,res)=>{
-  try{
-     const totalbudget=await monthlybudget.find({userId:req.user.id})
-     if(totalbudget.length === 0){
-        return res.status(400).json({
-          message:'no budget created'
-        })
-     }
-     return res.status(200).json({
-        message:'successfully received budget',
-        totalbudget
-     })
+exports.gettotalbudget = async (req, res) => {
+  try {
+    const totalbudget = await monthlybudget.find({ userId: req.user.id })
+    if (totalbudget.length === 0) {
+      return res.status(400).json({
+        message: 'no budget created'
+      })
+    }
+    return res.status(200).json({
+      message: 'successfully received budget',
+      totalbudget
+    })
   }
-  catch(err){
+  catch (err) {
     return res.status(500).json({
       message: err.message,
     });
   }
+}
+
+//get salarydate from createbudget
+
+exports.getsalarydatebudget=async(req,res,next)=>{
+  try{
+    const salarydatebudget=await createbudget.find({userId:req.user.id})
+    if(salarydatebudget.length === 0){
+         const error=new error('no budget created')
+         error.status=400
+         return next(error)
+      }
+    
+    return res.status(200).json({
+      message:'successfully received budget',
+      salarydatebudget
+    })
+  }
+  catch(error){
+     next(error)
+    }
 }

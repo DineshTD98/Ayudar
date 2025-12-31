@@ -5,12 +5,36 @@ import useapi from "../customehooks/useapi";
 import { useContext } from "react";
 import { userContext } from "../App";
 
-
 function Budgetcards({ totalexpense }) {
+  const Createbudget = useSelector((state) => state.Createbudget.value);
   const Totalbudget=useSelector((state)=>state.Totalbudget.value)
   const dispatch=useDispatch()
-  const { request, error, loading } = useapi();
+  const { request} = useapi();
   const {remainingbudget,setRemainingbudget}=useContext(userContext)
+  
+  const monthlydate = new Date();
+
+  // Find salary entry in budget (find the latest one with a valid date)
+  const filtersalarydate = Array.isArray(Createbudget) 
+    ? [...Createbudget].reverse().find((item) => item.source === "Salary" && item.createddate)
+    : null;
+
+  let salarydateObj;
+
+  if (filtersalarydate && filtersalarydate.createddate) {
+    const createdDate = new Date(filtersalarydate.createddate);
+    salarydateObj = new Date(createdDate);
+    salarydateObj.setDate(createdDate.getDate() + 30);
+  } else {
+    salarydateObj = new Date();
+    salarydateObj.setDate(salarydateObj.getDate() + 30);
+  }
+
+  salarydateObj.setHours(0, 0, 0, 0);
+  monthlydate.setHours(0, 0, 0, 0);
+
+  const remainingdays = salarydateObj - monthlydate;
+  const remainingdaysinmonth = Math.ceil(remainingdays / (1000 * 60 * 60 * 24));
 
 //use effect to calculate total amount in the card
   useEffect(()=>{
@@ -44,7 +68,7 @@ function Budgetcards({ totalexpense }) {
           const totalremaining=totalamount - totalexpense
           return totalremaining;
       })
-  },[])
+  },[totalamount,totalexpense])
      
   return (
     <div>
@@ -84,6 +108,8 @@ function Budgetcards({ totalexpense }) {
          {/*dates card */}
         <div className="border border-black bg-red-900 h-[150px] rounded">
           <h3 className="text-center mt-6 text-[24px] text-white">Date</h3>
+          <h5 className="text-center text-[20px] text-white">{monthlydate.toDateString()}</h5>
+          <p className="text-center text-[20px] text-white">Remaining days:{remainingdaysinmonth}</p> 
         </div>
       </div>
     </div>

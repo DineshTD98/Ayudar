@@ -2,14 +2,13 @@ import { useEffect, useState } from "react";
 import { setCreatebudget } from "../redux/slices/createbudgetslice";
 import { useDispatch, useSelector } from "react-redux";
 import useapi from "../customehooks/useapi";
-
 function Createbudget({ creditcardamount, setCreditcardamount }) {
   const Createbudget = useSelector((state) => state.Createbudget.value);
   const { request, error, loading } = useapi();
   const [creditcard, setCreditcard] = useState("");
   const dispatch = useDispatch();
   const [nettotal, setNettotal] = useState(0);
- 
+  
  // form state creation to add the budget
   const [form, setForm] = useState({
     amount: "",
@@ -92,7 +91,7 @@ function Createbudget({ creditcardamount, setCreditcardamount }) {
             data:{nettotal}
           })
           console.log(response.activebudget)
-          setCreatebudget('')
+          dispatch(setCreatebudget([]))
           setCreditcardamount('')
           setNettotal('')
       }
@@ -120,6 +119,7 @@ function Createbudget({ creditcardamount, setCreditcardamount }) {
             <h1 className="text-center bg-green-800 w-[250px] h-[30px] ms-32 text-white font-bold  p-1 rounded mb-3 ">
               Add a new budget
             </h1>
+
             <div className="mb-3 mt-3">
               <label
                 htmlFor=""

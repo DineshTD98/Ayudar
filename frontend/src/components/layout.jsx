@@ -4,7 +4,7 @@ export default function Layout({ setGetstarted }) {
   return (
     <>
       <Navbar setGetstarted={setGetstarted} />
-      <div>
+      <div className="mt-20">
         <Outlet />
       </div>
     </>
