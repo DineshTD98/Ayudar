@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { userContext } from "../App";
 import { useContext, useEffect } from "react";
-import Navbarimage from "../assets/navbarimage2.webp";
+
 function Navbar({ setGetstarted }) {
   const {
     setActive,

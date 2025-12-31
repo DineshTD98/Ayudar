@@ -15,8 +15,8 @@ exports.createdocument = async (req, res) => {
     const exists = await Documents.findOne({
       name,
       category,
-      userId: req.user.id,
-      fileUrl: req.file.filename,
+      userId:  req.user.id,
+      fileUrl:  req.file.filename,
       fileType: req.file.mimetype,
       fileName: req.file.originalname,
       fileSize: req.file.size,

@@ -12,7 +12,7 @@ const allowedOrigins = [
 app.use(cors({
   origin: allowedOrigins,
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
+  methods: ["GET", "POST", "PUT","PATCH", "DELETE", "OPTIONS"], 
   allowedHeaders: ["Content-Type", "Authorization"] 
 }));
 
@@ -24,7 +24,7 @@ const userrouter = require("./routes/userrouter");
 const Documentrouter = require("./routes/documentrouter");
 const Budgetrouter = require("./routes/budgetrouter");
 const Shoppingrouter=require("./routes/shoppingrouter")
-
+const profilerouter=require("./routes/profilerouter")
 
 app.get("/home", (req, res) => {
   res.send("thank you for using backend");
@@ -36,6 +36,7 @@ app.use("/user", userrouter);
 app.use("/documents", Documentrouter);
 app.use("/budget", Budgetrouter);
 app.use("/shopping",Shoppingrouter)
+app.use('/profile',profilerouter)
 
 // NO LOCAL FALLBACK
 const MONGODB_URI = process.env.MONGODB_URI;
