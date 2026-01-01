@@ -1,7 +1,7 @@
 import "./App.css";
 import "./index.css";
 
-import "./css/about.css";
+
 import "./css/loginform.css";
 
 import { BrowserRouter } from "react-router-dom";

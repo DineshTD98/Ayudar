@@ -3,7 +3,7 @@ import Firstpageimage from "../assets/family-creating-digital-content.jpg";
 import { useOutletContext } from "react-router-dom";
 
 
-function About() {
+function Firstpage() {
   const navigate = useNavigate();
   const {getstarted,setIsloggedin}=useOutletContext()
   
@@ -151,4 +151,4 @@ function About() {
   );
 }
 
-export default About;
+export default Firstpage;

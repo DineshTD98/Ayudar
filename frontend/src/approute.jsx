@@ -3,13 +3,13 @@ import { useContext, useEffect } from "react";
 
 import Loginpage from "./pages/loginpage";
 import Home from "./pages/home";
-import Firstpage from "./pages/firtstpage";
+import Firstpage from "./pages/firstpage";
 import Documents from "./pages/document";
 
 import Events from "./pages/events";
 import Budget from "./pages/budget";
 import Shopping from "./pages/Shopping";
-import About from "./components/About";
+
 import Profile from "./pages/profile";
 
 import Personal from "./components/personal";
@@ -36,7 +36,7 @@ function AppRoutes({
   setGetstarted,
 }) {
   const navigate = useNavigate();
-  const {setCreateshopping,setViewshopping}=useContext(userContext)
+ 
  
 //   // LocalStorage → URL sync
 //   useEffect(() => {
@@ -76,8 +76,8 @@ function AppRoutes({
                 getstarted={getstarted} />
             }
         >
-            <Route index element={<Navigate to="about"/>}/>
-            <Route path="about" element={<About/>}/>
+            <Route index element={<Navigate to="firstpage"/>}/>
+            <Route path="firstpage" element={<Firstpage/>}/>
 
         </Route>
 
