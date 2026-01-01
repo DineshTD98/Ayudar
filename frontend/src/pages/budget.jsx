@@ -30,8 +30,10 @@ function Budget() {
                    url: "/budget/getsubscription",
                    method: "GET",
                  });
-                 if (data.subscription) {
+                 if (data && data.subscription) {
                    dispatch(setSubscription(data.subscription));
+                 } else {
+                   dispatch(setSubscription([]));
                  }
                } catch (err) {
                  console.log(err.message);
@@ -48,8 +50,10 @@ function Budget() {
                 url: "/budget/getsalarydate",
                 method: "GET",
               });
-              if (data.salarydatebudget) {
+              if (data && data.salarydatebudget) {
                  dispatch(setCreatebudget(data.salarydatebudget));
+              } else {
+                 dispatch(setCreatebudget([]));
               }
             } catch (err) {
               console.log(err.message);
@@ -74,7 +78,7 @@ function Budget() {
           method: "GET",
         });
 
-        setExpense(data.Expense);
+        setExpense(data?.Expense || []);
         
       } catch (err) {
         console.log(err.message);

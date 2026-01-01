@@ -2,6 +2,8 @@ import { useState } from "react";
 import Showpassword from "../assets/password-show.png";
 import Hidepassword from "../assets/hide-password.jpg";
 import axios from "axios";
+import Signuppageimage from "../assets/infoslideimages/signuppageimage.jpg"
+
 function Signuppage({ setIsloggedin }) {
   const [profile, setProfile] = useState({
     firstname: "",
@@ -55,10 +57,12 @@ function Signuppage({ setIsloggedin }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-[700px]">
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
-          {/* Header */}
+    <div className="min-h-screen h-screen relative">
+    <div style={{backgroundImage: `url(${Signuppageimage})`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat", width: "100%", height: "100%"}}>
+    </div>
+    <div className="w-full flex items-center justify-center absolute z-50 top-5">
+        <div className="bg-white lg:w-[50%] md:w-[60%] w-full rounded-2xl shadow-xl overflow-hidden border border-gray-200">
+        {/* Header */}
           <div className="bg-green-900 px-6 py-4">
             <h1 className="text-3xl font-bold text-white text-center">
               Create Your Account
@@ -486,7 +490,8 @@ function Signuppage({ setIsloggedin }) {
             <div className="w-2 h-2 bg-green-700 rounded-full"></div>
           </div> 
         </div> */}
-      </div>
+    </div>
+    
     </div>
   );
 }

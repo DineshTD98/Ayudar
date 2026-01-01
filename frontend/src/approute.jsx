@@ -1,30 +1,32 @@
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
-import { useContext, useEffect } from "react";
 
-import Loginpage from "./pages/loginpage";
-import Home from "./pages/home";
 import Firstpage from "./pages/firstpage";
-import Documents from "./pages/document";
+import Info from "./components/Info";
+import Loginpage from "./pages/loginpage";
+
+import Layout from "./components/layout";
+import ProtecteRoute from "./components/protectedroute";
+
+import Home from "./pages/home";
 
 import Events from "./pages/events";
-import Budget from "./pages/budget";
-import Shopping from "./pages/Shopping";
 
 import Profile from "./pages/profile";
-
 import Personal from "./components/personal";
 import Security from "./components/security";
 import Preferences from "./components/preference";
 
-import Layout from "./components/layout";
-import ProtecteRoute from "./components/protectedroute";
+import Budget from "./pages/budget";
 import Createbudget from "./components/createbudget";
 import Expenses from "./components/expenses";
 import Subscriptions from "./components/subscriptions";
 import Transactions from "./components/transactions";
+
+import Documents from "./pages/document";
 import Uploaddocuments from "./components/uploaddocuments";
 import Viewdocuments from "./components/viewdocuments";
-import { userContext } from "./App";
+
+import Shopping from "./pages/Shopping";
 import Viewshopping from "./components/viewshopping";
 import Createshopping from "./components/createshopping";
 import Shoppinghistory from "./components/shoppinghistory";
@@ -35,10 +37,9 @@ function AppRoutes({
   getstarted,
   setGetstarted,
 }) {
-  const navigate = useNavigate();
  
  
-//   // LocalStorage → URL sync
+//   // LocalStorage → URL sync 
 //   useEffect(() => {
 //     const page = localStorage.getItem("currentpage");
 
@@ -76,8 +77,8 @@ function AppRoutes({
                 getstarted={getstarted} />
             }
         >
-            <Route index element={<Navigate to="firstpage"/>}/>
-            <Route path="firstpage" element={<Firstpage/>}/>
+            <Route index element={<Navigate to="info"/>}/>
+            <Route path="info" element={<Info/>}/>
 
         </Route>
 

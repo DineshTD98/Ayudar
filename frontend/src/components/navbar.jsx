@@ -7,8 +7,6 @@ function Navbar({ setGetstarted }) {
     setActive,
     dropdown,
     setDropdown,
-    setShowbudget,
-    setCreatebudget,
   } = useContext(userContext);
 
   const navigate = useNavigate();
@@ -83,8 +81,6 @@ function Navbar({ setGetstarted }) {
                     className="block w-full text-left text-white px-4 py-2 hover:bg-green-800"
                     onClick={() => {
                       navigate("/budget");
-                      setShowbudget(true);
-                      setCreatebudget(false);
                       setActive("A");
                       setDropdown("");
                       localStorage.setItem("currentpage", "showbudget");
@@ -96,10 +92,9 @@ function Navbar({ setGetstarted }) {
                     className="block w-full text-left text-white px-4 py-2 hover:bg-green-800"
                     onClick={() => {
                       navigate("/budget");
-                      setShowbudget(false);
-                      setCreatebudget(true);
                       setDropdown("");
                       setActive("B");
+                      navigate('/budget/create')
                       localStorage.setItem("currentpage", "createbudget");
                     }}
                   >

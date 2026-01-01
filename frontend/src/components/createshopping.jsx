@@ -56,6 +56,8 @@ function Createshopping() {
    } 
 
   const handledelete=(index)=>{
+      const confirmdelete = window.confirm("Are you sure you want to delete this item?");
+      if (!confirmdelete) return;
       const updated=list.filter((_,i)=>i !== index)
       setList(updated)
   }

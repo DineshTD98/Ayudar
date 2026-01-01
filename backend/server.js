@@ -25,6 +25,7 @@ const Documentrouter = require("./routes/documentrouter");
 const Budgetrouter = require("./routes/budgetrouter");
 const Shoppingrouter=require("./routes/shoppingrouter")
 const profilerouter=require("./routes/profilerouter")
+const eventrouter=require("./routes/eventroute")
 
 app.get("/home", (req, res) => {
   res.send("thank you for using backend");
@@ -37,6 +38,7 @@ app.use("/documents", Documentrouter);
 app.use("/budget", Budgetrouter);
 app.use("/shopping",Shoppingrouter)
 app.use('/profile',profilerouter)
+app.use("/event",eventrouter)
 
 // NO LOCAL FALLBACK
 const MONGODB_URI = process.env.MONGODB_URI;

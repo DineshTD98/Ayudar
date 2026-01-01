@@ -257,16 +257,9 @@ exports.createbudget = async (req, res) => {
 exports.getbudget = async (req, res) => {
   try {
     const budget = await createbudget.find({ userId: req.user.id });
-
-    if (budget.length === 0) {
-      return res.status(400).json({
-        message: "no budget to get",
-      });
-    }
-
     return res.status(200).json({
       message: "data received",
-      budget,
+      budget: budget || [],
     });
   } catch (err) {
     return res.status(500).json({
@@ -332,14 +325,9 @@ exports.monthlybudget = async (req, res) => {
 exports.gettotalbudget = async (req, res) => {
   try {
     const totalbudget = await monthlybudget.find({ userId: req.user.id })
-    if (totalbudget.length === 0) {
-      return res.status(400).json({
-        message: 'no budget created'
-      })
-    }
     return res.status(200).json({
       message: 'successfully received budget',
-      totalbudget
+      totalbudget: totalbudget || []
     })
   }
   catch (err) {
@@ -351,21 +339,15 @@ exports.gettotalbudget = async (req, res) => {
 
 //get salarydate from createbudget
 
-exports.getsalarydatebudget=async(req,res,next)=>{
-  try{
-    const salarydatebudget=await createbudget.find({userId:req.user.id})
-    if(salarydatebudget.length === 0){
-         const error=new error('no budget created')
-         error.status=400
-         return next(error)
-      }
-    
+exports.getsalarydatebudget = async (req, res, next) => {
+  try {
+    const salarydatebudget = await createbudget.find({ userId: req.user.id })
     return res.status(200).json({
-      message:'successfully received budget',
-      salarydatebudget
+      message: 'successfully received budget',
+      salarydatebudget: salarydatebudget || []
     })
   }
-  catch(error){
-     next(error)
-    }
+  catch (error) {
+    next(error)
+  }
 }

@@ -45,8 +45,12 @@ function Budgetcards({ totalexpense }) {
               method:'GET',
             }) 
             console.log(response.totalbudget)
-            dispatch(setTotalbudget(response.totalbudget))
-           
+            if(response && response.totalbudget && Array.isArray(response.totalbudget)){
+                dispatch(setTotalbudget(response.totalbudget))
+            }
+            else{
+                dispatch(setTotalbudget([]))
+            }
          }
          catch(err){
             console.log(err.message)
@@ -85,7 +89,7 @@ function Budgetcards({ totalexpense }) {
             Total Amount
           </h3>
           <h5 className="text-center text-[24px] text-white">
-            Rs.{totalamount}
+            Rs.{totalamount>0?totalamount:0}
           </h5>
         </div>
 
@@ -93,7 +97,7 @@ function Budgetcards({ totalexpense }) {
         <div className="border border-black bg-red-500 h-[150px] rounded">
           <h3 className="text-center mt-6 text-[24px] text-white">Expenses</h3>
           <h5 className="text-center text-[20px] text-white">
-            Rs:{totalexpense}
+            Rs:{totalexpense>0?totalexpense:0}
           </h5>
         </div>
 
@@ -101,7 +105,7 @@ function Budgetcards({ totalexpense }) {
         <div className="border border-black bg-blue-500 h-[150px] rounded">
           <h3 className="text-center mt-6 text-[24px] text-white">Remaining</h3>
            <h5 className="text-center text-[20px] text-white">
-            Rs:{remainingbudget}
+            Rs:{remainingbudget>0?remainingbudget:0}  
           </h5>
         </div>
 

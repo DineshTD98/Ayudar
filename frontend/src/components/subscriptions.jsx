@@ -46,6 +46,8 @@ function Subscriptions() {
 
 
 const handledelete = async (id) => {
+    const confirmdelete = window.confirm("Are you sure you want to delete this subscription?");
+    if (!confirmdelete) return;
     try {
       const response = await request({
         url: `/budget/deletesubscription/${id}`,

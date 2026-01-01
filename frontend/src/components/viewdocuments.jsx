@@ -41,6 +41,8 @@ function Viewdocuments() {
   }, [reload]);
 
   const handledelete = async (id) => {
+    const confirmdelete = window.confirm("Are you sure you want to delete this document?");
+    if (!confirmdelete) return;
     try {
       const response = await request({
         url: `/documents/deletedocument/${id}`,

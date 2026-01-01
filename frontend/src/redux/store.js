@@ -6,6 +6,7 @@ import Createbudgetslice from "./slices/createbudgetslice";
 import totalbudgetslice from "./slices/totalbudgetslice";
 import Shoppingslice from "./slices/shoppingslice"
 import profileSlice from "./slices/profile";
+import eventslice from "./slices/eventslice";
 export const Store = configureStore({
   reducer: {
     Logindetails: loginslice,
@@ -14,7 +15,8 @@ export const Store = configureStore({
     Createbudget: Createbudgetslice,
     Totalbudget:totalbudgetslice,
     Shoppingcart:Shoppingslice,
-    Profile:profileSlice
+    Profile:profileSlice,
+    Events:eventslice
   },
 });
 export default Store;
