@@ -61,6 +61,23 @@ function Budget() {
           }
           datafetch();
     },[]) 
+
+    useEffect(() => {
+      async function fetchCreditBudget() {
+        try {
+          const data = await request({
+            url: "/budget/getcreditbudget",
+            method: "GET",
+          });
+          if (data && data.creditbudget) {
+            setCreditcardamount(data.creditbudget.limit);
+          }
+        } catch (err) {
+          console.log(err.message);
+        }
+      }
+      fetchCreditBudget();
+    }, []);
    
     // used usememo to do the complex logic dont run again and again
  

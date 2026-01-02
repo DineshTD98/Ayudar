@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addnewEvent,addevent } from "../redux/slices/eventslice";
 import useApi from "../customehooks/useapi";
+import Eventsbgimage from "../assets/bgimageevents.jpg"
 const COLORS = [
   "bg-blue-500",
   "bg-green-500",
@@ -20,8 +21,8 @@ const formatLocalDate = (date) => {
  function Events() {
   const {request}=useApi()
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const Events=useSelector((state)=>state.Events.value)
-  const dispatch=useDispatch()
+  const events = useSelector((state) => state.Events.value);
+  const dispatch = useDispatch();
   const [showForm, setShowForm] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -76,16 +77,25 @@ const formatLocalDate = (date) => {
     },[])
   const selectedDateString = formatLocalDate(selectedDate);
   
-  const filteredEvents = Events.filter(
+  const filteredEvents = events.filter(
     (event) => event.date === selectedDateString
   );
 
   return (
-   <div
-  className={`min-h-screen flex bg-gray-100 p-6 transition-all duration-300 ${
-    showForm ? "justify-start" : "justify-center"
-  }`}
-     >
+    <div className="relative min-h-screen">
+      <div
+        style={{ backgroundImage: `url(${Eventsbgimage})` }}
+        className="fixed inset-0 bg-cover bg-center z-0"
+      >
+        <div className="w-full h-full bg-black/40"></div>
+      </div>
+
+      <div
+        className={`relative z-10 min-h-screen flex p-6 transition-all duration-300 ${
+          showForm ? "justify-start" : "justify-center"
+        }`}
+      >
+     
       {/* LEFT SIDE */}
       <div className={`flex flex-col w-[800px] `}>
         {/* Header */}
@@ -128,7 +138,7 @@ const formatLocalDate = (date) => {
               const isSelected =
                 date.toDateString() === selectedDate.toDateString();
               
-              const dayEvents = Events.filter(e => e.date === dateString);
+              const dayEvents = events.filter((e) => e.date === dateString);
 
               return (
                 <div
@@ -248,6 +258,7 @@ const formatLocalDate = (date) => {
           </form>
         </div>
       )}
+    </div>
     </div>
   );
 }

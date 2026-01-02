@@ -16,16 +16,30 @@ function Home() {
 
       {/* Main Content Area */}
       <div className="relative z-10 max-w-7xl mx-auto w-full">
+        <div className="flex">
         {/* Welcome Section */}
-        <div className="mb-12 animate-fade-in">
+           <div className="mb-12 animate-fade-in w-1/2">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">
             Welcome back, <span className="text-emerald-400">Family</span>!
           </h1>
           <p className="text-white/70 text-lg font-light">
             Here's what's happening with your family today.
           </p>
-        </div>
-
+           </div>
+           <div className="mb-12 w-1/2">
+            {/*important alerts for the customer*/}
+            <div className="animate-fade-in">
+              <h3 className="block text-center w-full text-red-500 font-bold text-[28px] animate-shake-80% animate-blink">Important Alerts 
+               <span className="text-red-500 animate-shake-80% animate-blink"> !</span>
+               </h3>
+               <div className="border border-white/10 p-4 rounded-2xl mt-2">
+                   <p className="text-white/70">Alert 1</p>
+                   <p className="text-white/70">Alert 2</p>
+                   <p className="text-white/70">Alert 3</p>
+               </div> 
+            </div>
+          </div>
+      </div>
         {/* Dashboard Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Budget Widget */}

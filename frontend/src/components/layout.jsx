@@ -1,10 +1,14 @@
 import Navbar from "./navbar";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
+
 export default function Layout({ setGetstarted }) {
+  const location = useLocation();
+  const isHomePage = location.pathname === "/home";
+
   return (
     <>
-      <Navbar setGetstarted={setGetstarted} />
-      <div className="mt-20">
+      {!isHomePage && <Navbar setGetstarted={setGetstarted} />}
+      <div className={!isHomePage ? "mt-20" : ""}>
         <Outlet />
       </div>
     </>

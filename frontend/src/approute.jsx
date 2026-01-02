@@ -5,7 +5,7 @@ import Info from "./components/Info";
 import Loginpage from "./pages/loginpage";
 
 import Layout from "./components/layout";
-import ProtecteRoute from "./components/protectedroute";
+import ProtectedRoute from "./components/protectedroute";
 
 import Home from "./pages/home";
 
@@ -95,7 +95,7 @@ function AppRoutes({
     
     {/*protected routes */}
 
-      <Route element={<ProtecteRoute />}>
+      <Route element={<ProtectedRoute />}>
         <Route element={<Layout setGetstarted={setGetstarted} />}>
           <Route path="/home" element={<Home />} />
 

@@ -337,6 +337,22 @@ exports.gettotalbudget = async (req, res) => {
   }
 }
 
+//getting creditcard budget
+exports.getcreditbudget = async (req, res) => {
+  try {
+    const creditbudget = await Creditcardbudget.findOne({ userId: req.user.id }).sort({ _id: -1 });
+    return res.status(200).json({
+      message: 'successfully received credit budget',
+      creditbudget: creditbudget || null
+    })
+  }
+  catch (err) {
+    return res.status(500).json({
+      message: err.message,
+    });
+  }
+}
+
 //get salarydate from createbudget
 
 exports.getsalarydatebudget = async (req, res, next) => {
