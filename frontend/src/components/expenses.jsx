@@ -39,6 +39,10 @@ function Expenses() {
   };
 
   const deleteRow = (index) => {
+    if(rows[index].title !== ""|| rows.length === 1){
+    const confirmdelete = window.confirm("Are you sure you want to delete this row?");
+    if (!confirmdelete) return;
+    }
     setRows(rows.filter((_, i) => i !== index));
   };
 
@@ -101,7 +105,7 @@ function Expenses() {
                   />
                 </td>
 
-                {/* ✅ ONLY CATEGORY FIELD CHANGED */}
+                {/* Category Field */}
                 <td className="p-2 border">
                   <select
                     className="border p-1 w-full rounded"

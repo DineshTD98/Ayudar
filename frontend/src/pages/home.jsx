@@ -1,4 +1,116 @@
+import { useContext } from "react";
+import { userContext } from "../App";
+import DashboardCard from "../components/DashboardCard";
+import Infoslide2 from "../assets/infoslideimages/infoslideimage3.jpg";
+
 function Home() {
-  return <></>;
+  const { remainingbudget } = useContext(userContext);
+
+  return (
+    <div 
+      className="min-h-screen w-full bg-cover bg-center bg-no-repeat bg-fixed relative overflow-hidden flex flex-col pt-24 pb-12 px-6"
+      style={{ backgroundImage: `url(${Infoslide2})` }}
+    >
+      {/* Dark Overlay */}
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"></div>
+
+      {/* Main Content Area */}
+      <div className="relative z-10 max-w-7xl mx-auto w-full">
+        {/* Welcome Section */}
+        <div className="mb-12 animate-fade-in">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">
+            Welcome back, <span className="text-emerald-400">Family</span>!
+          </h1>
+          <p className="text-white/70 text-lg font-light">
+            Here's what's happening with your family today.
+          </p>
+        </div>
+
+        {/* Dashboard Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Budget Widget */}
+          <DashboardCard
+            title="Budget"
+            color="bg-emerald-500"
+            icon={
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            }
+            content={
+              <div className="flex flex-col">
+                <span className="text-sm uppercase tracking-wider text-white/40 mb-1">Remaining</span>
+                <span className="text-3xl font-bold text-emerald-400">₹{remainingbudget.toLocaleString()}</span>
+              </div>
+            }
+            link="/budget"
+          />
+
+          {/* Events Widget */}
+          <DashboardCard
+            title="Events"
+            color="bg-blue-500"
+            icon={
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            }
+            content={
+              <div className="flex flex-col">
+                <span className="text-sm text-white/60">No events for today</span>
+                <span className="mt-2 text-white/40 italic">Stay tuned!</span>
+              </div>
+            }
+            link="/events"
+          />
+
+          {/* Documents Widget */}
+          <DashboardCard
+            title="Documents"
+            color="bg-amber-500"
+            icon={
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            }
+            content={
+              <div className="flex flex-col">
+                <span className="text-sm text-white/60 font-medium">Quick Access</span>
+                <p className="text-sm text-white/40 mt-1">Keep your important files safe and organized.</p>
+              </div>
+            }
+            link="/document/viewdocuments"
+          />
+
+          {/* Shopping Widget */}
+          <DashboardCard
+            title="Shopping"
+            color="bg-rose-500"
+            icon={
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+            }
+            content={
+              <div className="flex flex-col">
+                <span className="text-sm text-white/60">Manage your essentials</span>
+                <p className="text-sm text-white/40 mt-1">Don't forget anything on your next trip.</p>
+              </div>
+            }
+            link="/shopping/viewshopping"
+          />
+        </div>
+
+        {/* Quick Actions / Tips */}
+        <div className="mt-12 p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-md">
+           <h2 className="text-2xl font-semibold text-white mb-4">Quick Tip</h2>
+           <p className="text-white/60 leading-relaxed font-light">
+             "The key to a happy home is organization. Use Ayudar to track your daily expenses and never lose a document again."
+           </p>
+        </div>
+      </div>
+    </div>
+  );
 }
+
 export default Home;

@@ -112,7 +112,7 @@ function Budget() {
   return (
     <div className="min-h-screen bg-gray-100 flex">
       {/* SIDEBAR */}
-      <aside className="w-[260px] bg-white shadow-lg p-4">
+      <aside className="w-[260px] fixed top-20 left-0 h-screen bg-white shadow-lg p-4">
         <h1 className="text-2xl font-bold text-green-700 mb-8 text-center">
           Budget
         </h1>
@@ -159,7 +159,7 @@ function Budget() {
       </aside>
 
       {/* MAIN CONTENT */}
-      <main className="flex-1 p-6">
+      <main className="flex-1 p-6 ml-[260px]">
         {error ? (
           <p className="text-red-600 text-center">
             Couldn't fetch the data
