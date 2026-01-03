@@ -355,12 +355,12 @@ exports.getcreditbudget = async (req, res) => {
 
 //get salarydate from createbudget
 
-exports.getsalarydatebudget = async (req, res, next) => {
+exports.getcreatebudget = async (req, res, next) => {
   try {
-    const salarydatebudget = await createbudget.find({ userId: req.user.id })
+    const allcreatebudget = await createbudget.find({ userId: req.user.id })
     return res.status(200).json({
       message: 'successfully received budget',
-      salarydatebudget: salarydatebudget || []
+      allcreatebudget: allcreatebudget || []
     })
   }
   catch (error) {
