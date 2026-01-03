@@ -4,7 +4,7 @@ function Documents(){
     const [reload,setReload]=useState(false)
     return(
         <>
-          <div>
+          <div >
              <Outlet context={{
                     reload,
                     setReload

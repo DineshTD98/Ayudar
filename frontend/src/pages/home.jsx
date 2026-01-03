@@ -2,18 +2,44 @@ import { useContext } from "react";
 import { userContext } from "../App";
 import DashboardCard from "../components/DashboardCard";
 import Infoslide2 from "../assets/infoslideimages/infoslideimage3.jpg";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
   const { remainingbudget, alerts } = useContext(userContext);
+  const navigate = useNavigate();
 
   return (
     <div 
-      className="min-h-screen w-full bg-cover bg-center bg-no-repeat bg-fixed relative overflow-hidden flex flex-col pt-24 pb-12 px-6"
-      style={{ backgroundImage: `url(${Infoslide2})` }}
+      className="min-h-screen w-full bg-cover bg-center bg-no-repeat bg-fixed relative overflow-hidden flex flex-col pb-12 px-6"
+      style={{ backgroundImage: `url(${Infoslide2})`}}
     >
+      
       {/* Dark Overlay */}
       <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"></div>
-
+      {/* Header Area */}
+      <div className="relative z-10 flex items-center pt-6 mb-16">
+        <div className="w-1/2 text-right">
+          <p className="text-3xl font-bold text-white tracking-widest uppercase">Ayudar</p>
+        </div>
+        <div className="w-1/2 flex gap-4 justify-end">
+          <button 
+            onClick={() => {
+              localStorage.removeItem("token");
+              localStorage.removeItem("currentpage");
+              navigate("/");
+            }}
+            className="px-6 py-2 bg-white/10 hover:bg-red-500/20 text-white font-medium rounded-full border border-white/20 transition-all duration-300 backdrop-blur-md"
+          >
+            Logout
+          </button>
+          <button 
+            onClick={() => (window.location.href = "/profile")}
+            className="px-6 py-2 bg-white/10 hover:bg-emerald-500/20 text-white font-medium rounded-full border border-white/20 transition-all duration-300 backdrop-blur-md"
+          >
+            Profile
+          </button>
+        </div>
+      </div>
       {/* Main Content Area */}
       <div className="relative z-10 max-w-7xl mx-auto w-full">
         <div className="flex">
@@ -51,9 +77,9 @@ function Home() {
             title="Budget"
             color="bg-emerald-500"
             icon={
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 8.25H9m6 3H9m3 6-3-3h1.5a3 3 0 1 0 0-6M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+             </svg>
             }
             content={
               <div className="flex flex-col">

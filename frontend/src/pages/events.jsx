@@ -72,12 +72,12 @@ const formatLocalDate = (date) => {
 
   return (
     <div className="relative min-h-screen">
-      <div
+      {/* <div
         style={{ backgroundImage: `url(${Eventsbgimage})` }}
         className="fixed inset-0 bg-cover bg-center z-0"
       >
         <div className="w-full h-full bg-black/40"></div>
-      </div>
+      </div> */}
 
       <div
         className={`relative z-10 min-h-screen flex p-6 transition-all duration-300 ${

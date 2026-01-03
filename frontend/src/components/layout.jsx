@@ -8,7 +8,7 @@ export default function Layout({ setGetstarted }) {
   return (
     <>
       {!isHomePage && <Navbar setGetstarted={setGetstarted} />}
-      <div className={!isHomePage ? "mt-20" : ""}>
+      <div className={!isHomePage ? "pt-24" : ""}>
         <Outlet />
       </div>
     </>

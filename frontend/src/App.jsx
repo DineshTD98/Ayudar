@@ -103,7 +103,7 @@ function App() {
     };
 
     fetchData();
-  }, [isloggedin]);
+  }, [getstarted]);
 
   // Global Remaining Budget Calculation
   const totalBudget = useSelector((state) => state.Totalbudget.value);
@@ -130,20 +130,10 @@ function App() {
     <BrowserRouter>
       <userContext.Provider
         value={{
-          opendocuments,
-          setOpendocuments,
-          showbudget,
-          setShowbudget,
-          createbudget: createbudgetOpen,
-          setCreatebudget: setCreatebudgetOpen,
           active,
           setActive,
           dropdown,
           setDropdown,
-          createshopping,
-          setCreateshopping,
-          viewshopping,
-          setViewshopping,
           remainingbudget,
           setRemainingbudget,
           creditcardamount,

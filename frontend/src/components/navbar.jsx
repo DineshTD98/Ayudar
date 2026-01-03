@@ -37,9 +37,9 @@ function Navbar({ setGetstarted }) {
   return (
     <div
       className="bg-green-200 p-3 fixed top-0 left-0 right-0 z-50"
-      style={{ backgroundImage: "linear-gradient(to right, #4D8467, #BEDA7C)" }}
+      style={{ backgroundImage: "linear-gradient(to bottom, rgba(128, 143, 135, 1), rgba(128, 143, 135, 1))" }}
     >
-      <div className="flex flex-row items-center justify-between p-8 h-12 relative text-black">
+      <div className="flex flex-row items-center justify-between p-4 h-16 relative text-white">
         {/* Left side - Ayudar text */}
         <div className="text-2xl font-bold text-emerald-100">Ayudar</div>
 
