@@ -99,7 +99,11 @@ return (
               </div>
             </div>
           </div>
-          
+          <button className="group relative inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold text-md shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 hover:from-emerald-700 hover:to-green-700"
+             onClick={()=>{navigate('/shopping/viewshopping'),
+             localStorage.setItem("currentpage","viewshopping")}}>
+              View shopping
+          </button>
           <button
             className="group relative inline-flex items-center gap-2 bg-black text-white px-6 py-3 rounded-xl font-semibold text-md shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 hover:from-emerald-700 hover:to-green-700"
             onClick={() =>{ navigate('/shopping/shoppinghistory'),

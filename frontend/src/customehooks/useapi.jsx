@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import api from "../api/api";
 
 export default function useApi() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const request = async ({ url, method = "GET", data = null }) => {
+  const request = useCallback(async ({ url, method = "GET", data = null }) => {
     setLoading(true);
     setError(null);
 
@@ -23,7 +23,7 @@ export default function useApi() {
       setError(err.response?.data || err.message);
       throw err;
     }
-  };
+  }, []);
 
   return { request, loading, error };
 }

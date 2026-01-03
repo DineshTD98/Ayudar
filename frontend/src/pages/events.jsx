@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addnewEvent,addevent } from "../redux/slices/eventslice";
 import useApi from "../customehooks/useapi";
-import Eventsbgimage from "../assets/bgimageevents.jpg"
+import Eventsbgimage from "../assets/bgimageevents.jpg";
 const COLORS = [
   "bg-blue-500",
   "bg-green-500",
@@ -64,17 +64,6 @@ const formatLocalDate = (date) => {
             console.log(err)
           }
     }
-   useEffect(()=>{
-        async function Getevents(){
-            const response=await request({
-                url:"/event/getevents",
-                method:"GET"
-            })
-            console.log(response)
-            dispatch(addevent(response.events))
-        }
-        Getevents()
-    },[])
   const selectedDateString = formatLocalDate(selectedDate);
   
   const filteredEvents = events.filter(
@@ -100,7 +89,7 @@ const formatLocalDate = (date) => {
       <div className={`flex flex-col w-[800px] `}>
         {/* Header */}
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold">
+          <h2 className="text-2xl text-white font-bold">
             {selectedDate.toLocaleString("default", {
               month: "long",
               year: "numeric",

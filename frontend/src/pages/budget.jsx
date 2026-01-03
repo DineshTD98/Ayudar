@@ -6,113 +6,34 @@ import useapi from "../customehooks/useapi";
 import Expensetable from "../components/expensetable";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useSelector,useDispatch } from "react-redux";
-import { setSubscription } from "../redux/slices/subscriptionslice";
-import { setCreatebudget } from "../redux/slices/createbudgetslice";
+
+import { setExpense } from "../redux/slices/expenseslice";
+import { useContext } from "react";
+import { userContext } from "../App";
 function Budget() {
-  const [expense, setExpense] = useState([]);
-  const [totalexpense, setAmount] = useState(null);
-  const [creditcardamount, setCreditcardamount] =useState(0);
   const { request, error, loading } = useapi();
   const location = useLocation();
+  const dispatch = useDispatch();
+
+  const expense = useSelector((state) => state.Expense.value);
+  const subscriptionlist = useSelector((state) => state.Subscriptionlist.value);
   
+  const {creditcardamount, setCreditcardamount} = useContext(userContext);
   
-  const dispatch=useDispatch()
+  const [totalexpense, setTotalexpense] = useState(null);
 
-  const subscriptionlist=useSelector((state)=>state.Subscriptionlist.value)
-  
+  // used usememo to do the complex logic dont run again and again
+  const totalsubmoney = useMemo(() => {
+    return Array.isArray(subscriptionlist) ? subscriptionlist.reduce((sum, sub) => sum + (sub.price || 0), 0) : 0;
+  }, [subscriptionlist]);
 
-  // getting the subscription list
-     
-     useEffect(() => {
-         async function datafetch() {
-               try {
-                 const data = await request({
-                   url: "/budget/getsubscription",
-                   method: "GET",
-                 });
-                 if (data && data.subscription) {
-                   dispatch(setSubscription(data.subscription));
-                 } else {
-                   dispatch(setSubscription([]));
-                 }
-               } catch (err) {
-                 console.log(err.message);
-               }
-             }
-             datafetch();
-           }, []);
-  
-
-    useEffect(()=>{
-        async function datafetch() {
-            try {
-              const data = await request({
-                url: "/budget/getsalarydate",
-                method: "GET",
-              });
-              if (data && data.salarydatebudget) {
-                 dispatch(setCreatebudget(data.salarydatebudget));
-              } else {
-                 dispatch(setCreatebudget([]));
-              }
-            } catch (err) {
-              console.log(err.message);
-            }
-          }
-          datafetch();
-    },[]) 
-
-    useEffect(() => {
-      async function fetchCreditBudget() {
-        try {
-          const data = await request({
-            url: "/budget/getcreditbudget",
-            method: "GET",
-          });
-          if (data && data.creditbudget) {
-            setCreditcardamount(data.creditbudget.limit);
-          }
-        } catch (err) {
-          console.log(err.message);
-        }
-      }
-      fetchCreditBudget();
-    }, []);
-   
-    // used usememo to do the complex logic dont run again and again
- 
-    const totalsubmoney=useMemo(()=>{
-           return Array.isArray(subscriptionlist) ? subscriptionlist.reduce((sum,sub)=>sum + (sub.price||0),0) : 0
-     },[subscriptionlist])
-
-  // getting expense from the backend 
-
+  // useeffect to update total expense whenever expense or subscription change
   useEffect(() => {
-    const fetchexpense = async () => {
-      try {
-        const data = await request({
-          url: "/budget/getexpense",
-          method: "GET",
-        });
-
-        setExpense(data?.Expense || []);
-        
-      } catch (err) {
-        console.log(err.message);
-      }
-    };
-
-    fetchexpense();
-  }, []);
-
-  // useeffect to add subscription expenses from the subscription 
-
-  useEffect(()=>{
-       const overallexpense=Array.isArray(expense) ?
-          expense.reduce((sum,exp)=> sum + (exp.amount||0), 0):
-          0;
-      setAmount(overallexpense + totalsubmoney)
-  },[expense,totalsubmoney])
+    const overallexpense = Array.isArray(expense) ?
+      expense.reduce((sum, exp) => sum + (exp.amount || 0), 0) :
+      0;
+    setTotalexpense(overallexpense + totalsubmoney);
+  }, [expense, totalsubmoney]);
 
 
 
@@ -211,8 +132,15 @@ function Budget() {
             <Outlet
               context={{
                 expense,
-                setExpense,
-                setAmount,
+                setExpense: (data) => {
+                  if (typeof data === 'function') {
+                    // Handle functional updates if necessary, though dispatching is better
+                    const updated = data(expense);
+                    dispatch(setExpense(updated));
+                  } else {
+                    dispatch(setExpense(data));
+                  }
+                },
                 creditcardamount,
                 setCreditcardamount
               }}

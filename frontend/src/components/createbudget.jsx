@@ -1,10 +1,11 @@
 import { useEffect, useState, useMemo } from "react";
 import { setCreatebudget } from "../redux/slices/createbudgetslice";
+import { updateTotalbudget } from "../redux/slices/totalbudgetslice";
 import { useDispatch, useSelector } from "react-redux";
 import useapi from "../customehooks/useapi";
 import { useOutletContext } from "react-router-dom";
 function Createbudget() {
-  const {creditcardamount,setCreditcardamount}=useOutletContext();
+  const {setCreditcardamount}=useOutletContext();
   const Createbudget = useSelector((state) => state.Createbudget.value);
   const { request, error, loading } = useapi();
   const [creditcard, setCreditcard] = useState("");
@@ -95,6 +96,7 @@ function Createbudget() {
           })
           console.log(response.activebudget)
           dispatch(setCreatebudget([]))
+          dispatch(updateTotalbudget(response.activebudget))
           setCreditcardamount('')
           setNettotal(0)
           setSessionIncome(0)

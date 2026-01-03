@@ -4,7 +4,7 @@ import DashboardCard from "../components/DashboardCard";
 import Infoslide2 from "../assets/infoslideimages/infoslideimage3.jpg";
 
 function Home() {
-  const { remainingbudget } = useContext(userContext);
+  const { remainingbudget, alerts } = useContext(userContext);
 
   return (
     <div 
@@ -32,10 +32,14 @@ function Home() {
               <h3 className="block text-center w-full text-red-500 font-bold text-[28px] animate-shake-80% animate-blink">Important Alerts 
                <span className="text-red-500 animate-shake-80% animate-blink"> !</span>
                </h3>
-               <div className="border border-white/10 p-4 rounded-2xl mt-2">
-                   <p className="text-white/70">Alert 1</p>
-                   <p className="text-white/70">Alert 2</p>
-                   <p className="text-white/70">Alert 3</p>
+               <div className="border border-white/10 p-4 rounded-2xl mt-2 max-h-[150px] overflow-y-auto">
+                   {alerts.length > 0 ? (
+                     alerts.map((alert, index) => (
+                       <p key={index} className="text-white/70 border-b border-white/5 last:border-0 py-1">{alert}</p>
+                     ))
+                   ) : (
+                     <p className="text-white/40 text-center italic">No urgent alerts for now.</p>
+                   )}
                </div> 
             </div>
           </div>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import useapi from "../customehooks/useapi";
 import { useOutletContext } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Uploaddocuments() {
   const { setReload } = useOutletContext();
@@ -9,6 +10,8 @@ function Uploaddocuments() {
   const [date, setDate] = useState("");
   const [preview, setPreview] = useState("");
   const [files, setFiles] = useState(null);
+  const navigate=useNavigate();
+
 
   const { request } = useapi();
 
@@ -56,13 +59,23 @@ function Uploaddocuments() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-8 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-10">
+        <div className="text-center mb-10 flex justify-between items-center">
+          <div className="text-right w-1/2">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-green-800 to-green-800 bg-clip-text text-transparent">
             Upload Documents
           </h1>
           <p className="text-gray-600 mt-2">
             Securely upload and manage your important documents
           </p>
+          </div>
+          <div className="text-right w-1/2">
+          <button className="bg-gradient-to-r from-green-900 to-green-700 text-white py-2 px-4 rounded-xl transition duration-200"
+             onClick={() => navigate("/document/viewdocuments")}
+             type="button"
+          >
+            View Documents
+          </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

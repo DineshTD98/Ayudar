@@ -1,17 +1,14 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {setTotalbudget} from "../redux/slices/totalbudgetslice"
-import useapi from "../customehooks/useapi";
+
+import { useSelector } from "react-redux";
 import { useContext } from "react";
 import { userContext } from "../App";
 
-function Budgetcards({ totalexpense }) {
+function Budgetcards({totalexpense}) {
   const Createbudget = useSelector((state) => state.Createbudget.value);
   const Totalbudget=useSelector((state)=>state.Totalbudget.value)
-  const dispatch=useDispatch()
-  const { request} = useapi();
-  const {remainingbudget,setRemainingbudget}=useContext(userContext)
   
+   const {remainingbudget}=useContext(userContext)
+
   const monthlydate = new Date();
 
   // Find salary entry in budget (find the latest one with a valid date)
@@ -36,44 +33,11 @@ function Budgetcards({ totalexpense }) {
   const remainingdays = salarydateObj - monthlydate;
   const remainingdaysinmonth = Math.ceil(remainingdays / (1000 * 60 * 60 * 24));
 
-//use effect to calculate total amount in the card
-  useEffect(()=>{
-     async function totalamount(){
-         try{
-             const response=await request({
-              url:'/budget/gettotalbudget',
-              method:'GET',
-            }) 
-            console.log(response.totalbudget)
-            if(response && response.totalbudget && Array.isArray(response.totalbudget)){
-                dispatch(setTotalbudget(response.totalbudget))
-            }
-            else{
-                dispatch(setTotalbudget([]))
-            }
-         }
-         catch(err){
-            console.log(err.message)
-         }
-     }
-     totalamount()
-  },[])
-
- // total amount calculation using redux
-
+// calculations based on Redux data
   const totalamount = Array.isArray(Totalbudget) 
     ? Totalbudget.reduce((sum, item) => sum + Number(item.nettotal || 0), 0)
     : 0;
 
-// set remaining amount from budget
-  
-  useEffect(()=>{
-      setRemainingbudget(()=>{
-          const totalremaining=totalamount - totalexpense
-          return totalremaining;
-      })
-  },[totalamount,totalexpense])
-     
   return (
     <div>
       {/* <div className="w-full h-[100px] text-center mt-6">

@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import useapi from "../customehooks/useapi";
 import { useOutletContext } from "react-router-dom";
+import { addExpense } from "../redux/slices/expenseslice";
+import { useDispatch } from "react-redux";
 function Expenses() {
   const { request, error, loading } = useapi();
-  const { setExpense, setAmount } = useOutletContext();
+  const dispatch = useDispatch();
   const [rows, setRows] = useState([
     { title: "", category: "", amount: "", date: "" },
   ]);
@@ -59,17 +61,9 @@ function Expenses() {
       });
 
       const newexpense = response.expense;
-
-      setExpense((prev) => {
-        const updated = [...prev, ...newexpense];
-        const newtotal = updated.reduce(
-          (sum, item) => sum + Number(item.amount),
-          0,
-        );
-        setAmount(newtotal);
-        return updated;
-      });
-    } catch (err) {
+      dispatch(addExpense(newexpense));
+    } 
+    catch (err) {
       console.log(err.message);
     }
 

@@ -14,7 +14,7 @@ const {
   creditcard,
   gettotalbudget,
   monthlybudget,
-  getsalarydatebudget,
+  getcreatebudget,
   getcreditbudget
 } = require("../controller/budgetcontroller");
 router.post("/createexpense", auth, createexpense);
@@ -25,7 +25,7 @@ router.get("/categories", auth, getCategories);
 
 router.post("/createbudget", auth, createbudget);
 router.get("/getbudget", auth, getbudget);
-router.get("/getsalarydate", auth, getsalarydatebudget);
+router.get("/getcreatebudget", auth, getcreatebudget);
 
 router.post("/createsubscription", auth, createsubscription);
 router.get("/getsubscription", auth, getsubscription);
