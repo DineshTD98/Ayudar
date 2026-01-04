@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import useapi from "../customehooks/useapi";
-import { useOutletContext } from "react-router-dom";
+
 import { addExpense } from "../redux/slices/expenseslice";
 import { useDispatch } from "react-redux";
 function Expenses() {
   const { request, error, loading } = useapi();
+
   const dispatch = useDispatch();
+
   const [rows, setRows] = useState([
     { title: "", category: "", amount: "", date: "" },
   ]);
@@ -57,7 +59,6 @@ function Expenses() {
         url: "/Budget/createexpense",
         method: "post",
         data: rows,
-        Headers: "application/form",
       });
 
       const newexpense = response.expense;

@@ -10,7 +10,8 @@ const expenseslice = createSlice({
             state.value = action.payload;
         },
         addExpense: (state, action) => {
-            state.value.push(action.payload);
+            const newExpenses = Array.isArray(action.payload)? action.payload :[action.payload];
+            state.value = [...state.value, ...newExpenses];
         },
     },
 });

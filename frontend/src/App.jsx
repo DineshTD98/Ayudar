@@ -3,7 +3,7 @@ import "./index.css";
 import "./css/loginform.css";
 
 import { BrowserRouter } from "react-router-dom";
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useApi from "./customehooks/useapi";
 
@@ -19,22 +19,38 @@ import AppRoutes from "./approute";
 
 export const userContext = createContext();
 
+const formatLocalDate = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 function App() {
   const dispatch = useDispatch();
   const { request } = useApi();
 
-  const [opendocuments, setOpendocuments] = useState(false);
   const [isloggedin, setIsloggedin] = useState(false);
   const [getstarted, setGetstarted] = useState(false);
-  const [showbudget, setShowbudget] = useState(false);
-  const [createbudgetOpen, setCreatebudgetOpen] = useState(false);
   const [active, setActive] = useState("A");
   const [dropdown, setDropdown] = useState("");
-  const [createshopping, setCreateshopping] = useState(false);
-  const [viewshopping, setViewshopping] = useState(false);
   const [remainingbudget, setRemainingbudget] = useState(0);
   const [creditcardamount, setCreditcardamount] = useState(0);
-  const [alerts, setAlerts] = useState([]);
+
+  // Derived events from Redux Store
+  const events = useSelector((state) => state.Events.value);
+  
+  const { todayEvents, tomorrowEvents } = useMemo(() => {
+    const todayStr = formatLocalDate(new Date());
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = formatLocalDate(tomorrow);
+
+    return {
+      todayEvents: events.filter((event) => event.date === todayStr),
+      tomorrowEvents: events.filter((event) => event.date === tomorrowStr),
+    };
+  }, [events]);
 
   // Fetch all necessary data on mount or when logged in
   useEffect(() => {
@@ -44,17 +60,13 @@ function App() {
     const fetchData = async () => {
       try {
         // 1. Fetch Total Budget
-        const budgetresponse = await request({ url: "/budget/gettotalbudget",
-          method: "GET" });
-
+        const budgetresponse = await request({ url: "/budget/gettotalbudget", method: "GET" });
         if (budgetresponse?.totalbudget) {
           dispatch(setTotalbudget(budgetresponse.totalbudget));
         }
 
         // 2. Fetch Expenses
-        const expenseresponse = await request({ url: "/budget/getexpense",
-           method: "GET" });
-
+        const expenseresponse = await request({ url: "/budget/getexpense", method: "GET" });
         if (expenseresponse?.Expense) {
           dispatch(setExpense(expenseresponse.Expense));
         }
@@ -65,7 +77,7 @@ function App() {
           dispatch(setSubscription(subscriptionresponse.subscription));
         }
 
-        // 4. Fetch all the  Budget details 
+        // 4. Fetch all the Budget details 
         const salaryresponse = await request({ url: "/budget/getcreatebudget", method: "GET" });
         if (salaryresponse?.allcreatebudget) {
           dispatch(setCreatebudget(salaryresponse.allcreatebudget));
@@ -81,21 +93,6 @@ function App() {
         const eventresponse = await request({ url: "/event/getevents", method: "GET" });
         if (eventresponse?.events) {
           dispatch(addevent(eventresponse.events));
-          
-          const formatLocalDate = (date) => {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, "0");
-            const day = String(date.getDate()).padStart(2, "0");
-            return `${year}-${month}-${day}`;
-          };
-
-          const tomorrow = new Date();
-          tomorrow.setDate(tomorrow.getDate() + 1);
-          const tomorrowStr = formatLocalDate(tomorrow);
-          
-          const tomorrowEvents = eventresponse.events.filter(event => event.date === tomorrowStr);
-          const newAlerts = tomorrowEvents.map(event => `Reminder: ${event.title} is tomorrow! (${event.date})`);
-          setAlerts(newAlerts);
         }
       } catch (err) {
         console.error("Error fetching global data:", err);
@@ -109,6 +106,8 @@ function App() {
   const totalBudget = useSelector((state) => state.Totalbudget.value);
   const totalExpenseList = useSelector((state) => state.Expense.value);
   const subscriptionList = useSelector((state) => state.Subscriptionlist.value);
+
+
 
   useEffect(() => {
     const totalAmount = Array.isArray(totalBudget)
@@ -138,8 +137,8 @@ function App() {
           setRemainingbudget,
           creditcardamount,
           setCreditcardamount,
-          alerts,
-          setAlerts,
+          alerts: tomorrowEvents,
+          todayevents: todayEvents,
         }}
       >
         <AppRoutes

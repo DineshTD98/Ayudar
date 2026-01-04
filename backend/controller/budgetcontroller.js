@@ -34,12 +34,14 @@ exports.createexpense = async (req, res) => {
       }
     }
 
-    const expense = await expenses.insertMany(
+    const inserted = await expenses.insertMany(
       data.map((item) => ({
         ...item,
         userId: req.user.id,
       })),
     );
+
+    const expense = await expenses.find({ _id: { $in: inserted.map(e => e._id) } }).populate("category", "name");
 
     return res.status(200).json({
       message: "expense saved",

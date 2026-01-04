@@ -5,9 +5,11 @@ import Infoslide2 from "../assets/infoslideimages/infoslideimage3.jpg";
 import { useNavigate } from "react-router-dom";
 
 function Home() {
-  const { remainingbudget, alerts } = useContext(userContext);
+  const { remainingbudget,alerts,todayevents } = useContext(userContext);
   const navigate = useNavigate();
-
+  console.log(todayevents);
+  console.log(alerts);
+  
   return (
     <div 
       className="min-h-screen w-full bg-cover bg-center bg-no-repeat bg-fixed relative overflow-hidden flex flex-col pb-12 px-6"
@@ -54,19 +56,39 @@ function Home() {
            </div>
            <div className="mb-12 w-1/2">
             {/*important alerts for the customer*/}
-            <div className="animate-fade-in">
+            <div className="animate-fade-in relative z-12">
               <h3 className="block text-center w-full text-red-500 font-bold text-[28px] animate-shake-80% animate-blink">Important Alerts 
                <span className="text-red-500 animate-shake-80% animate-blink"> !</span>
                </h3>
-               <div className="border border-white/10 p-4 rounded-2xl mt-2 max-h-[150px] overflow-y-auto">
-                   {alerts.length > 0 ? (
-                     alerts.map((alert, index) => (
-                       <p key={index} className="text-white/70 border-b border-white/5 last:border-0 py-1">{alert}</p>
-                     ))
-                   ) : (
-                     <p className="text-white/40 text-center italic">No urgent alerts for now.</p>
-                   )}
-               </div> 
+                <div className="flex gap-2">
+                <div className="border border-green-900 p-4 rounded-2xl mt-2 max-h-[150px] w-[400px] overflow-y-auto">
+                    {alerts.length > 0 ? (
+                      alerts.map((alert,index) => (
+                       <div key={alert._id} className="flex flex-col gap-2">
+                        <p  className="text-blue-500 border-b border-white/5 last:border-0 py-1 ">{index+1}.{alert.title}</p>
+                        <p className="text-white/70">{alert.description}</p>
+                        <p className="text-white/70">{alert.date}</p>
+                       </div >
+                      ))
+                    ) : (
+                      <p className="text-white/40 text-center italic">No Alerts for tomorrow.</p>
+                    )}
+                </div> 
+                {/*today events*/}
+                <div className="border text-center border-green-800 p-4 rounded-2xl mt-2 max-h-[150px] w-[400px] overflow-y-auto">
+                    {todayevents.length > 0 ? (
+                      todayevents.map((event,index) => (
+                       <div key={event._id} className="flex flex-col gap-2">
+                        <p className="text-blue-500 border-b border-white/5 last:border-0 py-1">{index+1}.{event.title}</p>
+                        <p className="text-white/70">{event.description}</p>
+                        <p className="text-white/70">{event.date}</p>
+                       </div>
+                      ))
+                    ) : (
+                      <p className="text-white/40 text-center italic">No urgent events today.</p>
+                    )}
+                </div> 
+                </div>
             </div>
           </div>
       </div>
@@ -77,8 +99,8 @@ function Home() {
             title="Budget"
             color="bg-emerald-500"
             icon={
-             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 8.25H9m6 3H9m3 6-3-3h1.5a3 3 0 1 0 0-6M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 8.25H9m6 3H9m3 6-3-3h1.5a3 3 0 1 0 0-6M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
              </svg>
             }
             content={
@@ -100,10 +122,27 @@ function Home() {
               </svg>
             }
             content={
-              <div className="flex flex-col">
-                <span className="text-sm text-white/60">No events for today</span>
-                <span className="mt-2 text-white/40 italic">Stay tuned!</span>
-              </div>
+              (todayevents?.length > 0 || alerts?.length > 0) ? (
+                <div className="flex flex-col max-h-[80px] overflow-y-auto space-y-1">
+                  {todayevents?.map((event) => (
+                    <div key={`today-${event._id}`} className="flex items-center gap-2">
+                       <span className="text-[10px] font-bold text-emerald-400 uppercase">Today</span>
+                       <span className="text-sm text-white/90 font-medium truncate">{event.title}</span>
+                    </div>
+                  ))}
+                  {alerts?.map((event) => (
+                    <div key={`tomorrow-${event._id}`} className="flex items-center gap-2">
+                       <span className="text-[10px] font-bold text-amber-400 uppercase">Tomorrow</span>
+                       <span className="text-sm text-white/80 font-medium truncate">{event.title}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col">
+                  <span className="text-sm text-white/60">No events for today</span>
+                  <span className="mt-2 text-white/40 italic">Stay tuned!</span>
+                </div>
+              )
             }
             link="/events"
           />
