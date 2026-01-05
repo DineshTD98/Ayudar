@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { userContext } from "../App";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 
 function Navbar({ setGetstarted }) {
   const {
@@ -11,6 +11,7 @@ function Navbar({ setGetstarted }) {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleDropdown = (dropdownKey) => {
     setDropdown(dropdown === dropdownKey ? "" : dropdownKey);
@@ -34,6 +35,11 @@ function Navbar({ setGetstarted }) {
     };
   }, [dropdown, setDropdown]);
 
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
+
   return (
     <div
       className="bg-green-200 p-3 fixed top-0 left-0 right-0 z-50"
@@ -43,8 +49,29 @@ function Navbar({ setGetstarted }) {
         {/* Left side - Ayudar text */}
         <div className="text-2xl font-bold text-emerald-100">Ayudar</div>
 
-        {/* Right side - Navigation buttons */}
-        <div className="flex items-center space-x-6 relative">
+        {/* Hamburger Menu Button - visible on md and smaller screens */}
+        <button
+          className="lg:hidden text-white p-2 hover:bg-yellow-800 rounded transition-colors"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Toggle menu"
+        >
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            {mobileMenuOpen ? (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+            ) : (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+            )}
+          </svg>
+        </button>
+
+        {/* Desktop Navigation - visible on lg screens and above */}
+        <div className="hidden lg:flex items-center space-x-6 relative">
           {/* Home menu navbar */}
           <button
             className={`${location.pathname === "/home" ? "text-white font-bold" : "text-black"} rounded px-3 py-2 text-lg font-medium hover:bg-yellow-800 hover:text-white transition-colors`}
@@ -248,6 +275,210 @@ function Navbar({ setGetstarted }) {
                     Logout
                   </button>
                 </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Navigation Menu - visible on md and smaller screens */}
+      <div
+        className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+          mobileMenuOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="px-4 pb-4 space-y-2">
+          {/* Home */}
+          <button
+            className={`${location.pathname === "/home" ? "text-white font-bold bg-yellow-800" : "text-black"} w-full text-left rounded px-3 py-2 text-lg font-medium hover:bg-yellow-800 hover:text-white transition-colors`}
+            onClick={() => {
+              navigate("/home");
+              setDropdown("");
+              localStorage.setItem("currentpage", "home");
+            }}
+          >
+            Home
+          </button>
+
+          {/* Budget Dropdown */}
+          <div className="w-full dropdown-button">
+            <button
+              className={`${location.pathname.includes("/budget") ? "text-white font-bold bg-yellow-800" : "text-black"} w-full text-left rounded px-3 py-2 text-lg font-medium hover:bg-yellow-800 hover:text-white transition-colors flex items-center justify-between`}
+              onClick={() => handleDropdown("B")}
+            >
+              Budget
+              <svg
+                className={`w-4 h-4 transform transition-transform duration-200 ${dropdown === "B" ? "rotate-180" : ""}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+            {dropdown === "B" && (
+              <div className="ml-4 mt-1 space-y-1 dropdown-menu">
+                <button
+                  className="block w-full text-left text-white px-4 py-2 hover:bg-green-800 rounded"
+                  onClick={() => {
+                    navigate("/budget");
+                    setActive("A");
+                    setDropdown("");
+                    localStorage.setItem("currentpage", "showbudget");
+                  }}
+                >
+                  Show budget
+                </button>
+                <button
+                  className="block w-full text-left text-white px-4 py-2 hover:bg-green-800 rounded"
+                  onClick={() => {
+                    navigate("/budget");
+                    setDropdown("");
+                    setActive("B");
+                    navigate('/budget/create');
+                    localStorage.setItem("currentpage", "createbudget");
+                  }}
+                >
+                  Create budget
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Documents Dropdown */}
+          <div className="w-full dropdown-button">
+            <button
+              className={`${location.pathname.includes("/document") ? "text-white font-bold bg-yellow-800" : "text-black"} w-full text-left rounded px-3 py-2 text-lg font-medium hover:bg-yellow-800 hover:text-white transition-colors flex items-center justify-between`}
+              onClick={() => handleDropdown("C")}
+            >
+              Documents
+              <svg
+                className={`w-4 h-4 transform transition-transform duration-200 ${dropdown === "C" ? "rotate-180" : ""}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+            {dropdown === "C" && (
+              <div className="ml-4 mt-1 space-y-1 dropdown-menu">
+                <button
+                  className="block w-full text-left text-white px-4 py-2 hover:bg-green-800 rounded"
+                  onClick={() => {
+                    navigate("/document/viewdocuments");
+                    setDropdown("");
+                    localStorage.setItem("currentpage", "viewdocuments");
+                  }}
+                >
+                  View documents
+                </button>
+                <button
+                  className="block w-full text-left text-white px-4 py-2 hover:bg-green-800 rounded"
+                  onClick={() => {
+                    setDropdown("");
+                    navigate('/document/uploaddocuments');
+                    localStorage.setItem("currentpage", "uploaddocuments");
+                  }}
+                >
+                  Upload documents
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Shopping Dropdown */}
+          <div className="w-full dropdown-button">
+            <button
+              className={`${location.pathname.includes("/shopping") ? "text-white font-bold bg-yellow-800" : "text-black"} w-full text-left rounded px-3 py-2 text-lg font-medium hover:bg-yellow-800 hover:text-white transition-colors flex items-center justify-between`}
+              onClick={() => handleDropdown("D")}
+            >
+              Shopping
+              <svg
+                className={`w-4 h-4 transform transition-transform duration-200 ${dropdown === "D" ? "rotate-180" : ""}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+            {dropdown === "D" && (
+              <div className="ml-4 mt-1 space-y-1 dropdown-menu">
+                <button
+                  className="block w-full text-left text-white px-4 py-2 hover:bg-green-800 rounded"
+                  onClick={() => {
+                    navigate("/shopping/createshopping");
+                    setDropdown("");
+                    localStorage.setItem("currentpage", "createshopping");
+                  }}
+                >
+                  Createshopping
+                </button>
+                <button
+                  className="block w-full text-left text-white px-4 py-2 hover:bg-green-800 rounded"
+                  onClick={() => {
+                    navigate("/shopping/viewshopping");
+                    setDropdown("");
+                    localStorage.setItem("currentpage", "viewshopping");
+                  }}
+                >
+                  Viewshopping
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Events */}
+          <button
+            className={`${location.pathname.includes("/events") ? "text-white font-bold bg-yellow-800" : "text-black"} w-full text-left rounded px-3 py-2 text-lg font-medium hover:bg-yellow-800 hover:text-white transition-colors`}
+            onClick={() => {
+              navigate("/events");
+              setDropdown("");
+            }}
+          >
+            Events
+          </button>
+
+          {/* Profile Dropdown */}
+          <div className="w-full dropdown-button">
+            <button
+              className={`${location.pathname.includes("/profile") ? "text-white font-bold bg-yellow-800" : "text-black"} w-full text-left rounded px-3 py-2 text-lg font-medium hover:bg-yellow-800 hover:text-white transition-colors flex items-center justify-between`}
+              onClick={() => handleDropdown("F")}
+            >
+              Profile
+              <svg
+                className={`w-4 h-4 transform transition-transform duration-200 ${dropdown === "F" ? "rotate-180" : ""}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+            {dropdown === "F" && (
+              <div className="ml-4 mt-1 space-y-1 dropdown-menu">
+                <button
+                  className="block w-full text-left text-white px-4 py-2 hover:bg-green-800 rounded"
+                  onClick={() => {
+                    navigate("/profile/personal");
+                    setDropdown("");
+                    localStorage.setItem("currentpage", "personal");
+                  }}
+                >
+                  Settings
+                </button>
+                <button
+                  className="block w-full text-left text-white px-4 py-2 hover:bg-green-800 rounded"
+                  onClick={() => {
+                    navigate("/");
+                    setGetstarted(false);
+                    localStorage.removeItem("currentpage");
+                    localStorage.removeItem("token");
+                  }}
+                >
+                  Logout
+                </button>
               </div>
             )}
           </div>

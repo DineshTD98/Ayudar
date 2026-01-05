@@ -74,8 +74,8 @@ function Uploaddocuments() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-8 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-10 flex justify-between items-center">
-          <div className="text-right w-1/2">
+        <div className="text-center mb-10 flex lg:flex-row flex-col justify-between items-center">
+          <div className="lg:text-right text-center  w-1/2">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-green-800 to-green-800 bg-clip-text text-transparent">
             Upload Documents
           </h1>
@@ -83,7 +83,7 @@ function Uploaddocuments() {
             Securely upload and manage your important documents
           </p>
           </div>
-          <div className="text-right w-1/2">
+          <div className="lg:text-right  w-1/2">
           <button className="bg-gradient-to-r from-green-900 to-green-700 text-white py-2 px-4 rounded-xl transition duration-200"
              onClick={() => navigate("/document/viewdocuments")}
              type="button"

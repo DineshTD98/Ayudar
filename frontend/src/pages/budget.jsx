@@ -48,15 +48,15 @@ function Budget() {
   
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
+    <div className="min-h-screen bg-gray-100 flex lg:flex-row flex-col">
       {/* SIDEBAR */}
-      <aside className="w-[260px] fixed top-20 left-0 h-screen bg-white shadow-lg p-4">
-        <h1 className="text-2xl font-bold text-green-700 mb-8 text-center">
+      <aside className="w-full lg:w-[260px] lg:fixed lg:top-20 lg:left-0 lg:h-screen bg-white shadow-lg lg:p-4 p-3">
+        <h1 className="hidden lg:block text-2xl font-bold text-green-700 mb-8 text-center">
           Budget
         </h1>
 
-        <nav className="flex flex-col gap-3">
-          <NavLink to="overview" className={navClass}
+        <nav className="flex lg:flex-col flex-row gap-2 lg:gap-3 overflow-x-auto lg:overflow-x-visible">
+          <NavLink to="overview" className={`${navClass} whitespace-nowrap text-center lg:text-left`}
            onClick={()=>{
             localStorage.setItem("currentpage","overview")
            }}
@@ -64,7 +64,7 @@ function Budget() {
             Overview
           </NavLink>
 
-          <NavLink to="create" className={navClass}
+          <NavLink to="create" className={`${navClass} whitespace-nowrap text-center lg:text-left`}
             onClick={()=>{
             localStorage.setItem("currentpage","createbudget")
            }}
@@ -72,7 +72,7 @@ function Budget() {
             Create Budget
           </NavLink>
 
-          <NavLink to="expenses" className={navClass}
+          <NavLink to="expenses" className={`${navClass} whitespace-nowrap text-center lg:text-left`}
              onClick={()=>{
             localStorage.setItem("currentpage","expenses")
            }}
@@ -80,14 +80,14 @@ function Budget() {
             Expenses
           </NavLink>
 
-          <NavLink to="transactions" className={navClass}
+          <NavLink to="transactions" className={`${navClass} whitespace-nowrap text-center lg:text-left`}
             onClick={()=>{
             localStorage.setItem("currentpage","transactions")}}
           >
             Transactions
           </NavLink>
 
-          <NavLink to="subscriptions" className={navClass}
+          <NavLink to="subscriptions" className={`${navClass} whitespace-nowrap text-center lg:text-left`}
               onClick={()=>{
             localStorage.setItem("currentpage","subscriptions")}}
           >
@@ -97,7 +97,7 @@ function Budget() {
       </aside>
 
       {/* MAIN CONTENT */}
-      <main className="flex-1 p-6 ml-[260px]">
+      <main className="flex-1 p-4 lg:p-6 lg:ml-[260px]">
         {error ? (
           <p className="text-red-600 text-center">
             Couldn't fetch the data
@@ -109,15 +109,15 @@ function Budget() {
               <>
                 <Budgetcards totalexpense={totalexpense}/>
 
-                <div className="mt-6 grid grid-cols-12 gap-6">
-                  <div className="col-span-7 bg-white rounded-lg shadow p-4">
+                <div className="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+                  <div className="lg:col-span-7 bg-white rounded-lg shadow p-4">
                     <h2 className="text-xl font-semibold mb-4">
                       Recent Expenses
                     </h2>
                     <Expensetable expense={expense} />
                   </div>
 
-                  <div className="col-span-5 bg-white rounded-lg shadow p-4">
+                  <div className="lg:col-span-5 bg-white rounded-lg shadow p-4">
                     <h2 className="text-xl font-semibold mb-4 text-center">
                       Expense Breakdown
                     </h2>

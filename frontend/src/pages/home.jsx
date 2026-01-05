@@ -3,9 +3,11 @@ import { userContext } from "../App";
 import DashboardCard from "../components/DashboardCard";
 import Infoslide2 from "../assets/infoslideimages/infoslideimage3.jpg";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 function Home() {
   const { remainingbudget, alerts, todayevents } = useContext(userContext);
+  const [opennav,setOpennav] = useState(false);
   const navigate = useNavigate();
 
   return (
@@ -18,37 +20,77 @@ function Home() {
 
     
       <div className="fixed top-0 left-0 right-0 z-50 flex items-center h-24 px-6">
-        <div className="w-1/2 text-right">
-          <p className="text-3xl font-bold text-white tracking-widest uppercase">
-            Ayudar
-          </p>
+            <div className="w-1/2 sm:w-2/3 text-right">
+               <p className="font-display text-4xl font-extrabold tracking-[0.25em] uppercase
+                  bg-gradient-to-r from-emerald-300 via-white to-emerald-300 
+                  bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(52,211,153,0.35)]">
+                     Ayudar
+                </p>
+            </div>
+            <div className="lg:hidden w-1/2 sm:w-1/3 text-right">
+            <button className=" text-white p-2" onClick={()=>setOpennav(!opennav)}>
+               <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                {
+                  opennav ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                         : (
+                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                 )}
+                </svg>
+            </button>
+            </div>
+            <div className="hidden w-1/2 lg:flex gap-4 justify-end">
+                <button
+                  onClick={() => {
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("currentpage");
+                    navigate("/");
+                  }}
+                  className="px-7 py-2.5 bg-white/10 hover:bg-red-500/20 text-white font-display font-semibold text-sm tracking-wide rounded-full border border-white/20 transition-all duration-300 backdrop-blur-md hover:scale-105 hover:shadow-lg hover:shadow-red-500/20"
+                >
+                  Logout
+                </button>
+                <button
+                  onClick={() => navigate("/profile")}
+                  className="px-7 py-2.5 bg-white/10 hover:bg-emerald-500/20 text-white font-display font-semibold text-sm tracking-wide rounded-full border border-white/20 transition-all duration-300 backdrop-blur-md hover:scale-105 hover:shadow-lg hover:shadow-emerald-500/20"
+                >
+                  Profile
+                </button>
+            </div>
+     </div>
+     {/* Mobile menu */}
+     <div className={`lg:hidden fixed top-24 left-0 right-0 z-40 overflow-hidden transition-all duration-300 ease-in-out ${opennav ? "max-h-screen opacity-100" : "opacity-0 max-h-0"}`}>
+        <div className="bg-black/50 backdrop-blur-md px-6 py-4 space-y-3">
+            <button
+                  onClick={() => {
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("currentpage");
+                    navigate("/");
+                  }}
+                  className="w-full px-7 py-2.5 bg-white/10 hover:bg-red-500/20 text-white font-display font-semibold text-sm tracking-wide rounded-full border border-white/20 transition-all duration-300 backdrop-blur-md hover:scale-105 hover:shadow-lg hover:shadow-red-500/20"
+                >
+                  Logout
+                </button>
+                <button
+                  onClick={() => navigate("/profile")}
+                  className="w-full px-7 py-2.5 bg-white/10 hover:bg-emerald-500/20 text-white font-display font-semibold text-sm tracking-wide rounded-full border border-white/20 transition-all duration-300 backdrop-blur-md hover:scale-105 hover:shadow-lg hover:shadow-emerald-500/20"
+                >
+                  Profile
+                </button>
         </div>
-        <div className="w-1/2 flex gap-4 justify-end">
-          <button
-            onClick={() => {
-              localStorage.removeItem("token");
-              localStorage.removeItem("currentpage");
-              navigate("/");
-            }}
-            className="px-6 py-2 bg-white/10 hover:bg-red-500/20 text-white font-medium rounded-full border border-white/20 transition-all duration-300 backdrop-blur-md"
-          >
-            Logout
-          </button>
-          <button
-            onClick={() => navigate("/profile")}
-            className="px-6 py-2 bg-white/10 hover:bg-emerald-500/20 text-white font-medium rounded-full border border-white/20 transition-all duration-300 backdrop-blur-md"
-          >
-            Profile
-          </button>
-        </div>
-      </div>
+           </div>
      
 
      
-      <div className="relative z-10 pt-32 max-w-7xl mx-auto w-full">
+    <div className="relative z-10 pt-32 max-w-7xl mx-auto w-full">
         
-        <div className="flex">
-          <div className="mb-12 animate-fade-in w-1/2">
+      <div className="flex flex-col lg:flex-row lg:gap-6 items-start lg:items-start">
+          <div className="mb-12 animate-fade-in flex flex-col gap-3 lg:item-start w-full lg:w-1/2">
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">
               Welcome back, <span className="text-emerald-400">Family</span>!
             </h1>
@@ -57,55 +99,76 @@ function Home() {
             </p>
           </div>
 
-          <div className="mb-12 w-1/2">
+          <div className="mb-12 lg:w-1/2 w-full">
             <div className="animate-fade-in relative z-12">
-              <h3 className="block text-center w-full text-red-500 font-bold text-[28px] animate-shake-80% animate-blink">
-                Important Alerts <span className="text-red-500">!</span>
+              <h3 className="block text-center w-full text-red-400 font-display font-extrabold text-[32px] tracking-tight animate-shake-80% animate-blink drop-shadow-[0_0_15px_rgba(248,113,113,0.5)]">
+                Important Alerts<span className="text-red-500 text-[36px]">!</span>
               </h3>
+ 
+             <div className="flex lg:flex-row flex-col gap-6 items-start">
+  {/* Tomorrow Alerts */}
+                <div className="flex flex-col w-[400px]">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></span>
+                    <h4 className="text-blue-300 font-display font-semibold tracking-wide">
+                      Today Events
+                    </h4>
+                  </div>
 
-              <div className="flex gap-2">
-                <div className="border border-green-900 p-4 rounded-2xl mt-2 max-h-[150px] w-[400px] overflow-y-auto">
-                  {alerts.length > 0 ? (
-                    alerts.map((alert, index) => (
-                      <div key={alert._id} className="flex flex-col gap-2">
-                        <p className="text-blue-500 border-b border-white/5 py-1">
-                          {index + 1}. {alert.title}
-                        </p>
-                        <p className="text-white/70">{alert.description}</p>
-                        <p className="text-white/70">{alert.date}</p>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-white/40 text-center italic">
-                      No Alerts for tomorrow.
-                    </p>
-                  )}
-                </div>
-
-                <div className="border text-center border-green-800 p-4 rounded-2xl mt-2 max-h-[150px] w-[400px] overflow-y-auto">
+                <div className="border-2 border-blue-500/30 bg-gradient-to-br from-blue-900/30 to-blue-800/10 p-5 rounded-2xl max-h-[150px] overflow-y-auto backdrop-blur-md shadow-lg shadow-blue-500/20">
                   {todayevents.length > 0 ? (
                     todayevents.map((event, index) => (
-                      <div key={event._id} className="flex flex-col gap-2">
-                        <p className="text-blue-500 border-b border-white/5 py-1">
+                      <div key={event._id} className="flex flex-col gap-1 mb-3 last:mb-0">
+                        <p className="text-blue-200 font-semibold text-lg">
                           {index + 1}. {event.title}
                         </p>
-                        <p className="text-white/70">{event.description}</p>
-                        <p className="text-white/70">{event.date}</p>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-white/40 text-center italic">
-                      No urgent events today.
-                    </p>
-                  )}
+                        <p className="text-white/70 text-lg">{event.description}</p>
+                        <p className="text-blue-400/50 text-[20px]">{event.date}</p>
+                  </div>
+                 ))
+                ) : (
+                  <p className="text-white/40 text-center italic text-sm">
+                    No urgent events today
+                  </p>
+                )}
                 </div>
+                </div>
+              <div className="flex flex-col w-[400px]">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></span>
+                    <h4 className="text-emerald-300 font-display font-semibold tracking-wide">
+                      Tomorrow Alerts
+                    </h4>
+             </div>
+
+            <div className="border-2 border-emerald-500/30 bg-gradient-to-br from-emerald-900/30 to-emerald-800/10 p-5 rounded-2xl max-h-[150px] overflow-y-auto backdrop-blur-md shadow-lg shadow-emerald-500/20">
+              {alerts.length > 0 ? (
+                alerts.map((alert, index) => (
+                  <div key={alert._id} className="flex flex-col gap-1 mb-3 last:mb-0">
+                    <p className="text-emerald-200 font-semibold text-lg">
+                      {index + 1}. {alert.title}
+                    </p>
+                    <p className="text-white/70 text-lg">{alert.description}</p>
+                    <p className="text-emerald-400/50 text-[20px]">{alert.date}</p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-white/40 text-center italic text-lg">
+                  No alerts for tomorrow
+                </p>
+              )}
+            </div>
+              </div>
+
+  
+  
               </div>
             </div>
           </div>
-        </div>
+             </div>
 
         {/* Dashboard Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <DashboardCard
             title="Budget"
             color="bg-emerald-500"
@@ -137,7 +200,7 @@ function Home() {
             }
             content={
               <div className="flex flex-col">
-                <span className="text-sm text-white/60">No events for today</span>
+                {todayevents.length>0?<span className="text-xl font-bold  text-red-500">{todayevents[0].title}</span>:<span className="text-sm text-white/60">No events for today</span>}
                 <span className="mt-2 text-white/40 italic">Stay tuned!</span>
               </div>
             }
@@ -185,14 +248,14 @@ function Home() {
             }
             link="/shopping/viewshopping"
           />
-        </div>
-      </div>
-       <div className="mt-12 p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-md">
+             </div>
+         </div>
+         <div className="mt-12 p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-md">
            <h2 className="text-2xl font-semibold text-white mb-4">Quick Tip</h2>
            <p className="text-white/60 leading-relaxed font-light">
              "The key to a happy home is organization. Use Ayudar to track your daily expenses and never lose a document again."
            </p>
-        </div>
+         </div>
     </div>
   );
 }

@@ -76,7 +76,7 @@ function Viewdocuments() {
           url:`/documents/searchdocument/${search}`,
           method:"GET",
          })
-         console.log(respose.document)
+         console.log(respose)
          if(Array.isArray(respose.document)){
           dispatch(setDocument(respose.document))
          }
@@ -99,7 +99,7 @@ function Viewdocuments() {
              <div className="w-1/2 text-right">
              <button className="bg-green-700 text-white px-2 py-2 rounded"
                 onClick={()=>{
-              navigate("/documents/upload")
+              navigate("/document/uploaddocuments")
               }}
           
                 >Upload documents
@@ -175,7 +175,7 @@ function Viewdocuments() {
           </thead>
 
           <tbody className="text-center text-gray-700">
-            {Documentlist.map((data) => (
+            {Documentlist.length>0?Documentlist.map((data) => (
               <tr
                 key={data._id}
                 className="border-b hover:bg-gray-100 transition"
@@ -221,7 +221,17 @@ function Viewdocuments() {
                   </button>
                 </td>
               </tr>
-            ))}
+
+            )):
+            <>
+                <tr className="h-24">
+                  <td className="text-center w-full" colSpan={6}><p>No document category found</p></td>
+                </tr>
+                <tr className="h-24">
+                    <td className="text-center" colSpan={6}><button onClick={()=>navigate("/document")} className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition">Back</button></td>
+                </tr>
+            </>
+            }
           </tbody>
         </table>
       </div>

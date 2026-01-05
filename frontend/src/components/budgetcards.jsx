@@ -47,7 +47,7 @@ function Budgetcards({totalexpense}) {
           </div> */}
 
       {/*total amount card */}
-      <div className="grid grid-cols-4 gap-4 mt-10 ms-10 mr-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-10 mx-4 lg:mx-10">
         <div className="border border-black bg-green-500 h-[150px] rounded">
           <h3 className="text-center mt-6 text-[24px] text-white">
             Total Amount

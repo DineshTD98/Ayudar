@@ -89,7 +89,7 @@ const formatLocalDate = (date) => {
       <div className={`flex flex-col w-[800px] `}>
         {/* Header */}
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl text-white font-bold">
+          <h2 className="text-2xl text-black font-bold">
             {selectedDate.toLocaleString("default", {
               month: "long",
               year: "numeric",

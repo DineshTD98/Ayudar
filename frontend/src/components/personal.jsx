@@ -36,7 +36,7 @@ export default function Personal() {
 
   // edit image click
   function handleEditClick() {
-    fileInputRef.current.click();
+      fileInputRef.current.click();
   }
 
   // image select
