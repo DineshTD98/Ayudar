@@ -10,14 +10,14 @@ const documentSchema = new mongoose.Schema(
     date: {
       type: Date,
     },
-     fileUrl: {
+    fileUrl: {
       type: String,
       required: true,
     },
 
     fileType: {
       type: String,
-      required: true, 
+      required: true,
     },
 
     fileName: {
@@ -26,7 +26,7 @@ const documentSchema = new mongoose.Schema(
     },
 
     fileSize: {
-      type: Number, 
+      type: Number,
     },
 
     userId: {
@@ -40,4 +40,21 @@ const documentSchema = new mongoose.Schema(
 
 const Document = mongoose.model("Document", documentSchema);
 
-module.exports = Document;
+const documentcategorySchema = new mongoose.Schema({
+  name: { type: String,
+    lowercase:true,
+    trim:true
+  },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+});
+
+const Documentcategory = mongoose.model(
+  "Documentcategory",
+  documentcategorySchema,
+);
+
+module.exports = { Document, Documentcategory };

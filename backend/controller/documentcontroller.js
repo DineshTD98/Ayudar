@@ -1,5 +1,4 @@
-const Documents = require("../model/documentmodel");
-
+const { Document: Documents, Documentcategory } = require("../model/documentmodel");
 exports.createdocument = async (req, res) => {
   try {
     const { name, category, date } = req.body;
@@ -15,8 +14,8 @@ exports.createdocument = async (req, res) => {
     const exists = await Documents.findOne({
       name,
       category,
-      userId:  req.user.id,
-      fileUrl:  req.file.filename,
+      userId: req.user.id,
+      fileUrl: req.file.filename,
       fileType: req.file.mimetype,
       fileName: req.file.originalname,
       fileSize: req.file.size,
@@ -35,7 +34,7 @@ exports.createdocument = async (req, res) => {
       fileType: req.file.mimetype,
       fileName: req.file.originalname,
       fileSize: req.file.size,
-      });
+    });
 
     res.status(201).json({
       success: true,
@@ -88,3 +87,80 @@ exports.deletedocument = async (req, res) => {
     });
   }
 };
+
+
+exports.createdocumentcategory = async (req, res, next) => {
+  try {
+    const category = Array.isArray(req.body) ? req.body : [req.body]
+
+    const data = category.map((cat) => ({
+      name: cat.name.toLowerCase(),
+      userId: req.user.id
+    }))
+    const names = data.map(item => item.name)
+   
+     const exists = await Documentcategory.findOne({
+      name: { $in: names },
+      userId: req.user.id
+    })
+
+
+    if (exists) {
+      const error = new Error("category already exists")
+      error.statusCode = 400
+      return next(error)
+    }
+    const newcategory = await Documentcategory.create(data)
+    res.status(201).json({
+      success: true,
+      message: "category created successfully",
+      newcategory
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+
+// get document category
+
+exports.getdocumentcategory=async(req,res,next)=>{
+  try {
+    const category=await Documentcategory.find({userId:req.user.id})
+    if(!category){
+      const error=new Error("category not found")
+      error.statusCode=404
+      return next(error)
+    }
+    res.status(200).json({
+      message:"category successfully received",
+      category
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+// get search documents
+
+exports.searchdocument=async(req,res,next)=>{
+  try{
+      const document=await Documents.find({
+        category:req.params.search,
+        userId:req.user.id
+      })
+   if(!document){
+      const error=new Error("no document found")
+       error.statusCode=400;
+       return next(error)
+      }
+
+      res.status(201).json({
+         message:"successfully received",
+         document
+      })
+  }
+  catch(error){
+    next(error)
+  }
+}

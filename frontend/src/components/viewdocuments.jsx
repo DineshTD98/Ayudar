@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { setDocument } from "../redux/slices/documentslice";
 import useapi from "../customehooks/useapi";
 import { useOutletContext } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect,useState } from "react";
 import Search from "../assets/search-icon.jpg";
 
 
@@ -11,6 +11,9 @@ function Viewdocuments() {
   const BASE_URL=import.meta.env.VITE_API_URL;
   const { reload, setReload } = useOutletContext();
   const { request, error, loading } = useapi();
+
+  const [search, setSearch] = useState("");
+
   const dispatch = useDispatch();
 
   const Documentlist = useSelector((state) => state.Documentlist.value);
@@ -64,6 +67,27 @@ function Viewdocuments() {
     link.click();
     document.body.removeChild(link);
   };
+
+  // handle search 
+  const handleSearch = async(e) => {
+    e.preventDefault();
+    try{
+        const respose=await request({
+          url:`/documents/searchdocument/${search}`,
+          method:"GET",
+         })
+         console.log(respose.document)
+         if(Array.isArray(respose.document)){
+          dispatch(setDocument(respose.document))
+         }
+      }
+    catch(err){
+      console.log(err.message);
+    }
+       
+  }
+
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <div className="flex">
@@ -73,15 +97,18 @@ function Viewdocuments() {
           </h1>
         </div>
         <div className="w-1/2 flex justify-end mb-5">
-          <div className="relative w-[400px] flex ">
+          <form action="" onSubmit={handleSearch}>
+            <div className="relative w-[400px] flex ">
             {/* Input */}
             <label htmlFor="search" className="block p-3">
-              Search
+              Search By category
             </label>
             <input
               type="search"
               placeholder="Load your file here"
               className="w-full border border-gray-300 p-2 rounded"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
             />
             {/* Search Icon */}
             <div className="absolute right-3 top-1/2 -translate-y-1/2 group">
@@ -99,9 +126,12 @@ function Viewdocuments() {
                 Search documents
               </span>
             </div>
-          </div>
+            </div>
+          </form>
         </div>
       </div>
+
+
       <div className="bg-white shadow-lg rounded-lg overflow-x-auto">
         <table className="w-full border-collapse">
           <thead className="bg-green-200 text-black sticky top-0 border border-black">

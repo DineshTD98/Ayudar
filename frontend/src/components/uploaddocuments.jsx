@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import useapi from "../customehooks/useapi";
 import { useOutletContext } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +10,9 @@ function Uploaddocuments() {
   const [date, setDate] = useState("");
   const [preview, setPreview] = useState("");
   const [files, setFiles] = useState(null);
+
+  const [categorylist,setCategorylist]=useState([])
+
   const navigate=useNavigate();
 
 
@@ -54,6 +57,18 @@ function Uploaddocuments() {
       console.log(err.message);
     }
   };
+
+
+  useEffect(() => {
+        async function getcategory(){
+            const response=await request({
+                url:"/documents/getdocumentcategory",
+                method:"get"
+            })
+            setCategorylist(response.category)
+        }
+        getcategory()
+  }, [])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-8 px-4">
@@ -121,7 +136,8 @@ function Uploaddocuments() {
                 </div>
 
                 {/* Category Input */}
-                <div className="space-y-2">
+                <div className="space-y-2 flex gap-8 items-center">
+                  <div>
                   <label
                     htmlFor="filecategory"
                     className="block text-sm font-semibold text-gray-700"
@@ -129,32 +145,18 @@ function Uploaddocuments() {
                     Category
                     <span className="text-red-500 ml-1">*</span>
                   </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <svg
-                        className="w-5 h-5 text-gray-400"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
-                        />
-                      </svg>
-                    </div>
-                    <input
-                      type="text"
-                      id="filecategory"
-                      value={category}
-                      onChange={(e) => setCategory(e.target.value)}
-                      className="block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 outline-none"
-                      placeholder="e.g., Financial, Medical, Legal"
-                      required
-                    />
                   </div>
+                  <div>
+                    <select name="" id="" value={category} onChange={(e)=>setCategory(e.target.value)}>
+                         <option value="" disabled>Select Category</option>
+                        { 
+                            categorylist.map((item)=>(
+                                <option key={item._id} value={item.name}>{item.name}</option>
+                            ))
+                        }
+                    </select>
+                  </div>
+                 
                 </div>
 
                 {/* Date Input */}

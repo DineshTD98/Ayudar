@@ -1,8 +1,9 @@
+import { useEffect } from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 
 function MyPieChart({ expense }) {
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#AF19FF", "#FF1919"];
-
+  
   // Group by category and sum amounts
   const categoryStats = expense.reduce((acc, curr) => {
     const categoryName = curr.category?.name || "Others";
@@ -14,24 +15,33 @@ function MyPieChart({ expense }) {
     return acc;
   }, {});
 
+  const totalexpenseamount=expense.reduce((acc,curr)=>acc+Number(curr.amount),0)
+  
+  const percentage=Object.entries(categoryStats).map(([category,amount])=>({
+    category,
+    percentage:Math.floor((amount/totalexpenseamount*100)*100)/100
+  }))
+  
+  console.log(percentage)
   const data = Object.keys(categoryStats).map((name) => ({
     name,
-    amount: categoryStats[name],
+    percentage:percentage
   }));
+  
 
   return (
     <div className="flex justify-center">
       <PieChart width={400} height={400} className="p-1">
         <Pie
-          data={data}
+          data={percentage}
           cx={200}
           cy={180}
           outerRadius={120}
-          dataKey="amount"
-          nameKey="name"
-          label={({ name, amount }) => `${name}: Rs ${amount}`}
+          dataKey="percentage"
+          nameKey="category"
+          label={({ name, percentage }) => `${name}: ${percentage.toFixed(2)}%`}
         >
-          {data.map((_, index) => (
+          {percentage.map((_, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
           ))}
         </Pie>
