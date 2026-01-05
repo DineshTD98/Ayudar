@@ -9,7 +9,7 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
 }
 
-// file filter (ONLY images)
+// file filter
 const fileFilter = (req, file, cb) => {
   const allowedtypes = ['image/jpeg',
     'image/jpg',

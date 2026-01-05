@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
 import { setDocument } from "../redux/slices/documentslice";
 import useapi from "../customehooks/useapi";
-import { useOutletContext } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { useEffect,useState } from "react";
 import Search from "../assets/search-icon.jpg";
 
@@ -13,7 +13,7 @@ function Viewdocuments() {
   const { request, error, loading } = useapi();
 
   const [search, setSearch] = useState("");
-
+   const navigate=useNavigate()
   const dispatch = useDispatch();
 
   const Documentlist = useSelector((state) => state.Documentlist.value);
@@ -90,45 +90,62 @@ function Viewdocuments() {
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <div className="flex">
-        <div className="w-1/2">
-          <h1 className="text-2xl font-semibold text-right text-green-700 mb-6">
+      <div className="">
+        
+         <div className="flex">
+             <h1 className="text-2xl w-1/2 font-semibold text-right text-green-700 mb-6">
             Manage Documents
-          </h1>
-        </div>
-        <div className="w-1/2 flex justify-end mb-5">
-          <form action="" onSubmit={handleSearch}>
-            <div className="relative w-[400px] flex ">
-            {/* Input */}
-            <label htmlFor="search" className="block p-3">
-              Search By category
-            </label>
-            <input
-              type="search"
-              placeholder="Load your file here"
-              className="w-full border border-gray-300 p-2 rounded"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            {/* Search Icon */}
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 group">
-              <button type="submit">
-                <img src={Search} alt="search" className="w-6 h-6 opacity-60" />
+             </h1>
+             <div className="w-1/2 text-right">
+             <button className="bg-green-700 text-white px-2 py-2 rounded"
+                onClick={()=>{
+              navigate("/documents/upload")
+              }}
+          
+                >Upload documents
               </button>
+              </div>
+            </div>
+       
+        
+       <div className="w-full mb-6">
+  <form onSubmit={handleSearch} className="flex justify-center">
+    <div className="w-full max-w-2xl">
+      
+      {/* Label */}
+      <label
+        htmlFor="search"
+        className="block mb-2 text-sm font-medium text-gray-700"
+      >
+        Search by Category
+      </label>
 
-              {/* Tooltip */}
-              <span
-                className="absolute -top-8 left-1/2 -translate-x-1/2
-                      whitespace-nowrap rounded bg-black px-1 py-1
-                      text-xs text-white opacity-0
-                      group-hover:opacity-100 transition"
-              >
-                Search documents
-              </span>
-            </div>
-            </div>
-          </form>
-        </div>
+      {/* Input + Icon */}
+      <div className="relative w-[500px]">
+        <input
+          id="search"
+          type="search"
+          placeholder="Enter category"
+          className="w-full h-9 border border-gray-300 rounded px-3 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+
+        {/* Search Button */}
+        <button
+          type="submit"
+          className="absolute right-3 top-1/2 -translate-y-1/2"
+        >
+          <img
+            src={Search}
+            alt="search"
+            className="w-5 h-5 opacity-60 hover:opacity-100 transition"
+          />
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
       </div>
 
 
