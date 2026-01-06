@@ -2,6 +2,16 @@ import { Outlet,NavLink} from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 function Profile() {
     const navigate = useNavigate();
+
+    const handlelogout=()=>{
+         const logout=window.confirm("Do you want to logout")
+         if(!logout) return;
+          
+          navigate("/login"),
+          localStorage.removeItem("token"),
+          localStorage.removeItem("currentpage")
+      }
+      
   return (
     <div>
          <div className="min-h-screen bg-gray-100 flex lg:flex-row flex-col">
@@ -23,7 +33,7 @@ function Profile() {
                     className="border border-green-800 rounded p-2 bg-black text-white hover:bg-green-800 hover:text-white transition-colors duration-300 lg:mb-3 whitespace-nowrap text-center lg:text-left"
                     >Preferences </NavLink>
 
-                    <button className="border border-red-600 bg-red-600 text-white hover:bg-red-700 p-2 rounded transition-colors duration-300 lg:mb-3 whitespace-nowrap text-center lg:text-left" onClick={() => {navigate("/login"),localStorage.removeItem("token"),localStorage.removeItem("currentpage")}}>
+                    <button className="border border-red-600 bg-red-600 text-white hover:bg-red-700 p-2 rounded transition-colors duration-300 lg:mb-3 whitespace-nowrap text-center lg:text-left" onClick={handlelogout}>
                       Logout
                     </button>
                   </nav>

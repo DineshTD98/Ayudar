@@ -40,6 +40,16 @@ function Navbar({ setGetstarted }) {
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
+  const handlelogout=()=>{
+     const Logout=window.confirm("do you want to logout?")
+     if(!Logout) return;
+
+      navigate("/");
+      setGetstarted(false);
+      localStorage.removeItem("currentpage");
+      localStorage.removeItem("token");
+  }
+
   return (
     <div
       className="bg-green-200 p-3 fixed top-0 left-0 right-0 z-50"
@@ -265,12 +275,7 @@ function Navbar({ setGetstarted }) {
                   </button>
                   <button
                     className="block w-full text-left text-white px-4 py-2 hover:bg-green-800 rounded"
-                    onClick={() => {
-                      navigate("/");
-                      setGetstarted(false);
-                      localStorage.removeItem("currentpage");
-                      localStorage.removeItem("token");
-                    }}
+                    onClick={handlelogout}
                   >
                     Logout
                   </button>
@@ -470,12 +475,7 @@ function Navbar({ setGetstarted }) {
                 </button>
                 <button
                   className="block w-full text-left text-white px-4 py-2 hover:bg-green-800 rounded"
-                  onClick={() => {
-                    navigate("/");
-                    setGetstarted(false);
-                    localStorage.removeItem("currentpage");
-                    localStorage.removeItem("token");
-                  }}
+                   onClick={handlelogout}
                 >
                   Logout
                 </button>
