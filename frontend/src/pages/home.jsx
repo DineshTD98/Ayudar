@@ -19,8 +19,8 @@ function Home() {
       <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px] z-0"></div>
 
     
-      <div className="fixed top-0 left-0 right-0 z-50 flex items-center h-24 px-6">
-            <div className="w-1/2 sm:w-2/3 text-right">
+     <div className="fixed top-0 left-0 right-0 z-50 flex items-center h-24 px-6">
+          <div className="flex-grow text-center lg:text-right">
                <p className="font-display text-4xl font-extrabold tracking-[0.25em] uppercase
                   bg-gradient-to-r from-emerald-300 via-white to-emerald-300 
                   bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(52,211,153,0.35)]">
@@ -64,7 +64,7 @@ function Home() {
             </div>
      </div>
      {/* Mobile menu */}
-     <div className={`lg:hidden fixed top-24 left-0 right-0 z-40 overflow-hidden transition-all duration-300 ease-in-out ${opennav ? "max-h-screen opacity-100" : "opacity-0 max-h-0"}`}>
+     <div className={`lg:hidden w-1/3 fixed top-24 left-0 right-0 z-40 overflow-hidden transition-all duration-300 ease-in-out ${opennav ? "max-h-screen opacity-100" : "opacity-0 max-h-0"}`}>
         <div className="bg-black/50 backdrop-blur-md px-6 py-4 space-y-3">
             <button
                   onClick={() => {
