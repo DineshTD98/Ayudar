@@ -123,7 +123,7 @@ function Home() {
                     </h4>
                   </div>
 
-                <div className="border-2 border-blue-500/30 bg-gradient-to-br from-blue-900/30 to-blue-800/10 p-5 rounded-2xl max-h-[150px] overflow-y-auto backdrop-blur-md shadow-lg shadow-blue-500/20">
+                <div className="border-2 border-red-500 bg-gradient-to-br from-blue-900/30 to-blue-800/10 p-5 rounded-2xl max-h-[150px] overflow-y-auto backdrop-blur-md shadow-lg shadow-blue-500/20">
                   {todayevents.length > 0 ? (
                     todayevents.map((event, index) => (
                       <div key={event._id} className="flex flex-col gap-1 mb-3 last:mb-0">
@@ -135,7 +135,7 @@ function Home() {
                   </div>
                  ))
                 ) : (
-                  <p className="text-white/40 text-center italic text-sm">
+                  <p className="text-white/40 text-center italic text-lg">
                     No urgent events today
                   </p>
                 )}

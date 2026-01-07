@@ -146,9 +146,10 @@ exports.getdocumentcategory=async(req,res,next)=>{
 exports.searchdocument=async(req,res,next)=>{
   try{
       const document=await Documents.find({
-        category:req.params.search,
-        userId:req.user.id
-      })
+      $and:[
+       {category:{$regex:req.params.search,$options:"i"}},
+       {userId:req.user.id}
+      ]})
    if(!document){
       const error=new Error("no document found")
        error.statusCode=400;
