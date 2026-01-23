@@ -10,6 +10,7 @@ import loginpageimage from "../assets/infoslideimages/loginpagebg.jpeg";
 function Login({ setIsloggedin, setGetstarted }) {
   const [welcome, setWelcome] = useState(false);
   const [show, setShow] = useState(false);
+  const [error, setError] = useState("");
   const Navigate = useNavigate();
   const dispatch = useDispatch();
   const username = useSelector((state) => state.Logindetails.username.value);
@@ -18,9 +19,10 @@ function Login({ setIsloggedin, setGetstarted }) {
   const handlesubmit = async (e) => {
     e.preventDefault();
     if (!username || !password) {
-      alert("Please enter username and password");
+      setError("Please enter your username and password");
       return;
     }
+    setError("");
     try {
       const response = await axios.post("https://ayudar.onrender.com/user/login", {
         username,
@@ -38,7 +40,7 @@ function Login({ setIsloggedin, setGetstarted }) {
         setGetstarted(true);
       }, 1500);
     } catch (err) {
-      alert(err.response?.data?.message || err.message);
+      setError(err.response?.data?.message || "Invalid credentials. Please try again.");
     }
   };
 
@@ -135,6 +137,14 @@ function Login({ setIsloggedin, setGetstarted }) {
               >
                 Sign In
               </button>
+
+              {error && (
+                <div className="bg-red-500/20 border border-red-500/50 p-3 rounded-xl backdrop-blur-md animate-shake">
+                  <p className="text-red-200 text-sm text-center font-medium">
+                    {error}
+                  </p>
+                </div>
+              )}
             </form>
 
             {/* Divider */}

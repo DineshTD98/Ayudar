@@ -17,7 +17,7 @@ function Signuppage({ setIsloggedin }) {
   });
   const [display, setDisplay] = useState(false);
   const [showing, setShowing] = useState(false);
-  const [msgalert, setAlert] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,15 +31,52 @@ function Signuppage({ setIsloggedin }) {
     }));
   };
 
+  const validateField = (name, value) => {
+    let error = "";
+    if (value.trim() === "") {
+      error = "This field is required";
+    } else if (name === "email") {
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(value)) {
+        error = "Invalid email format";
+      }
+    } else if (name === "mobileno") {
+      if (value.length !== 10 || !/^\d+$/.test(value)) {
+        error = "Mobile number must be 10 digits";
+      }
+    } else if (name === "password") {
+      const pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      if (!pattern.test(value)) {
+        error = "Requirement: Upper/lowercase, number, special char, 8+ chars";
+      }
+    } else if (name === "confirmpassword") {
+      if (value !== profile.password) {
+        error = "Passwords do not match";
+      }
+    }
+    setErrors((prev) => ({ ...prev, [name]: error }));
+    return error;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (profile.password !== profile.confirmpassword) {
-      alert("Password does not match");
-      return;
-    }
+    
+    // Validate all fields
+    const newErrors = {};
+    let hasErrors = false;
+    
+    Object.keys(profile).forEach((key) => {
+      if (key !== "fullname") {
+        const error = validateField(key, profile[key]);
+        if (error) {
+          newErrors[key] = error;
+          hasErrors = true;
+        }
+      }
+    });
 
-    if (Object.values(profile).some((value) => value === "")) {
-      alert("Please fill all the fields");
+    if (hasErrors) {
+      setErrors(newErrors);
       return;
     }
 
@@ -49,10 +86,12 @@ function Signuppage({ setIsloggedin }) {
         profile,
       );
       console.log(response.data);
-      alert(response.data.message);
+      // For success, a clear alert is okay, or we could redirect
+      alert(response.data.message || "Account created successfully!");
       setIsloggedin(false);
     } catch (err) {
-      console.log(err.message);
+      const errorMsg = err.response?.data?.message || err.message;
+      setErrors((prev) => ({ ...prev, submit: errorMsg }));
     }
   };
 
@@ -107,22 +146,16 @@ function Signuppage({ setIsloggedin }) {
                         handleChange(e);
                         handleFullname(e);
                       }}
-                      onBlur={(e) => {
-                        if (e.target.value !== "" && e.target.value.trim() === "") {
-                           if (e.target.value == "") {
-                             alert("Field cannot be empty");
-                             return;
-                           }
-                        }
-                        if (e.target.value == "") {
-                            alert("Field cannot be empty");
-                            return;
-                        }
-                      }}
-                      className="block w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black transition duration-200 outline-none text-base"
+                      onBlur={(e) => validateField("firstname", e.target.value)}
+                      className={`block w-full pl-9 pr-3 py-2 border rounded-lg focus:ring-2 focus:border-black transition duration-200 outline-none text-base ${
+                        errors.firstname ? "border-red-500 focus:ring-red-200" : "border-gray-300 focus:ring-black"
+                      }`}
                       placeholder="Enter first name"
                     />
                   </div>
+                  {errors.firstname && (
+                    <p className="text-xs text-red-500 mt-1">{errors.firstname}</p>
+                  )}
                 </div>
 
                 {/* Last Name */}
@@ -155,16 +188,16 @@ function Signuppage({ setIsloggedin }) {
                         handleChange(e);
                         handleFullname(e);
                       }}
-                      onBlur={(e) => {
-                        if (e.target.value == "") {
-                          alert("Field cannot be empty");
-                          return;
-                        }
-                      }}
-                      className="block w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black transition duration-200 outline-none text-base"
+                      onBlur={(e) => validateField("lastname", e.target.value)}
+                      className={`block w-full pl-9 pr-3 py-2 border rounded-lg focus:ring-2 focus:border-black transition duration-200 outline-none text-base ${
+                        errors.lastname ? "border-red-500 focus:ring-red-200" : "border-gray-300 focus:ring-black"
+                      }`}
                       placeholder="Enter last name"
                     />
                   </div>
+                  {errors.lastname && (
+                    <p className="text-xs text-red-500 mt-1">{errors.lastname}</p>
+                  )}
                 </div>
               </div>
 
@@ -229,16 +262,16 @@ function Signuppage({ setIsloggedin }) {
                       name="email"
                       value={profile.email}
                       onChange={handleChange}
-                      onBlur={(e) => {
-                        if (e.target.value == "") {
-                          alert("Field cannot be empty");
-                          return;
-                        }
-                      }}
-                      className="block w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black transition duration-200 outline-none text-base"
+                      onBlur={(e) => validateField("email", e.target.value)}
+                      className={`block w-full pl-9 pr-3 py-2 border rounded-lg focus:ring-2 focus:border-black transition duration-200 outline-none text-base ${
+                        errors.email ? "border-red-500 focus:ring-red-200" : "border-gray-300 focus:ring-black"
+                      }`}
                       placeholder="Enter your email"
                     />
                   </div>
+                  {errors.email && (
+                    <p className="text-xs text-red-500 mt-1">{errors.email}</p>
+                  )}
                 </div>
 
                 {/* Mobile */}
@@ -269,16 +302,16 @@ function Signuppage({ setIsloggedin }) {
                       name="mobileno"
                       value={profile.mobileno}
                       onChange={handleChange}
-                      onBlur={(e) => {
-                        if (e.target.value !== "" && e.target.value.length !== 10) {
-                          alert("Mobile number must be 10 digits");
-                          return;
-                        }
-                      }}
-                      className="block w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black transition duration-200 outline-none text-base"
+                      onBlur={(e) => validateField("mobileno", e.target.value)}
+                      className={`block w-full pl-9 pr-3 py-2 border rounded-lg focus:ring-2 focus:border-black transition duration-200 outline-none text-base ${
+                        errors.mobileno ? "border-red-500 focus:ring-red-200" : "border-gray-300 focus:ring-black"
+                      }`}
                       placeholder="10-digit mobile number"
                     />
                   </div>
+                  {errors.mobileno && (
+                    <p className="text-xs text-red-500 mt-1">{errors.mobileno}</p>
+                  )}
                 </div>
               </div>
 
@@ -309,16 +342,16 @@ function Signuppage({ setIsloggedin }) {
                     name="username"
                     value={profile.username}
                     onChange={handleChange}
-                    onBlur={(e) => {
-                      if (e.target.value == "") {
-                        alert("Field cannot be empty");
-                        return;
-                      }
-                    }}
-                    className="block w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black transition duration-200 outline-none text-base"
+                    onBlur={(e) => validateField("username", e.target.value)}
+                    className={`block w-full pl-9 pr-3 py-2 border rounded-lg focus:ring-2 focus:border-black transition duration-200 outline-none text-base ${
+                      errors.username ? "border-red-500 focus:ring-red-200" : "border-gray-300 focus:ring-black"
+                    }`}
                     placeholder="Choose a username"
                   />
                 </div>
+                {errors.username && (
+                  <p className="text-xs text-red-500 mt-1">{errors.username}</p>
+                )}
               </div>
 
               {/* Password Row */}
@@ -359,16 +392,10 @@ function Signuppage({ setIsloggedin }) {
                       name="password"
                       value={profile.password}
                       onChange={handleChange}
-                      onBlur={(e) => {
-                        const pattern =
-                          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-                        if (e.target.value !== "" && !pattern.test(e.target.value)) {
-                          setAlert(true);
-                        } else {
-                          setAlert(false);
-                        }
-                      }}
-                      className="block w-full pl-9 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black transition duration-200 outline-none text-base"
+                      onBlur={(e) => validateField("password", e.target.value)}
+                      className={`block w-full pl-9 pr-10 py-2 border rounded-lg focus:ring-2 focus:border-black transition duration-200 outline-none text-base ${
+                        errors.password ? "border-red-500 focus:ring-red-200" : "border-gray-300 focus:ring-black"
+                      }`}
                       placeholder="Create password"
                     />
                     <button
@@ -383,10 +410,10 @@ function Signuppage({ setIsloggedin }) {
                       />
                     </button>
                   </div>
-                  {msgalert && (
+                  {errors.password && (
                     <div className="mt-1 p-2 bg-red-50 border border-red-200 rounded-lg">
                       <p className="text-xs text-red-600 leading-tight">
-                        Password must have: Upper & lowercase, number, special char, 8+ chars.
+                        {errors.password}
                       </p>
                     </div>
                   )}
@@ -428,12 +455,10 @@ function Signuppage({ setIsloggedin }) {
                       name="confirmpassword"
                       value={profile.confirmpassword}
                       onChange={handleChange}
-                      onBlur={(e) => {
-                        if (e.target.value !== "" && profile.password !== e.target.value) {
-                          alert("Password does not match");
-                        }
-                      }}
-                      className="block w-full pl-9 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black transition duration-200 outline-none text-base"
+                      onBlur={(e) => validateField("confirmpassword", e.target.value)}
+                      className={`block w-full pl-9 pr-10 py-2 border rounded-lg focus:ring-2 focus:border-black transition duration-200 outline-none text-base ${
+                        errors.confirmpassword ? "border-red-500 focus:ring-red-200" : "border-gray-300 focus:ring-black"
+                      }`}
                       placeholder="Confirm password"
                     />
                     <button
@@ -448,6 +473,9 @@ function Signuppage({ setIsloggedin }) {
                       />
                     </button>
                   </div>
+                  {errors.confirmpassword && (
+                    <p className="text-xs text-red-500 mt-1">{errors.confirmpassword}</p>
+                  )}
                 </div>
               </div>
 
@@ -459,6 +487,11 @@ function Signuppage({ setIsloggedin }) {
                 >
                   Create Account
                 </button>
+                {errors.submit && (
+                  <p className="text-sm text-red-500 mt-3 font-medium bg-red-50 p-2 rounded-lg border border-red-100">
+                    {errors.submit}
+                  </p>
+                )}
               </div>
             </form>
 
