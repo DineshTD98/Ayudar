@@ -60,16 +60,24 @@ return (
     <div className="min-h-screen bg-green-50 py-10 px-6">
       
       {/* Header */}
-      <div className="max-w-5xl mx-auto flex justify-between items-center mb-8">
+      <div className="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <h1 className="text-3xl font-bold text-green-900">
           Shopping List
         </h1>
-        <button
-          onClick={() => {navigate("/shopping/shoppinghistory"),localStorage.setItem("currentpage","shoppinghistory")}}
-          className="bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded-lg shadow transition"
-        >
-          View History
-        </button>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full md:w-auto">
+          <button
+            onClick={() => {navigate("/shopping/shoppinghistory"),localStorage.setItem("currentpage","shoppinghistory")}}
+            className="bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded-lg shadow transition w-full sm:w-auto"
+          >
+            View History
+          </button>
+          <button 
+            onClick={()=>navigate("/shopping/createshopping")} 
+            className="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-lg shadow transition w-full sm:w-auto"
+          >
+            Create shopping
+          </button>
+        </div>
       </div>
 
       {/* Table Card */}

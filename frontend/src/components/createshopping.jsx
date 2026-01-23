@@ -99,22 +99,24 @@ return (
               </div>
             </div>
           </div>
-          <button className="group relative inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold text-md shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 hover:from-emerald-700 hover:to-green-700"
-             onClick={()=>{navigate('/shopping/viewshopping'),
-             localStorage.setItem("currentpage","viewshopping")}}>
-              View shopping
-          </button>
-          <button
-            className="group relative inline-flex items-center gap-2 bg-black text-white px-6 py-3 rounded-xl font-semibold text-md shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 hover:from-emerald-700 hover:to-green-700"
-            onClick={() =>{ navigate('/shopping/shoppinghistory'),
-               localStorage.setItem("currentpage","shoppinghistory")
-            }}
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            View History
-          </button>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full md:w-auto">
+            <button className="group relative inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold text-md shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 hover:from-emerald-700 hover:to-green-700 w-full sm:w-auto"
+               onClick={()=>{navigate('/shopping/viewshopping'),
+               localStorage.setItem("currentpage","viewshopping")}}>
+                View shopping
+            </button>
+            <button
+              className="group relative inline-flex items-center justify-center gap-2 bg-black text-white px-6 py-3 rounded-xl font-semibold text-md shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 hover:from-emerald-700 hover:to-green-700 w-full sm:w-auto"
+              onClick={() =>{ navigate('/shopping/shoppinghistory'),
+                 localStorage.setItem("currentpage","shoppinghistory")
+              }}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              View History
+            </button>
+          </div>
         </div>
 
         {/* Main Content */}
@@ -209,80 +211,146 @@ return (
                 <p className="text-black">Start by adding items using the form on the left</p>
               </div>
             ) : (
-              <div className="overflow-hidden rounded-xl border border-green-900">
-                <table className="w-full">
-                  <thead className="bg-gradient-to-r from-green-50 to-emerald-50">
-                    <tr>
-                      {keys.map((heading, index) => (
-                        <th
-                          key={index}
-                          className="px-6 py-4 text-left text-sm font-semibold text-green-900 uppercase tracking-wider border-b border-green-200"
-                        >
-                          {heading}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-green-100">
-                    {list.map((item, index) => (
-                      <tr 
-                        key={index} 
-                        className="hover:bg-green-50 transition-colors duration-150"
-                      >
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <div className="w-8 h-8 rounded-full flex bg-black items-center justify-center mr-3">
-                              <span className="text-sm font-semibold text-white">{index + 1}</span>
-                            </div>
+              <>
+                {/* Mobile Card View */}
+                <div className="block md:hidden space-y-4">
+                  {list.map((item, index) => (
+                    <div 
+                      key={index} 
+                      className="bg-white border-2 border-green-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow duration-200"
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full flex bg-black items-center justify-center">
+                            <span className="text-sm font-semibold text-white">{index + 1}</span>
                           </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="font-lg text-lg text-black">{item.productname}</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                         {editIndex === index ? (
-                                <input
-                                  type="text"
-                                  value={editQty}
-                                  onChange={(e) => setEditQty(e.target.value)}
-                                />
-                              ) : (
-                                item.quantity
-                              )}
-                        </td>
-                        
-                       <td>
-                            {editIndex === index ? (
-                              <button onClick={() =>handlenewqnty(index)}>
-                                Save
-                              </button>
-                            ) : (
-                              <button
-                                onClick={() =>
-                                  handleUpdateClick(index, item.quantity)
-                                }
-                                className="border border-green-700 text-white bg-black text-center font-bold px-4 py-2 rounded-lg"
-                              >
-                                Update
-                              </button>
-                            )}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right">
-                          <button
-                            onClick={() => handledelete(index)}
-                            className="inline-flex font-bold items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-red-200 to-red-250 text-red-700 rounded-lg hover:from-red-200 hover:to-red-100 hover:text-red-800 transition-all duration-200 border border-red-200"
+                          <div>
+                            <p className="text-xs text-gray-500 uppercase tracking-wide">Product</p>
+                            <p className="font-semibold text-lg text-black">{item.productname}</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="mb-4">
+                        <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Quantity</p>
+                        {editIndex === index ? (
+                          <input
+                            type="text"
+                            value={editQty}
+                            onChange={(e) => setEditQty(e.target.value)}
+                            className="w-full px-3 py-2 border-2 border-green-500 rounded-lg focus:outline-none focus:border-green-700"
+                          />
+                        ) : (
+                          <p className="text-base text-gray-800">{item.quantity}</p>
+                        )}
+                      </div>
+                      
+                      <div className="flex gap-2">
+                        {editIndex === index ? (
+                          <button 
+                            onClick={() => handlenewqnty(index)}
+                            className="flex-1 bg-green-600 text-white font-bold px-4 py-2.5 rounded-lg hover:bg-green-700 transition-colors"
                           >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                            </svg>
-                            Remove
+                            Save
                           </button>
-                        </td>
+                        ) : (
+                          <button
+                            onClick={() => handleUpdateClick(index, item.quantity)}
+                            className="flex-1 border border-green-700 text-white bg-black font-bold px-4 py-2.5 rounded-lg hover:bg-gray-800 transition-colors"
+                          >
+                            Update
+                          </button>
+                        )}
+                        <button
+                          onClick={() => handledelete(index)}
+                          className="flex-1 inline-flex font-bold items-center justify-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-red-200 to-red-250 text-red-700 rounded-lg hover:from-red-200 hover:to-red-100 hover:text-red-800 transition-all duration-200 border border-red-200"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                          </svg>
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Desktop Table View */}
+                <div className="hidden md:block overflow-hidden rounded-xl border border-green-900">
+                  <table className="w-full">
+                    <thead className="bg-gradient-to-r from-green-50 to-emerald-50">
+                      <tr>
+                        {keys.map((heading, index) => (
+                          <th
+                            key={index}
+                            className="px-6 py-4 text-left text-sm font-semibold text-green-900 uppercase tracking-wider border-b border-green-200"
+                          >
+                            {heading}
+                          </th>
+                        ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody className="divide-y divide-green-100">
+                      {list.map((item, index) => (
+                        <tr 
+                          key={index} 
+                          className="hover:bg-green-50 transition-colors duration-150"
+                        >
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex items-center">
+                              <div className="w-8 h-8 rounded-full flex bg-black items-center justify-center mr-3">
+                                <span className="text-sm font-semibold text-white">{index + 1}</span>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="font-lg text-lg text-black">{item.productname}</div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                           {editIndex === index ? (
+                                  <input
+                                    type="text"
+                                    value={editQty}
+                                    onChange={(e) => setEditQty(e.target.value)}
+                                  />
+                                ) : (
+                                  item.quantity
+                                )}
+                          </td>
+                          
+                         <td>
+                              {editIndex === index ? (
+                                <button onClick={() =>handlenewqnty(index)}>
+                                  Save
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={() =>
+                                    handleUpdateClick(index, item.quantity)
+                                  }
+                                  className="border border-green-700 text-white bg-black text-center font-bold px-4 py-2 rounded-lg"
+                                >
+                                  Update
+                                </button>
+                              )}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-right">
+                            <button
+                              onClick={() => handledelete(index)}
+                              className="inline-flex font-bold items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-red-200 to-red-250 text-red-700 rounded-lg hover:from-red-200 hover:to-red-100 hover:text-red-800 transition-all duration-200 border border-red-200"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                              </svg>
+                              Remove
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
             )}
           </div>
         </div>
