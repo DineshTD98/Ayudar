@@ -71,20 +71,20 @@ function Uploaddocuments() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-6 sm:py-8 px-3 sm:px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-10 flex lg:flex-row flex-col justify-between items-center">
-          <div className="lg:text-right text-center  w-1/2">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-green-800 to-green-800 bg-clip-text text-transparent">
+        <div className="text-center mb-8 sm:mb-10 flex flex-col lg:flex-row justify-between items-center gap-4">
+          <div className="lg:text-right text-center w-full lg:w-1/2">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-green-800 to-green-800 bg-clip-text text-transparent">
             Upload Documents
           </h1>
-          <p className="text-gray-600 mt-2">
+          <p className="text-gray-600 mt-2 text-sm sm:text-base">
             Securely upload and manage your important documents
           </p>
           </div>
-          <div className="lg:text-right  w-1/2">
-          <button className="bg-gradient-to-r from-green-900 to-green-700 text-white py-2 px-4 rounded-xl transition duration-200"
+          <div className="lg:text-right w-full lg:w-1/2">
+          <button className="bg-gradient-to-r from-green-900 to-green-700 text-white py-2 px-4 rounded-xl transition duration-200 text-sm sm:text-base w-full sm:w-auto"
              onClick={() => navigate("/document/viewdocuments")}
              type="button"
           >
@@ -93,9 +93,9 @@ function Uploaddocuments() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
           {/* Left Column - Upload Form */}
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-4 sm:p-6 lg:p-8">
             <form onSubmit={handleupload}>
               <div className="space-y-6">
                 {/* Name Input */}

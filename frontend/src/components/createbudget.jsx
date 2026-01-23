@@ -122,13 +122,13 @@ function Createbudget() {
   }, [Createbudget, filterSource, filterMonth]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-3 sm:px-4 py-6 sm:py-8 space-y-6 sm:space-y-8">
       {/* Header Section */}
       <div className="text-center space-y-2">
-        <h1 className="text-4xl font-extrabold text-slate-800 tracking-tight">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-800 tracking-tight">
           Create Budget
         </h1>
-        <p className="text-slate-500 text-lg">
+        <p className="text-slate-500 text-base sm:text-lg">
           Plan your finances and track your spending goals
         </p>
       </div>
@@ -139,14 +139,14 @@ function Createbudget() {
           
           {/* Main Budget Form Card */}
           <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden transition-all hover:shadow-md">
-            <div className="bg-emerald-900 px-6 py-4 flex items-center justify-between">
-              <h2 className="text-white font-bold text-xl flex items-center gap-2">
-                <span className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">💰</span>
+            <div className="bg-emerald-900 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+              <h2 className="text-white font-bold text-lg sm:text-xl flex items-center gap-2">
+                <span className="w-7 h-7 sm:w-8 sm:h-8 bg-white/20 rounded-lg flex items-center justify-center text-sm sm:text-base">💰</span>
                 Income Source
               </h2>
             </div>
             
-            <form onSubmit={handlesubmit} className="p-8 space-y-6">
+            <form onSubmit={handlesubmit} className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-slate-700 block ml-1">
@@ -211,14 +211,14 @@ function Createbudget() {
 
           {/* Credit Card Card */}
           <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden transition-all hover:shadow-md">
-            <div className="bg-gray-600 px-6 py-4 flex items-center justify-between">
-              <h2 className="text-white font-bold text-xl flex items-center gap-2">
-                <span className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">💳</span>
+            <div className="bg-gray-600 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+              <h2 className="text-white font-bold text-lg sm:text-xl flex items-center gap-2">
+                <span className="w-7 h-7 sm:w-8 sm:h-8 bg-white/20 rounded-lg flex items-center justify-center text-sm sm:text-base">💳</span>
                 Credit Card Configuration
               </h2>
             </div>
 
-            <div className="p-8 space-y-6">
+            <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
               <div className="flex items-center gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
                 <label className="text-sm font-bold text-slate-700">Do you have a credit card?</label>
                 <div className="flex bg-white p-1 rounded-lg border border-slate-200">
@@ -299,13 +299,13 @@ function Createbudget() {
         </div>
 
         {/* Financial Summary */}
-        <div className="lg:col-span-4 lg:sticky lg:top-24 space-y-6">
-          <div className="bg-black rounded-3xl p-8 shadow-2xl relative overflow-hidden group">
+        <div className="lg:col-span-4 space-y-6">
+          <div className="bg-black rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden group lg:sticky lg:top-24">
             {/* Background elements */}
             <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all duration-700"></div>
           
-            <div className="relative space-y-8">
-              <h3 className="text-white font-bold text-lg tracking-wide uppercase opacity-60">Financial Preview</h3>
+            <div className="relative space-y-6 sm:space-y-8">
+              <h3 className="text-white font-bold text-base sm:text-lg tracking-wide uppercase opacity-60">Financial Preview</h3>
               
               <div className="space-y-6">
                 <div className="flex justify-between items-end border-b border-white/10 pb-4">

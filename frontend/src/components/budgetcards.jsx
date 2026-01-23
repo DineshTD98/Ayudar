@@ -47,37 +47,37 @@ function Budgetcards({totalexpense}) {
           </div> */}
 
       {/*total amount card */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-10 mx-4 lg:mx-10">
-        <div className="border border-black bg-green-500 h-[150px] rounded">
-          <h3 className="text-center mt-6 text-[24px] text-white">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6 lg:mt-10 mx-2 sm:mx-4 lg:mx-10">
+        <div className="border border-black bg-green-500 h-[120px] sm:h-[150px] rounded">
+          <h3 className="text-center mt-4 sm:mt-6 text-lg sm:text-xl lg:text-2xl text-white">
             Total Amount
           </h3>
-          <h5 className="text-center text-[24px] text-white">
+          <h5 className="text-center text-lg sm:text-xl lg:text-2xl text-white">
             Rs.{totalamount>0?totalamount:0}
           </h5>
         </div>
 
        {/*total expense card */}
-        <div className="border border-black bg-red-500 h-[150px] rounded">
-          <h3 className="text-center mt-6 text-[24px] text-white">Expenses</h3>
-          <h5 className="text-center text-[20px] text-white">
+        <div className="border border-black bg-red-500 h-[120px] sm:h-[150px] rounded">
+          <h3 className="text-center mt-4 sm:mt-6 text-lg sm:text-xl lg:text-2xl text-white">Expenses</h3>
+          <h5 className="text-center text-base sm:text-lg lg:text-xl text-white">
             Rs:{totalexpense>0?totalexpense:0}
           </h5>
         </div>
 
          {/*total remaining card */}
-        <div className="border border-black bg-blue-500 h-[150px] rounded">
-          <h3 className="text-center mt-6 text-[24px] text-white">Remaining</h3>
-           <h5 className="text-center text-[20px] text-white">
+        <div className="border border-black bg-blue-500 h-[120px] sm:h-[150px] rounded">
+          <h3 className="text-center mt-4 sm:mt-6 text-lg sm:text-xl lg:text-2xl text-white">Remaining</h3>
+           <h5 className="text-center text-base sm:text-lg lg:text-xl text-white">
             Rs:{remainingbudget>0?remainingbudget:0}  
           </h5>
         </div>
 
          {/*dates card */}
-        <div className="border border-black bg-red-900 h-[150px] rounded">
-          <h3 className="text-center mt-6 text-[24px] text-white">Date</h3>
-          <h5 className="text-center text-[20px] text-white">{monthlydate.toDateString()}</h5>
-          <p className="text-center text-[20px] text-white">Remaining days:{remainingdaysinmonth}</p> 
+        <div className="border border-black bg-red-900 h-[120px] sm:h-[150px] rounded">
+          <h3 className="text-center mt-4 sm:mt-6 text-lg sm:text-xl lg:text-2xl text-white">Date</h3>
+          <h5 className="text-center text-sm sm:text-base lg:text-lg text-white">{monthlydate.toDateString()}</h5>
+          <p className="text-center text-sm sm:text-base lg:text-lg text-white">Remaining days:{remainingdaysinmonth}</p> 
         </div>
       </div>
     </div>

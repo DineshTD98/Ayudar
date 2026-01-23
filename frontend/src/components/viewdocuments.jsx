@@ -89,15 +89,15 @@ function Viewdocuments() {
 
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-3 sm:p-4 lg:p-6 bg-gray-50 min-h-screen">
       <div className="">
         
-         <div className="flex">
-             <h1 className="text-2xl w-1/2 font-semibold text-right text-green-700 mb-6">
+         <div className="flex flex-col sm:flex-row gap-3 sm:gap-0 mb-6">
+             <h1 className="text-xl sm:text-2xl w-full sm:w-1/2 font-semibold text-center sm:text-right text-green-700">
             Manage Documents
              </h1>
-             <div className="w-1/2 text-right">
-             <button className="bg-green-700 text-white px-2 py-2 rounded"
+             <div className="w-full sm:w-1/2 text-center sm:text-right">
+             <button className="bg-green-700 text-white px-3 sm:px-4 py-2 rounded text-sm sm:text-base w-full sm:w-auto"
                 onClick={()=>{
               navigate("/document/uploaddocuments")
               }}
@@ -110,7 +110,7 @@ function Viewdocuments() {
         
        <div className="w-full mb-6">
   <form onSubmit={handleSearch} className="flex justify-center">
-    <div className="w-full max-w-2xl">
+    <div className="w-full max-w-2xl px-2 sm:px-0">
       
       {/* Label */}
       <label
@@ -121,7 +121,7 @@ function Viewdocuments() {
       </label>
 
       {/* Input + Icon */}
-      <div className="relative w-[500px]">
+      <div className="relative w-full sm:w-[500px]">
         <input
           id="search"
           type="search"

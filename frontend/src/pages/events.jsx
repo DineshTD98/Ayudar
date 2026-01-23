@@ -80,8 +80,8 @@ function Events() {
         {/* LEFT SIDE */}
         <div className="flex flex-col w-full lg:w-[800px]">
           {/* Header */}
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl text-black font-bold">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+            <h2 className="text-xl sm:text-2xl text-black font-bold">
               {selectedDate.toLocaleString("default", {
                 month: "long",
                 year: "numeric",
@@ -90,18 +90,18 @@ function Events() {
 
             <button
               onClick={() => setShowForm(true)}
-              className="bg-green-600 text-white px-4 py-2 rounded-lg"
+              className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm sm:text-base whitespace-nowrap"
             >
               + Add Event
             </button>
           </div>
 
           {/* Calendar */}
-          <div className="grid grid-cols-7 gap-2 bg-white p-4 rounded-xl shadow">
+          <div className="grid grid-cols-7 gap-1 sm:gap-2 bg-white p-2 sm:p-4 rounded-xl shadow">
             {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
               <div
                 key={day}
-                className="text-center font-semibold text-gray-500"
+                className="text-center font-semibold text-gray-500 text-xs sm:text-sm"
               >
                 {day}
               </div>
@@ -130,18 +130,18 @@ function Events() {
                   <div
                     key={day}
                     onClick={() => setSelectedDate(date)}
-                    className={`cursor-pointer text-center p-2 rounded-lg relative min-h-[50px] flex flex-col items-center justify-center ${
+                    className={`cursor-pointer text-center p-1 sm:p-2 rounded-lg relative min-h-[40px] sm:min-h-[50px] flex flex-col items-center justify-center text-sm sm:text-base ${
                       isSelected
                         ? "bg-green-600 text-white"
                         : "hover:bg-gray-200"
                     }`}
                   >
                     <span className="z-10">{day}</span>
-                    <div className="flex gap-1 mt-1 flex-wrap justify-center">
+                    <div className="flex gap-0.5 sm:gap-1 mt-1 flex-wrap justify-center">
                       {dayEvents.map((event, idx) => (
                         <div
                           key={idx}
-                          className={`w-3.5 h-3.5 rounded-full ${event.color} border border-white`}
+                          className={`w-2 h-2 sm:w-3.5 sm:h-3.5 rounded-full ${event.color} border border-white`}
                           title={event.title}
                         />
                       ))}
@@ -152,8 +152,8 @@ function Events() {
           </div>
 
           {/* Events Section */}
-          <div className="mt-6 bg-white p-4 rounded-xl shadow">
-            <h3 className="text-xl font-semibold mb-3">
+          <div className="mt-6 bg-white p-3 sm:p-4 rounded-xl shadow">
+            <h3 className="text-lg sm:text-xl font-semibold mb-3">
               Events on {selectedDateString}
             </h3>
 
@@ -166,8 +166,8 @@ function Events() {
                 key={event._id}
                 className={`p-3 mb-2 rounded-lg text-white ${event.color}`}
               >
-                <h4 className="font-bold">{event.title}</h4>
-                <p className="text-sm">{event.description}</p>
+                <h4 className="font-bold text-sm sm:text-base">{event.title}</h4>
+                <p className="text-xs sm:text-sm">{event.description}</p>
               </div>
             ))}
           </div>
@@ -177,23 +177,25 @@ function Events() {
         {showForm && (
           <div
             className="
-              bg-white shadow-xl p-6 rounded-xl
+              bg-white shadow-xl p-4 sm:p-6 rounded-xl
               w-full lg:w-[500px]
               h-auto lg:h-[500px]
 
               fixed lg:static
-              bottom-0 left-0
+              bottom-0 left-0 right-0
               lg:ml-6 lg:mt-16
               z-20
+              max-h-[80vh] lg:max-h-none
+              overflow-y-auto lg:overflow-y-visible
             "
           >
-            <h2 className="text-xl font-bold mb-4">Add Event</h2>
+            <h2 className="text-lg sm:text-xl font-bold mb-4">Add Event</h2>
 
             <form onSubmit={handleAddEvent} className="space-y-4">
               <input
                 type="text"
                 placeholder="Event Name"
-                className="w-full border p-2 rounded"
+                className="w-full border p-2 rounded text-sm sm:text-base"
                 value={formData.title}
                 onChange={(e) =>
                   setFormData({ ...formData, title: e.target.value })
@@ -203,7 +205,7 @@ function Events() {
 
               <input
                 type="date"
-                className="w-full border p-2 rounded"
+                className="w-full border p-2 rounded text-sm sm:text-base"
                 value={formData.date}
                 onChange={(e) =>
                   setFormData({ ...formData, date: e.target.value })
@@ -213,7 +215,7 @@ function Events() {
 
               <textarea
                 placeholder="Description"
-                className="w-full border p-2 rounded"
+                className="w-full border p-2 rounded text-sm sm:text-base"
                 value={formData.description}
                 onChange={(e) =>
                   setFormData({ ...formData, description: e.target.value })
@@ -221,29 +223,29 @@ function Events() {
               />
 
               {/* Color Picker */}
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 {COLORS.map((color) => (
                   <div
                     key={color}
                     onClick={() => setFormData({ ...formData, color })}
-                    className={`w-6 h-6 rounded-full cursor-pointer ${color} ${
+                    className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full cursor-pointer ${color} ${
                       formData.color === color ? "ring-2 ring-black" : ""
                     }`}
                   />
                 ))}
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex gap-3 flex-col sm:flex-row">
                 <button
                   type="submit"
-                  className="bg-green-600 text-white px-4 py-2 rounded"
+                  className="bg-green-600 text-white px-4 py-2 rounded text-sm sm:text-base"
                 >
                   Save
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowForm(false)}
-                  className="bg-gray-300 px-4 py-2 rounded"
+                  className="bg-gray-300 px-4 py-2 rounded text-sm sm:text-base"
                 >
                   Cancel
                 </button>

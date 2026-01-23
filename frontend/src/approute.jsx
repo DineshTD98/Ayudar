@@ -80,7 +80,7 @@ function AppRoutes({
             <Route index element={<Navigate to="info"/>}/>
             <Route path="info" element={<Info/>}/>
 
-        </Route>
+            </Route>
 
       <Route
         path="/login"

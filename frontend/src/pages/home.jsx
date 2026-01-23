@@ -109,59 +109,59 @@ function Home() {
 
           <div className="mb-12 lg:w-1/2 w-full">
             <div className="animate-fade-in relative z-12">
-              <h3 className="block text-center w-full text-red-400 font-display font-extrabold text-[32px] tracking-tight animate-shake-80% animate-blink drop-shadow-[0_0_15px_rgba(248,113,113,0.5)]">
-                Important Alerts<span className="text-red-500 text-[36px]">!</span>
+              <h3 className="block text-center w-full text-red-400 font-display font-extrabold text-2xl md:text-3xl lg:text-[32px] tracking-tight animate-shake-80% animate-blink drop-shadow-[0_0_15px_rgba(248,113,113,0.5)]">
+                Important Alerts<span className="text-red-500 text-3xl md:text-[36px]">!</span>
               </h3>
  
-             <div className="flex lg:flex-row flex-col gap-6 items-start">
-  {/* Tomorrow Alerts */}
-                <div className="flex flex-col w-[400px]">
+             <div className="flex lg:flex-row flex-col gap-4 md:gap-6 items-stretch">
+  {/* Today Events */}
+                <div className="flex flex-col w-full lg:w-1/2">
                   <div className="flex items-center gap-2 mb-2">
                     <span className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></span>
-                    <h4 className="text-blue-300 font-display font-semibold tracking-wide">
+                    <h4 className="text-blue-300 font-display font-semibold tracking-wide text-sm md:text-base">
                       Today Events
                     </h4>
                   </div>
 
-                <div className="border-2 border-red-500 bg-gradient-to-br from-blue-900/30 to-blue-800/10 p-5 rounded-2xl max-h-[150px] overflow-y-auto backdrop-blur-md shadow-lg shadow-blue-500/20">
+                <div className="border-2 border-red-500 bg-gradient-to-br from-blue-900/30 to-blue-800/10 p-4 md:p-5 rounded-2xl max-h-[150px] md:max-h-[180px] overflow-y-auto backdrop-blur-md shadow-lg shadow-blue-500/20">
                   {todayevents.length > 0 ? (
                     todayevents.map((event, index) => (
                       <div key={event._id} className="flex flex-col gap-1 mb-3 last:mb-0">
-                        <p className="text-blue-200 font-semibold text-lg">
+                        <p className="text-blue-200 font-semibold text-base md:text-lg">
                           {index + 1}. {event.title}
                         </p>
-                        <p className="text-white/70 text-lg">{event.description}</p>
-                        <p className="text-blue-400/50 text-[20px]">{event.date}</p>
+                        <p className="text-white/70 text-sm md:text-base">{event.description}</p>
+                        <p className="text-blue-400/50 text-sm md:text-base">{event.date}</p>
                   </div>
                  ))
                 ) : (
-                  <p className="text-white/40 text-center italic text-lg">
+                  <p className="text-white/40 text-center italic text-sm md:text-base">
                     No urgent events today
                   </p>
                 )}
                 </div>
                 </div>
-              <div className="flex flex-col w-[400px]">
+              <div className="flex flex-col w-full lg:w-1/2">
                   <div className="flex items-center gap-2 mb-2">
                     <span className="w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></span>
-                    <h4 className="text-emerald-300 font-display font-semibold tracking-wide">
+                    <h4 className="text-emerald-300 font-display font-semibold tracking-wide text-sm md:text-base">
                       Tomorrow Alerts
                     </h4>
              </div>
 
-            <div className="border-2 border-emerald-500/30 bg-gradient-to-br from-emerald-900/30 to-emerald-800/10 p-5 rounded-2xl max-h-[150px] overflow-y-auto backdrop-blur-md shadow-lg shadow-emerald-500/20">
+            <div className="border-2 border-emerald-500/30 bg-gradient-to-br from-emerald-900/30 to-emerald-800/10 p-4 md:p-5 rounded-2xl max-h-[150px] md:max-h-[180px] overflow-y-auto backdrop-blur-md shadow-lg shadow-emerald-500/20">
               {alerts.length > 0 ? (
                 alerts.map((alert, index) => (
                   <div key={alert._id} className="flex flex-col gap-1 mb-3 last:mb-0">
-                    <p className="text-emerald-200 font-semibold text-lg">
+                    <p className="text-emerald-200 font-semibold text-base md:text-lg">
                       {index + 1}. {alert.title}
                     </p>
-                    <p className="text-white/70 text-lg">{alert.description}</p>
-                    <p className="text-emerald-400/50 text-[20px]">{alert.date}</p>
+                    <p className="text-white/70 text-sm md:text-base">{alert.description}</p>
+                    <p className="text-emerald-400/50 text-sm md:text-base">{alert.date}</p>
                   </div>
                 ))
               ) : (
-                <p className="text-white/40 text-center italic text-lg">
+                <p className="text-white/40 text-center italic text-sm md:text-base">
                   No alerts for tomorrow
                 </p>
               )}
