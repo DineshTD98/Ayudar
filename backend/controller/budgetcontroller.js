@@ -369,3 +369,59 @@ exports.getcreatebudget = async (req, res, next) => {
     next(error)
   }
 }
+
+
+// deleting the budget
+
+exports.deletebudget = async (req, res, next) => {
+  try {
+    const deleted = await createbudget.findOneAndDelete({
+      _id: req.params.id,
+      userId: req.user.id
+    })
+    res.status(201).json({
+      message: "item deleted successfully"
+    })
+  }
+  catch (error) {
+    next(error)
+  }
+}
+
+// deleting the total budget history
+exports.deletetotalbudget = async (req, res, next) => {
+  try {
+    await monthlybudget.deleteMany({ userId: req.user.id });
+    res.status(200).json({
+      message: "Total budget history cleared successfully"
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// clearing credit card budget
+exports.clearcreditcard = async (req, res, next) => {
+  try {
+    await Creditcardbudget.deleteMany({ userId: req.user.id });
+    res.status(200).json({
+      message: "Credit card configuration cleared"
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// deleting a specific monthly budget record
+exports.deletemonthlybudget = async (req, res, next) => {
+  try {
+    const deleted = await monthlybudget.findOneAndDelete({
+      _id: req.params.id,
+      userId: req.user.id
+    });
+    if (!deleted) return res.status(404).json({ message: "Record not found" });
+    res.status(200).json({ message: "Budget record removed successfully" });
+  } catch (error) {
+    next(error);
+  }
+};

@@ -3,20 +3,31 @@ import { useNavigate } from "react-router-dom";
 import useApi from "../customehooks/useapi";
 
 function Createshopping() {
-
-  const [editQty,setEditQty]=useState('')
-  const [editIndex,setEditIndex]=useState(null)
+  const [editQty, setEditQty] = useState('');
+  const [editIndex, setEditIndex] = useState(null);
 
   const [form, setForm] = useState({
-    Slno: "",
     productname: "",
+    category: "",
     quantity: "",
   });
-  const {request,error,loading}=useApi()
-  const navigate=useNavigate();
+  
+  const { request } = useApi();
+  const navigate = useNavigate();
   const [list, setList] = useState([]);
 
-  
+  // Pre-defined shopping categories
+  const categories = [
+    "Grocery",
+    "Dairy",
+    "Fruits & Veg",
+    "Meat & Poultry",
+    "Snacks",
+    "Household",
+    "Personal Care",
+    "Electronics",
+    "Other"
+  ];
 
   const handlechange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -29,336 +40,236 @@ function Createshopping() {
     );
 
     if (!exists) {
-       setList([...list, form]);
-       setForm({ Slno: "", productname: "", quantity: "" });
+      setList([...list, form]);
+      setForm({ productname: "", category: "", quantity: "" });
+    } else {
+      alert("Item already exists in the queue");
     }
-  else{
-    alert("item already exists")
-  }
-}
-  const keys = Object.keys(form);
-  keys.push("update");
-  keys.push("Delete");
-  
-
-  // handle update
-
-  const handleUpdateClick=(index,quantity)=>{
-       setEditQty(quantity)
-       setEditIndex(index)
-  }
-
-  const handlenewqnty=(index)=>{
-    const updated=list.map((item,i)=>i===index?{...item,quantity:editQty}:item)
-    setList(updated)
-    setEditIndex(null)
-    setEditQty('')
-   } 
-
-  const handledelete=(index)=>{
-      const confirmdelete = window.confirm("Are you sure you want to delete this item?");
-      if (!confirmdelete) return;
-      const updated=list.filter((_,i)=>i !== index)
-      setList(updated)
-  }
-
- const handlesave =async() => {
-      alert("url is triggered")
-      try{
-         const response=await request({
-           url:'/shopping/createshopping',
-           method:"post",
-           data:list
-         })
-        setList([])
-        console.log(response.shoppinglist)
-      }
-      catch(err){
-          console.log(err.message)
-      }
   };
 
-return (
-  <>
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 p-4 md:p-8">
-      <div className="w-full max-w-[1400px] mx-auto">
+  const handleUpdateClick = (index, quantity) => {
+    setEditQty(quantity);
+    setEditIndex(index);
+  };
+
+  const handlenewqnty = (index) => {
+    const updated = list.map((item, i) => i === index ? { ...item, quantity: editQty } : item);
+    setList(updated);
+    setEditIndex(null);
+    setEditQty('');
+  };
+
+  const handledelete = (index) => {
+    const confirmdelete = window.confirm("Are you sure you want to delete this item?");
+    if (!confirmdelete) return;
+    const updated = list.filter((_, i) => i !== index);
+    setList(updated);
+  };
+
+  const handlesave = async () => {
+    try {
+      await request({
+        url: '/shopping/createshopping',
+        method: "post",
+        data: list
+      });
+      setList([]);
+      alert("Shopping list saved successfully!");
+    } catch (err) {
+      console.error("Save error:", err.message);
+      alert("Failed to save shopping list.");
+    }
+  };
+
+  return (
+    <div className="min-h-screen text-slate-200 p-6 pt-32">
+      <div className="max-w-7xl mx-auto space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 p-6 bg-white rounded-2xl shadow-lg border border-green-100">
-          <div className="mb-6 md:mb-0">
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mr-4 shadow-md">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                </svg>
-              </div>
-              <div>
-                <h1 className="font-bold lg:text-[28px] md:text-5xl bg-gradient-to-r from-green-600 to-emerald-800 bg-clip-text text-transparent">
-                  Shopping List
-                </h1>
-                <p className="text-green-700 mt-2 text-md">Create and manage your shopping items</p>
-              </div>
+        <div className="flex flex-col md:flex-row justify-between items-center gap-8 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[40px] p-10 shadow-2xl">
+          <div className="flex items-center gap-6">
+            <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/20 rotate-3">
+              <svg className="w-8 h-8 text-white -rotate-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+            </div>
+            <div>
+              <h1 className="text-4xl font-black text-white tracking-tight">Shopping <span className="text-emerald-400">List</span></h1>
+              <p className="text-slate-400 mt-1 font-medium italic underline decoration-emerald-500/30">Plan your household needs</p>
             </div>
           </div>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full md:w-auto">
-            <button className="group relative inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold text-md shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 hover:from-emerald-700 hover:to-green-700 w-full sm:w-auto"
-               onClick={()=>{navigate('/shopping/viewshopping'),
-               localStorage.setItem("currentpage","viewshopping")}}>
-                View shopping
-            </button>
+          
+          <div className="flex gap-4">
             <button
-              className="group relative inline-flex items-center justify-center gap-2 bg-black text-white px-6 py-3 rounded-xl font-semibold text-md shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 hover:from-emerald-700 hover:to-green-700 w-full sm:w-auto"
-              onClick={() =>{ navigate('/shopping/shoppinghistory'),
-                 localStorage.setItem("currentpage","shoppinghistory")
-              }}
+              onClick={() => navigate("/shopping/viewshopping")}
+              className="px-8 py-3 bg-white/5 hover:bg-white/10 text-white rounded-2xl font-bold transition-all border border-white/10 flex items-center gap-2"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-              View History
+              Vault
             </button>
+            {list.length > 0 && (
+              <button
+                onClick={handlesave}
+                className="px-8 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl font-black transition-all shadow-xl shadow-emerald-500/20 active:scale-95"
+              >
+                Save Draft
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           {/* Form Section */}
-          <div className="w-full bg-white p-8 rounded-2xl shadow-lg border border-green-800">
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold text-green-800 mb-2 flex items-center">
-                <svg className="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                </svg>
-                Add New Item
-              </h2>
-              <p className="text-black">Fill in the details below to add an item to your list</p>
-            </div>
-
-            <form onSubmit={handlesubmit}>
-              <div className="space-y-6">
-                <div className="group">
-                  <label htmlFor="productname" className="block mb-2 font-medium text-green-700 text-lg">
-                    Product Name
-                  </label>
-                   <input
-                      type="text"
-                      required
-                      name="productname"
-                      value={form.productname}
-                      onChange={handlechange}
-                      className="w-full pl-10 pr-4 py-3 border-2 border-green-900 rounded-xl focus:border-green-900 focus:ring-opacity-50 focus:outline-none transition-colors text-lg"
-                      placeholder="Enter product name"
-                    />
+          <div className="lg:col-span-4 h-fit">
+            <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[40px] p-8 shadow-2xl sticky top-36">
+              <h2 className="text-xl font-black text-white mb-8 tracking-tight uppercase text-xs opacity-50">Quick Add Entry</h2>
+              
+              <form onSubmit={handlesubmit} className="space-y-6">
+                <div className="space-y-2">
+                  <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Product Name</label>
+                  <input
+                    type="text"
+                    name="productname"
+                    value={form.productname}
+                    onChange={handlechange}
+                    placeholder="Enter item name..."
+                    required
+                    className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-slate-700 focus:ring-2 focus:ring-emerald-500/50 outline-none transition-all font-bold"
+                  />
                 </div>
 
-                <div className="group">
-                  <label htmlFor="quantity" className="block mb-2 font-medium text-green-700 text-lg">
-                    Quantity
-                  </label>
+                <div className="space-y-2">
+                  <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Category</label>
+                  <select
+                    name="category"
+                    value={form.category}
+                    onChange={handlechange}
+                    required
+                    className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white focus:ring-2 focus:ring-emerald-500/50 outline-none transition-all appearance-none cursor-pointer"
+                  >
+                    <option value="" disabled className="bg-slate-900">Select Category</option>
+                    {categories.map((cat) => (
+                      <option key={cat} value={cat} className="bg-slate-900">{cat}</option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Quantity</label>
                   <input
-                     type="text"
-                      required
-                      name="quantity"
-                      value={form.quantity}
-                      onChange={handlechange}
-                      className="w-full pl-10 pr-4 py-3 border-2 border-green-900 rounded-xl focus:border-green-900  focus:outline-none transition-colors text-lg"
-                      placeholder="e.g., 2 kg, 5 pieces"
-                    />
-                  
+                    type="text"
+                    name="quantity"
+                    value={form.quantity}
+                    onChange={handlechange}
+                    placeholder="e.g., 2 kg, 1 pack"
+                    required
+                    className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-slate-700 focus:ring-2 focus:ring-emerald-500/50 outline-none transition-all"
+                  />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full bg-black text-white py-3.5 px-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2"
+                  className="w-full py-5 bg-emerald-500 hover:bg-emerald-600 text-white font-black rounded-2xl shadow-xl shadow-emerald-500/20 transition-all active:scale-95 mt-4"
                 >
-                      Add to List
+                  Add to Queue
                 </button>
-              </div>
-            </form>
+              </form>
+            </div>
           </div>
 
-          {/* List Section */}
-          <div className="w-full bg-white p-2 rounded-2xl shadow-lg border border-green-100">
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-2xl font-bold text-green-800 flex items-center">
-                <svg className="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                </svg>
-                Your Shopping List
-                <span className="ml-3 bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full">
-                  {list.length} items
-                </span>
-              </h2>
-              
-              {list.length > 0 && (
-                <button
-                  onClick={() => handlesave()}
-                  className="bg-gradient-to-r from-amber-700 to-yellow-600 text-white font-bold px-5 py-2.5 rounded-xl hover:shadow-lg hover:from-amber-500 hover:to-yellow-600 transform hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
-                  </svg>
-                  Save List
-                </button>
-              )}
-            </div>
-
-            {list.length === 0 ? (
-              <div className="text-center py-16 rounded-xl border-2 border-dashed border-green-900">
-                <svg className="w-16 h-16 mx-auto text-red-900 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
-                </svg>
-                <h3 className="text-xl font-semibold text-black mb-2">Your list is empty</h3>
-                <p className="text-black">Start by adding items using the form on the left</p>
-              </div>
-            ) : (
-              <>
-                {/* Mobile Card View */}
-                <div className="block md:hidden space-y-4">
-                  {list.map((item, index) => (
-                    <div 
-                      key={index} 
-                      className="bg-white border-2 border-green-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow duration-200"
-                    >
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full flex bg-black items-center justify-center">
-                            <span className="text-sm font-semibold text-white">{index + 1}</span>
-                          </div>
-                          <div>
-                            <p className="text-xs text-gray-500 uppercase tracking-wide">Product</p>
-                            <p className="font-semibold text-lg text-black">{item.productname}</p>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="mb-4">
-                        <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Quantity</p>
-                        {editIndex === index ? (
-                          <input
-                            type="text"
-                            value={editQty}
-                            onChange={(e) => setEditQty(e.target.value)}
-                            className="w-full px-3 py-2 border-2 border-green-500 rounded-lg focus:outline-none focus:border-green-700"
-                          />
-                        ) : (
-                          <p className="text-base text-gray-800">{item.quantity}</p>
-                        )}
-                      </div>
-                      
-                      <div className="flex gap-2">
-                        {editIndex === index ? (
-                          <button 
-                            onClick={() => handlenewqnty(index)}
-                            className="flex-1 bg-green-600 text-white font-bold px-4 py-2.5 rounded-lg hover:bg-green-700 transition-colors"
-                          >
-                            Save
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => handleUpdateClick(index, item.quantity)}
-                            className="flex-1 border border-green-700 text-white bg-black font-bold px-4 py-2.5 rounded-lg hover:bg-gray-800 transition-colors"
-                          >
-                            Update
-                          </button>
-                        )}
-                        <button
-                          onClick={() => handledelete(index)}
-                          className="flex-1 inline-flex font-bold items-center justify-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-red-200 to-red-250 text-red-700 rounded-lg hover:from-red-200 hover:to-red-100 hover:text-red-800 transition-all duration-200 border border-red-200"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                          </svg>
-                          Remove
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+          {/* List Preview Table */}
+          <div className="lg:col-span-8">
+            <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[40px] p-8 shadow-2xl min-h-[500px]">
+              <div className="flex items-center justify-between mb-10">
+                <h2 className="text-2xl font-black text-white tracking-tight">Queue <span className="text-slate-600">Preview</span></h2>
+                <div className="px-4 py-1 bg-white/5 rounded-full border border-white/10 text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                  {list.length} Records
                 </div>
+              </div>
 
-                {/* Desktop Table View */}
-                <div className="hidden md:block overflow-hidden rounded-xl border border-green-900">
-                  <table className="w-full">
-                    <thead className="bg-gradient-to-r from-green-50 to-emerald-50">
-                      <tr>
-                        {keys.map((heading, index) => (
-                          <th
-                            key={index}
-                            className="px-6 py-4 text-left text-sm font-semibold text-green-900 uppercase tracking-wider border-b border-green-200"
-                          >
-                            {heading}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-green-100">
-                      {list.map((item, index) => (
-                        <tr 
-                          key={index} 
-                          className="hover:bg-green-50 transition-colors duration-150"
-                        >
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="flex items-center">
-                              <div className="w-8 h-8 rounded-full flex bg-black items-center justify-center mr-3">
-                                <span className="text-sm font-semibold text-white">{index + 1}</span>
+              <div className="overflow-x-auto rounded-[32px] border border-white/5">
+                <table className="w-full">
+                  <thead>
+                    <tr className="bg-white/5">
+                      <th className="px-8 py-5 text-left text-[10px] font-black text-slate-500 uppercase tracking-widest">Classification</th>
+                      <th className="px-8 py-5 text-left text-[10px] font-black text-slate-500 uppercase tracking-widest">Product</th>
+                      <th className="px-8 py-5 text-left text-[10px] font-black text-slate-500 uppercase tracking-widest">Amount</th>
+                      <th className="px-8 py-5 text-center text-[10px] font-black text-slate-500 uppercase tracking-widest">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5">
+                    {list.length > 0 ? (
+                      list.map((item, index) => (
+                        <tr key={index} className="group hover:bg-white/5 transition-all">
+                          <td className="px-8 py-6">
+                            <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-[10px] font-black text-emerald-400 uppercase tracking-widest">
+                              {item.category || "Misc"}
+                            </span>
+                          </td>
+                          <td className="px-8 py-6">
+                            <span className="text-white font-bold text-lg tracking-wide">{item.productname}</span>
+                          </td>
+                          <td className="px-8 py-6">
+                            {editIndex === index ? (
+                              <div className="flex items-center gap-2 animate-in zoom-in-95 duration-200">
+                                <input
+                                  type="text"
+                                  value={editQty}
+                                  onChange={(e) => setEditQty(e.target.value)}
+                                  className="w-24 px-4 py-2 bg-white/10 border border-emerald-500/50 rounded-xl text-white focus:outline-none font-bold"
+                                />
+                                <button onClick={() => handlenewqnty(index)} className="p-2 bg-emerald-500 text-white rounded-lg shadow-lg">
+                                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                  </svg>
+                                </button>
                               </div>
+                            ) : (
+                              <span className="text-white font-black tabular-nums">{item.quantity}</span>
+                            )}
+                          </td>
+                          <td className="px-8 py-6">
+                            <div className="flex items-center justify-center gap-3">
+                              <button
+                                onClick={() => handleUpdateClick(index, item.quantity)}
+                                className="p-3 text-slate-600 hover:text-blue-400 hover:bg-blue-400/10 rounded-2xl transition-all"
+                              >
+                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                              </button>
+                              <button
+                                onClick={() => handledelete(index)}
+                                className="p-3 text-slate-600 hover:text-red-400 hover:bg-red-400/10 rounded-2xl transition-all"
+                              >
+                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                              </button>
                             </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="font-lg text-lg text-black">{item.productname}</div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                           {editIndex === index ? (
-                                  <input
-                                    type="text"
-                                    value={editQty}
-                                    onChange={(e) => setEditQty(e.target.value)}
-                                  />
-                                ) : (
-                                  item.quantity
-                                )}
-                          </td>
-                          
-                         <td>
-                              {editIndex === index ? (
-                                <button onClick={() =>handlenewqnty(index)}>
-                                  Save
-                                </button>
-                              ) : (
-                                <button
-                                  onClick={() =>
-                                    handleUpdateClick(index, item.quantity)
-                                  }
-                                  className="border border-green-700 text-white bg-black text-center font-bold px-4 py-2 rounded-lg"
-                                >
-                                  Update
-                                </button>
-                              )}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-right">
-                            <button
-                              onClick={() => handledelete(index)}
-                              className="inline-flex font-bold items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-red-200 to-red-250 text-red-700 rounded-lg hover:from-red-200 hover:to-red-100 hover:text-red-800 transition-all duration-200 border border-red-200"
-                            >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                              </svg>
-                              Remove
-                            </button>
-                          </td>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </>
-            )}
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="4" className="px-6 py-40 text-center">
+                          <div className="flex flex-col items-center gap-4 opacity-10">
+                            <svg className="w-24 h-24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                            </svg>
+                            <p className="text-2xl font-black italic tracking-widest uppercase">Vault Empty</p>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </>
-);
-
+  );
 }
 
 export default Createshopping;

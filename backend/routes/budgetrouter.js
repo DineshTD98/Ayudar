@@ -15,7 +15,11 @@ const {
   gettotalbudget,
   monthlybudget,
   getcreatebudget,
-  getcreditbudget
+  getcreditbudget,
+  deletebudget,
+  deletetotalbudget,
+  clearcreditcard,
+  deletemonthlybudget
 } = require("../controller/budgetcontroller");
 router.post("/createexpense", auth, createexpense);
 router.get("/getexpense", auth, getexpenses);
@@ -35,4 +39,9 @@ router.post("/creditbudget", auth, creditcard);
 router.get("/getcreditbudget", auth, getcreditbudget);
 router.post('/monthlybudget', auth, monthlybudget)
 router.get('/gettotalbudget', auth, gettotalbudget)
+
+router.delete("/deletebudget/:id", auth, deletebudget)
+router.delete("/deletetotalbudget", auth, deletetotalbudget)
+router.delete("/clearcreditcard", auth, clearcreditcard)
+router.delete("/deletemonthlybudget/:id", auth, deletemonthlybudget)
 module.exports = router;

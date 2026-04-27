@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { setUsername, setPassword } from "../redux/slices/loginslice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
 import Showpassword from "../assets/password-show.png";
 import Hidepassword from "../assets/hide-password.jpg";
@@ -24,7 +24,8 @@ function Login({ setIsloggedin, setGetstarted }) {
     }
     setError("");
     try {
-      const response = await axios.post("https://ayudar.onrender.com/user/login", {
+      const API_URL = import.meta.env.VITE_API_URL;
+      const response = await axios.post(`${API_URL}/user/login`, {
         username,
         password,
       });
@@ -127,6 +128,14 @@ function Login({ setIsloggedin, setGetstarted }) {
                       className="w-5 h-5 opacity-40 hover:opacity-100 transition-opacity duration-200 invert"
                     />
                   </button>
+                </div>
+                <div className="flex justify-end mt-1">
+                  <Link 
+                    to="/forgot-password" 
+                    className="text-emerald-400 hover:text-emerald-300 text-xs font-medium transition-colors"
+                  >
+                    Forgot Password?
+                  </Link>
                 </div>
               </div>
 

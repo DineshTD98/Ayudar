@@ -1,182 +1,128 @@
 import { useContext } from "react";
-import { userContext } from "../App";
+import { UserContext } from "../context/UserContext";
 import DashboardCard from "../components/DashboardCard";
 import Infoslide2 from "../assets/infoslideimages/infoslideimage3.jpg";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 function Home() {
-  const { remainingbudget, alerts, todayevents } = useContext(userContext);
+  const { remainingbudget, alerts, todayevents } = useContext(UserContext);
   const [opennav,setOpennav] = useState(false);
   const navigate = useNavigate();
 
   return (
-          <div
-              className="
-                min-h-screen w-full
-                bg-center bg-no-repeat bg-cover
-                relative overflow-hidden flex flex-col pb-12 px-6
-                md:flex
-              "
-               style={{
-                  backgroundImage: `url(${Infoslide2})`,
-                }}
-              >
-                
-      {/* Dark Overlay */}
-            <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px] z-0"></div>
+    <div className="relative z-10 pt-28 sm:pt-32 max-w-7xl mx-auto w-full px-4 sm:px-6 pb-12">
 
     
-       <div className="fixed top-0 left-0 right-0 z-50 flex items-center h-24 px-6">
-          <div className="flex-grow text-center lg:text-right">
-               <p className="font-display text-4xl font-extrabold tracking-[0.25em] uppercase
-                  bg-gradient-to-r from-emerald-300 via-white to-emerald-300 
-                  bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(52,211,153,0.35)]">
-                     Ayudar
-                </p>
-            </div>
-            <div className="lg:hidden w-1/2 sm:w-1/3 text-right">
-            <button className=" text-white p-2" onClick={()=>setOpennav(!opennav)}>
-               <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                {
-                  opennav ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                         : (
-                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-                 )}
-                </svg>
-            </button>
-            </div>
-            <div className="hidden w-1/2 lg:flex gap-4 justify-end">
-                <button
-                  onClick={() => {
-                    localStorage.removeItem("token");
-                    localStorage.removeItem("currentpage");
-                    navigate("/");
-                  }}
-                  className="px-7 py-2.5 bg-white/10 hover:bg-red-500/20 text-white font-display font-semibold text-sm tracking-wide rounded-full border border-white/20 transition-all duration-300 backdrop-blur-md hover:scale-105 hover:shadow-lg hover:shadow-red-500/20"
-                >
-                  Logout
-                </button>
-                <button
-                  onClick={() => navigate("/profile")}
-                  className="px-7 py-2.5 bg-white/10 hover:bg-emerald-500/20 text-white font-display font-semibold text-sm tracking-wide rounded-full border border-white/20 transition-all duration-300 backdrop-blur-md hover:scale-105 hover:shadow-lg hover:shadow-emerald-500/20"
-                >
-                  Profile
-                </button>
-            </div>
-     </div>
-     {/* Mobile menu */}
-     <div className={`lg:hidden w-full fixed top-24 left-0 right-0 z-40 overflow-hidden transition-all duration-300 ease-in-out ${opennav ? "max-h-screen opacity-100" : "opacity-0 max-h-0"}`}>
-        <div className="bg-black/50 backdrop-blur-md px-6 py-4 space-y-3">
-            <button
-                  onClick={() => {
-                    localStorage.removeItem("token");
-                    localStorage.removeItem("currentpage");
-                    navigate("/");
-                  }}
-                  className="w-full px-7 py-2.5 bg-white/10 hover:bg-red-500/20 text-white font-display font-semibold text-sm tracking-wide rounded-full border border-white/20 transition-all duration-300 backdrop-blur-md hover:scale-105 hover:shadow-lg hover:shadow-red-500/20"
-                >
-                  Logout
-                </button>
-                <button
-                  onClick={() => navigate("/profile")}
-                  className="w-full px-7 py-2.5 bg-white/10 hover:bg-emerald-500/20 text-white font-display font-semibold text-sm tracking-wide rounded-full border border-white/20 transition-all duration-300 backdrop-blur-md hover:scale-105 hover:shadow-lg hover:shadow-emerald-500/20"
-                >
-                  Profile
-                </button>
-        </div>
-           </div>
-     
-
-     
-    <div className="relative z-10 pt-32 max-w-7xl mx-auto w-full">
+    <div className="relative z-10 pt-0 max-w-7xl mx-auto w-full">
         
       <div className="flex flex-col lg:flex-row lg:gap-6 items-start lg:items-start">
           <div className="mb-12 animate-fade-in flex flex-col gap-3 lg:item-start w-full lg:w-1/2">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2">
               Welcome back, <span className="text-emerald-400">Family</span>!
             </h1>
-            <p className="text-white/70 text-lg font-light">
+            <p className="text-white/70 text-base sm:text-lg font-light">
               Here's what's happening with your family today.
             </p>
           </div>
 
           <div className="mb-12 lg:w-1/2 w-full">
             <div className="animate-fade-in relative z-12">
-              <h3 className="block text-center w-full text-red-400 font-display font-extrabold text-2xl md:text-3xl lg:text-[32px] tracking-tight animate-shake-80% animate-blink drop-shadow-[0_0_15px_rgba(248,113,113,0.5)]">
-                Important Alerts<span className="text-red-500 text-3xl md:text-[36px]">!</span>
-              </h3>
- 
-             <div className="flex lg:flex-row flex-col gap-4 md:gap-6 items-stretch">
-  {/* Today Events */}
-                <div className="flex flex-col w-full lg:w-1/2">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></span>
-                    <h4 className="text-blue-300 font-display font-semibold tracking-wide text-sm md:text-base">
-                      Today Events
-                    </h4>
-                  </div>
-
-                <div className="border-2 border-red-500 bg-gradient-to-br from-blue-900/30 to-blue-800/10 p-4 md:p-5 rounded-2xl max-h-[150px] md:max-h-[180px] overflow-y-auto backdrop-blur-md shadow-lg shadow-blue-500/20">
-                  {todayevents.length > 0 ? (
-                    todayevents.map((event, index) => (
-                      <div key={event._id} className="flex flex-col gap-1 mb-3 last:mb-0">
-                        <p className="text-blue-200 font-semibold text-base md:text-lg">
-                          {index + 1}. {event.title}
-                        </p>
-                        <p className="text-white/70 text-sm md:text-base">{event.description}</p>
-                        <p className="text-blue-400/50 text-sm md:text-base">{event.date}</p>
-                  </div>
-                 ))
-                ) : (
-                  <p className="text-white/40 text-center italic text-sm md:text-base">
-                    No urgent events today
-                  </p>
-                )}
-                </div>
-                </div>
-              <div className="flex flex-col w-full lg:w-1/2">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></span>
-                    <h4 className="text-emerald-300 font-display font-semibold tracking-wide text-sm md:text-base">
-                      Tomorrow Alerts
-                    </h4>
-             </div>
-
-            <div className="border-2 border-emerald-500/30 bg-gradient-to-br from-emerald-900/30 to-emerald-800/10 p-4 md:p-5 rounded-2xl max-h-[150px] md:max-h-[180px] overflow-y-auto backdrop-blur-md shadow-lg shadow-emerald-500/20">
-              {alerts.length > 0 ? (
-                alerts.map((alert, index) => (
-                  <div key={alert._id} className="flex flex-col gap-1 mb-3 last:mb-0">
-                    <p className="text-emerald-200 font-semibold text-base md:text-lg">
-                      {index + 1}. {alert.title}
-                    </p>
-                    <p className="text-white/70 text-sm md:text-base">{alert.description}</p>
-                    <p className="text-emerald-400/50 text-sm md:text-base">{alert.date}</p>
-                  </div>
-                ))
-              ) : (
-                <p className="text-white/40 text-center italic text-sm md:text-base">
-                  No alerts for tomorrow
-                </p>
-              )}
-            </div>
+              <div className="flex items-center gap-4 mb-8">
+                <div className="h-px flex-grow bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+                <h3 className="text-white font-display font-bold text-xl md:text-2xl tracking-widest uppercase opacity-80 flex items-center gap-3">
+                  <span className="relative flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                  </span>
+                  Daily Briefing
+                </h3>
+                <div className="h-px flex-grow bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
               </div>
+ 
+             <div className="flex flex-col gap-6">
+                {/* Today Events */}
+                <div className="group relative">
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
+                  <div className="relative bg-black/40 backdrop-blur-xl border border-white/10 p-6 rounded-3xl transition-all duration-300">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center">
+                          <svg className="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                        <h4 className="text-white font-semibold text-lg">Today's Schedule</h4>
+                      </div>
+                      <span className="text-xs font-bold text-blue-400 uppercase tracking-widest px-3 py-1 bg-blue-500/10 rounded-full border border-blue-500/20">Active</span>
+                    </div>
 
-  
-  
+                    <div className="space-y-4 max-h-[160px] overflow-y-auto pr-2 custom-scrollbar">
+                      {todayevents.length > 0 ? (
+                        todayevents.map((event, index) => (
+                          <div key={event._id} className="group/item flex items-start gap-4 p-3 rounded-2xl hover:bg-white/5 transition-colors duration-200">
+                            <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-white/40 font-bold text-xs group-hover/item:text-blue-400 transition-colors">
+                              {index + 1}
+                            </span>
+                            <div>
+                              <p className="text-white/90 font-medium text-base mb-0.5">{event.title}</p>
+                              <p className="text-white/50 text-sm font-light leading-relaxed">{event.description}</p>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="py-6 text-center">
+                          <p className="text-white/30 italic text-sm">No scheduled events for today</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Tomorrow Alerts */}
+                <div className="group relative">
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-amber-500 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
+                  <div className="relative bg-black/40 backdrop-blur-xl border border-white/10 p-6 rounded-3xl transition-all duration-300">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
+                          <svg className="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        </div>
+                        <h4 className="text-white font-semibold text-lg">Upcoming Tomorrow</h4>
+                      </div>
+                      <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest px-3 py-1 bg-emerald-500/10 rounded-full border border-emerald-500/20">Pending</span>
+                    </div>
+
+                    <div className="space-y-4 max-h-[160px] overflow-y-auto pr-2 custom-scrollbar">
+                      {alerts.length > 0 ? (
+                        alerts.map((alert, index) => (
+                          <div key={alert._id} className="group/item flex items-start gap-4 p-3 rounded-2xl hover:bg-white/5 transition-colors duration-200">
+                            <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-white/40 font-bold text-xs group-hover/item:text-emerald-400 transition-colors">
+                              {index + 1}
+                            </span>
+                            <div>
+                              <p className="text-white/90 font-medium text-base mb-0.5">{alert.title}</p>
+                              <p className="text-white/50 text-sm font-light leading-relaxed">{alert.description}</p>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="py-6 text-center">
+                          <p className="text-white/30 italic text-sm">Clear schedule for tomorrow</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
              </div>
 
         {/* Dashboard Grid */}
-             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+             <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           <DashboardCard
             title="Budget"
             color="bg-emerald-500"
@@ -258,9 +204,9 @@ function Home() {
           />
              </div>
          </div>
-         <div className="mt-12 p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-md">
-           <h2 className="text-2xl font-semibold text-white mb-4">Quick Tip</h2>
-           <p className="text-white/60 leading-relaxed font-light">
+         <div className="mt-8 sm:mt-12 p-5 sm:p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-md">
+           <h2 className="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">Quick Tip</h2>
+           <p className="text-white/60 leading-relaxed font-light text-sm sm:text-base">
              "The key to a happy home is organization. Use Ayudar to track your daily expenses and never lose a document again."
            </p>
          </div>

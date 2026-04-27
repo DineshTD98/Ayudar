@@ -39,88 +39,81 @@ function Expensetable({expense}) {
 
   return (
     <>
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4 p-2 bg-slate-50 rounded-2xl border border-slate-100">
-          <div className="flex items-center gap-2 px-3">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Category</span>
-            <select 
-              value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value)}
-              className="bg-transparent font-bold text-slate-700 outline-none cursor-pointer text-sm"
-            >
-              <option value="All">All Categories</option>
-              {categories.map((cat) => (
-                <option key={cat._id} value={cat._id}>{cat.name}</option>
-              ))}
-            </select>
-          </div>
-          <div className="w-px h-8 bg-slate-200 hidden md:block"></div>
-          <div className="flex items-center gap-2 px-3">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Month</span>
-            <select 
-              value={filterMonth}
-              onChange={(e) => setFilterMonth(e.target.value)}
-              className="bg-transparent font-bold text-slate-700 outline-none cursor-pointer text-sm"
-            >
-              <option value="All">Select Month</option>
-              {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map((m, i) => (
-                <option key={m} value={i}>{m}</option>
-              ))}
-            </select>
-          </div>
+    <div className="space-y-6">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-6 p-3 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[24px]">
+        <div className="flex items-center gap-3 px-4">
+          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Category</span>
+          <select 
+            value={filterCategory}
+            onChange={(e) => setFilterCategory(e.target.value)}
+            className="bg-transparent font-bold text-white outline-none cursor-pointer text-sm"
+          >
+            <option value="All" className="bg-slate-900">All Categories</option>
+            {categories.map((cat) => (
+              <option key={cat._id} value={cat._id} className="bg-slate-900">{cat.name}</option>
+            ))}
+          </select>
         </div>
+        <div className="w-px h-8 bg-white/10 hidden md:block" />
+        <div className="flex items-center gap-3 px-4">
+          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Timeline</span>
+          <select 
+            value={filterMonth}
+            onChange={(e) => setFilterMonth(e.target.value)}
+            className="bg-transparent font-bold text-white outline-none cursor-pointer text-sm"
+          >
+            <option value="All" className="bg-slate-900">Entire History</option>
+            {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map((m, i) => (
+              <option key={m} value={i} className="bg-slate-900">{m}</option>
+            ))}
+          </select>
+        </div>
+      </div>
 
-        <div className="overflow-x-auto">
-        <table className="min-w-full border border-gray-300 rounded-lg overflow-hidden">
-          <thead className="bg-green-700 text-white">
+      <div className="overflow-x-auto rounded-[32px] border border-white/5">
+        <table className="min-w-full">
+          <thead className="bg-white/5">
             <tr>
-              <th className="px-4 py-3 text-left text-sm font-semibold">
-                Title
-              </th>
-              <th className="px-4 py-3 text-left text-sm font-semibold">
-                Amount
-              </th>
-              <th className="px-4 py-3 text-left text-sm font-semibold">
-                Category
-              </th>
-              <th className="px-4 py-3 text-left text-sm font-semibold">
-                Date
-              </th>
+              <th className="px-6 py-4 text-left text-[10px] font-black text-slate-500 uppercase tracking-widest">Descriptor</th>
+              <th className="px-6 py-4 text-left text-[10px] font-black text-slate-500 uppercase tracking-widest">Amount</th>
+              <th className="px-6 py-4 text-left text-[10px] font-black text-slate-500 uppercase tracking-widest">Classification</th>
+              <th className="px-6 py-4 text-left text-[10px] font-black text-slate-500 uppercase tracking-widest">Date</th>
             </tr>
           </thead>
 
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-white/5">
             {filteredExpenses.map((exp) => (
-              <tr
-                key={exp._id}
-                className="hover:bg-gray-100 transition-colors"
-              >
-                <td className="px-4 py-2 text-gray-800">
-                  {exp.title}
+              <tr key={exp._id} className="group hover:bg-white/5 transition-all">
+                <td className="px-6 py-5">
+                  <span className="font-bold text-white tracking-wide">{exp.title}</span>
                 </td>
-                <td className="px-4 py-2 text-gray-800 font-medium">
-                  ₹{exp.amount}
+                <td className="px-6 py-5 font-black text-emerald-400 tabular-nums">
+                  ₹{Number(exp.amount).toLocaleString()}
                 </td>
-                <td className="px-4 py-2 text-gray-700">
-                  {typeof exp.category === 'object' 
-                    ? exp.category?.name 
-                    : (categories.find(c => c._id === exp.category)?.name || "others")
-                  }
+                <td className="px-6 py-5">
+                  <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    {typeof exp.category === 'object' 
+                      ? exp.category?.name 
+                      : (categories.find(c => c._id === exp.category)?.name || "others")
+                    }
+                  </span>
                 </td>
-                <td className="px-4 py-2 text-gray-600">
-                  {new Date(exp.date).toLocaleDateString()}
+                <td className="px-6 py-5 text-slate-500 text-sm font-medium">
+                  {new Date(exp.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                 </td>
               </tr>
             ))}
             {filteredExpenses.length === 0 && (
               <tr>
-                <td colSpan="4" className="px-4 py-8 text-center text-gray-400 italic">
-                  No expenses matches your filters.
+                <td colSpan="4" className="px-6 py-16 text-center text-slate-600 italic font-medium">
+                  No expense records match your current filters.
                 </td>
               </tr>
             )}
           </tbody>
         </table>
-      </div>   
+      </div>
+    </div>   
      </>
   )
 }

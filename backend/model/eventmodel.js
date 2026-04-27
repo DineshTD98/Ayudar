@@ -8,15 +8,23 @@ const eventmodelschema=new mongoose.Schema({
     },
     description:{
         type:String,
-        required:true
+        default:""
     },
     date:{
         type:String,
         required:true
     },
+    time:{
+        type:String,
+        default:""
+    },
     color:{
         type:String,
         required:true
+    },
+    category:{
+        type:String,
+        default:"Personal"
     },
     user:{
         type:String,

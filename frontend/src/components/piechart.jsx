@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 
 function MyPieChart({ expense }) {
@@ -22,11 +21,8 @@ function MyPieChart({ expense }) {
     percentage:Math.floor((amount/totalexpenseamount*100)*100)/100
   }))
   
+  
   console.log(percentage)
-  const data = Object.keys(categoryStats).map((name) => ({
-    name,
-    percentage:percentage
-  }));
   
 
   return (

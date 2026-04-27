@@ -124,22 +124,33 @@ exports.createdocumentcategory = async (req, res, next) => {
 
 // get document category
 
-exports.getdocumentcategory=async(req,res,next)=>{
+exports.getdocumentcategory = async (req, res, next) => {
   try {
-    const category=await Documentcategory.find({userId:req.user.id})
-    if(!category){
-      const error=new Error("category not found")
-      error.statusCode=404
-      return next(error)
+    let category = await Documentcategory.find({ userId: req.user.id });
+    
+    // If no custom categories found, return helpful defaults
+    if (!category || category.length === 0) {
+      const defaults = [
+        { _id: "def1", name: "identity" },
+        { _id: "def2", name: "health" },
+        { _id: "def3", name: "education" },
+        { _id: "def4", name: "finance" },
+        { _id: "def5", name: "property" }
+      ];
+      return res.status(200).json({
+        message: "Default categories provided",
+        category: defaults
+      });
     }
+
     res.status(200).json({
-      message:"category successfully received",
+      message: "Category successfully received",
       category
-    })
+    });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 // get search documents
 

@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 import Firstpage from "./pages/firstpage";
 import Info from "./components/Info";
@@ -30,6 +30,8 @@ import Shopping from "./pages/Shopping";
 import Viewshopping from "./components/viewshopping";
 import Createshopping from "./components/createshopping";
 import Shoppinghistory from "./components/shoppinghistory";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 function AppRoutes({
   isloggedin,
@@ -92,6 +94,9 @@ function AppRoutes({
           />
         }
       />
+      
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password/:token" element={<ResetPassword />} />
     
     {/*protected routes */}
 
@@ -114,7 +119,7 @@ function AppRoutes({
             <Route path="overview" element={<></>} />
             <Route path="create" element={<Createbudget />} />
             <Route path="expenses" element={<Expenses />} />
-            <Route path="transactions" element={<Transactions />} />
+            {/* <Route path="transactions" element={<Transactions />} /> */}
             <Route path="subscriptions" element={<Subscriptions />} />
           </Route>
         

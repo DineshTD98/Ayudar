@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { setSubscription } from "../redux/slices/subscriptionslice";
 import useapi from "../customehooks/useapi";
 
@@ -11,7 +11,7 @@ function Subscriptions() {
     price: "",
   });
 
-  const { request, error, loading } = useapi();
+  const { request, loading } = useapi();
   const [createsubscription, setCreateSubscription] = useState(false);
   const subscriptionitems = useSelector(
     (state) => state.Subscriptionlist?.value || [],

@@ -24,7 +24,7 @@ function Signuppage({ setIsloggedin }) {
     setProfile((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFullname = (e) => {
+  const handleFullname = () => {
     setProfile((prev) => ({
       ...prev,
       fullname: prev.firstname + " " + prev.lastname,
@@ -144,7 +144,7 @@ function Signuppage({ setIsloggedin }) {
                       value={profile.firstname}
                       onChange={(e) => {
                         handleChange(e);
-                        handleFullname(e);
+                        handleFullname();
                       }}
                       onBlur={(e) => validateField("firstname", e.target.value)}
                       className={`block w-full pl-9 pr-3 py-2 border rounded-lg focus:ring-2 focus:border-black transition duration-200 outline-none text-base ${
@@ -186,7 +186,7 @@ function Signuppage({ setIsloggedin }) {
                       value={profile.lastname}
                       onChange={(e) => {
                         handleChange(e);
-                        handleFullname(e);
+                        handleFullname();
                       }}
                       onBlur={(e) => validateField("lastname", e.target.value)}
                       className={`block w-full pl-9 pr-3 py-2 border rounded-lg focus:ring-2 focus:border-black transition duration-200 outline-none text-base ${

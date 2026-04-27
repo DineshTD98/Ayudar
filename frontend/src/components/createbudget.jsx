@@ -1,21 +1,19 @@
-import { useEffect, useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { setCreatebudget } from "../redux/slices/createbudgetslice";
+import { setTotalbudget } from "../redux/slices/totalbudgetslice";
 import { updateTotalbudget } from "../redux/slices/totalbudgetslice";
 import { useDispatch, useSelector } from "react-redux";
 import useapi from "../customehooks/useapi";
 import { useOutletContext } from "react-router-dom";
 function Createbudget() {
-  const {setCreditcardamount}=useOutletContext();
+  const {setCreditcardamount,creditcardamount}=useOutletContext();
   const Createbudget = useSelector((state) => state.Createbudget.value);
-  const { request, error, loading } = useapi();
+  const { request } = useapi();
   const [creditcard, setCreditcard] = useState("");
   const dispatch = useDispatch();
-  const [nettotal, setNettotal] = useState(0);
-  const [sessionIncome, setSessionIncome] = useState(0);
-  const [sessionCreditAmount, setSessionCreditAmount] = useState(0);
   const [filterSource, setFilterSource] = useState("All");
   const [filterMonth, setFilterMonth] = useState("All");
-  
+  const [alert , setAlert]=useState(false)
  // form state creation to add the budget
   const [form, setForm] = useState({
     amount: "",
@@ -53,20 +51,24 @@ function Createbudget() {
       });
       console.log(response.Createdbudget);
       dispatch(setCreatebudget([...Createbudget, response.Createdbudget]));
-      setSessionIncome(response.Createdbudget.amount);
     } catch (err) {
       console.log(err.message);
     }
   };
 
-  //useeffect to add amount to the nettotal 
-  useEffect(() => {
-    setNettotal(
-      Number(sessionCreditAmount || 0) +
-        Number(sessionIncome || 0),
-    );
-  }, [sessionIncome, sessionCreditAmount]);
+  let budgetamount=Createbudget.length >0 ? Createbudget[Createbudget.length-1].amount:0;
+  let updatednettotal=budgetamount + creditcardamount
+  // Derive session totals from Redux and Context
+  const sessionIncome = useMemo(() => {
+    return Createbudget.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+  }, [Createbudget]);
 
+  const sessionCreditAmount = Number(creditcardamount || 0);
+
+  const nettotal = useMemo(() => {
+    return sessionCreditAmount + sessionIncome;
+  }, [sessionIncome, sessionCreditAmount]);
+  
 
   // add button to handle the credit card
   const handlecreditsubmit = async (e) => {
@@ -79,7 +81,6 @@ function Createbudget() {
       });
       console.log(response.creditbudget);
       setCreditcardamount(response.creditbudget.limit);
-      setSessionCreditAmount(response.creditbudget.limit);
     } catch (err) {
       return console.log(err.message);
     }
@@ -98,14 +99,39 @@ function Createbudget() {
           dispatch(setCreatebudget([]))
           dispatch(updateTotalbudget(response.activebudget))
           setCreditcardamount('')
-          setNettotal(0)
-          setSessionIncome(0)
-          setSessionCreditAmount(0)
-      }
+        }
       catch(err){
         console.log(err.message)
       }
   }
+
+  const handleClearHistory = async () => {
+    if (!window.confirm("Are you sure you want to clear your entire budget history? This cannot be undone.")) return;
+    try {
+      await request({
+        url: '/budget/deletetotalbudget',
+        method: 'delete'
+      });
+      dispatch(setTotalbudget([]));
+      alert("Budget history cleared");
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
+  const handleClearCredit = async () => {
+    if (!window.confirm("Are you sure you want to clear your credit card allocation?")) return;
+    try {
+      await request({
+        url: '/budget/clearcreditcard',
+        method: 'delete'
+      });
+      setCreditcardamount(0);
+      alert("Credit card cleared");
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
 
   // filtering for the table
 
@@ -121,313 +147,310 @@ function Createbudget() {
     });
   }, [Createbudget, filterSource, filterMonth]);
 
-  return (
-    <div className="max-w-7xl mx-auto px-3 sm:px-4 py-6 sm:py-8 space-y-6 sm:space-y-8">
-      {/* Header Section */}
-      <div className="text-center space-y-2">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-800 tracking-tight">
-          Create Budget
-        </h1>
-        <p className="text-slate-500 text-base sm:text-lg">
-          Plan your finances and track your spending goals
-        </p>
-      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Forms Section (Left) */}
-        <div className="lg:col-span-8 space-y-8">
-          
-          {/* Main Budget Form Card */}
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden transition-all hover:shadow-md">
-            <div className="bg-emerald-900 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
-              <h2 className="text-white font-bold text-lg sm:text-xl flex items-center gap-2">
-                <span className="w-7 h-7 sm:w-8 sm:h-8 bg-white/20 rounded-lg flex items-center justify-center text-sm sm:text-base">💰</span>
-                Income Source
-              </h2>
-            </div>
+  // deleting budget from the table
+
+    const handledeletebudget = async (id) => {
+        const confirmdelete=window.confirm("do you want to delete the budget")
+        if(!confirmdelete){
+            return;
+        }
+        setAlert(!alert);
+
+      const updated = Createbudget.filter((item) => item._id !== id)
+      dispatch(setCreatebudget(updated));
+         try{
+            await request({
+               url:`budget/deletebudget/${id}`,
+               method:"delete"
+            })
             
-            <form onSubmit={handlesubmit} className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-slate-700 block ml-1">
-                    Amount
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium">₹</span>
+            }
+            catch(err){
+                console.log(err.message)
+             }
+        }
+  return (
+    <div className="min-h-screen bg-[#0f172a] text-slate-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-8 sm:space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        
+        {/* Header Section */}
+        <div className="text-center space-y-4">
+          <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tight">
+            Configure Your <span className="text-emerald-400">Budget</span>
+          </h1>
+          <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+            Build your financial foundation. Track income sources and allocate your credit limits with precision.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+          {/* Forms Section (Left) */}
+          <div className="lg:col-span-8 space-y-10">
+            
+            {/* Main Budget Form Card */}
+            <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[40px] overflow-hidden shadow-2xl">
+              <div className="bg-gradient-to-r from-emerald-500/20 to-teal-500/20 px-8 py-6 border-b border-white/10">
+                <h2 className="text-white font-bold text-xl flex items-center gap-3">
+                  <div className="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center text-xl">💰</div>
+                  Income Allocation
+                </h2>
+              </div>
+              
+              <form onSubmit={handlesubmit} className="p-5 sm:p-8 lg:p-10 space-y-6 sm:space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-3">
+                    <label className="text-xs font-black uppercase tracking-widest text-slate-500 ml-1">
+                      Amount (₹)
+                    </label>
+                    <div className="relative group">
+                      <span className="absolute left-5 top-1/2 -translate-y-1/2 text-emerald-400 font-bold">₹</span>
+                      <input
+                        type="number"
+                        name="amount"
+                        value={form.amount}
+                        onChange={handlechange}
+                        placeholder="0.00"
+                        className="w-full pl-10 pr-6 py-4 rounded-2xl bg-white/5 border border-white/10 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all font-bold"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <label className="text-xs font-black uppercase tracking-widest text-slate-500 ml-1">
+                      Entry Date
+                    </label>
                     <input
-                      type="number"
-                      name="amount"
-                      value={form.amount}
+                      type="date"
+                      name="createddate"
+                      value={form.createddate}
                       onChange={handlechange}
-                      placeholder="0.00"
-                      className="w-full pl-8 pr-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all outline-none"
+                      className="w-full px-6 py-4 rounded-2xl bg-white/5 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
                     />
+                  </div>
+
+                  <div className="space-y-3 md:col-span-2">
+                    <label className="text-xs font-black uppercase tracking-widest text-slate-500 ml-1">
+                      Income Source
+                    </label>
+                    <select
+                      name="source"
+                      value={form.source}
+                      onChange={handlechange}
+                      className="w-full px-6 py-4 rounded-2xl bg-white/5 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all appearance-none bg-no-repeat bg-[right_1.5rem_center]"
+                    >
+                      <option value="" disabled className="bg-slate-900">Select the source of income</option>
+                      <option value="Salary" className="bg-slate-900">Salary</option>
+                      <option value="Family income" className="bg-slate-900">Family income</option>
+                      <option value="Business" className="bg-slate-900">Business</option>
+                      <option value="Other" className="bg-slate-900">Other</option>
+                    </select>
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-slate-700 block ml-1">
-                    Created Date
-                  </label>
-                  <input
-                    type="date"
-                    name="createddate"
-                    value={form.createddate}
-                    onChange={handlechange}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all outline-none"
-                  />
-                </div>
-
-                <div className="space-y-2 md:col-span-2">
-                  <label className="text-sm font-semibold text-slate-700 block ml-1">
-                    Source of Income
-                  </label>
-                  <select
-                    name="source"
-                    value={form.source}
-                    onChange={handlechange}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all outline-none appearance-none bg-no-repeat bg-[right_1rem_center] bg-[length:1em_1em]"
-                    style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")` }}
+                <div className="flex justify-end">
+                  <button
+                    type="submit"
+                    className="group bg-emerald-500 hover:bg-emerald-600 text-white font-black py-4 px-10 rounded-2xl shadow-xl shadow-emerald-500/20 transition-all active:scale-95 flex items-center gap-2"
                   >
-                    <option value="" disabled>Select the source of income</option>
-                    <option value="Salary">Salary </option>
-                    <option value="Family income">Family income </option>
-                    <option value="Business">Business </option>
-                    <option value="Other">Other </option>
-                  </select>
+                    Generate Entry
+                    <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                  </button>
                 </div>
-              </div>
-
-              <div className="flex justify-end pt-4">
-                <button
-                  type="submit"
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg shadow-emerald-600/20 transition-all hover:-translate-y-0.5 active:translate-y-0"
-                >
-                  Generate Budget
-                </button>
-              </div>
-            </form>
-          </div>
-
-          {/* Credit Card Card */}
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden transition-all hover:shadow-md">
-            <div className="bg-gray-600 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
-              <h2 className="text-white font-bold text-lg sm:text-xl flex items-center gap-2">
-                <span className="w-7 h-7 sm:w-8 sm:h-8 bg-white/20 rounded-lg flex items-center justify-center text-sm sm:text-base">💳</span>
-                Credit Card Configuration
-              </h2>
+              </form>
             </div>
 
-            <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
-              <div className="flex items-center gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                <label className="text-sm font-bold text-slate-700">Do you have a credit card?</label>
-                <div className="flex bg-white p-1 rounded-lg border border-slate-200">
-                  <button 
-                    onClick={() => setCreditcard("yes")}
-                    className={`px-4 py-1.5 rounded-md text-sm font-bold transition-all ${creditcard === 'yes' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 hover:bg-slate-50'}`}
-                  >
-                    Yes
-                  </button>
-                  <button 
-                    onClick={() => setCreditcard("no")}
-                    className={`px-4 py-1.5 rounded-md text-sm font-bold transition-all ${creditcard === 'no' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 hover:bg-slate-50'}`}
-                  >
-                    No
-                  </button>
+            {/* Credit Card Card */}
+            <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl lg:rounded-[40px] overflow-hidden shadow-2xl">
+              <div className="bg-gradient-to-r from-blue-500/20 to-indigo-500/20 px-8 py-6 border-b border-white/10">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-white font-bold text-xl flex items-center gap-3">
+                    <div className="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center text-xl">💳</div>
+                    Credit Card Settings
+                  </h2>
+                  <div className="flex bg-white/5 p-1 rounded-xl border border-white/10">
+                    <button 
+                      onClick={() => setCreditcard("yes")}
+                      className={`px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${creditcard === 'yes' ? 'bg-blue-500 text-white shadow-lg' : 'text-slate-400 hover:bg-white/5'}`}
+                    >
+                      Yes
+                    </button>
+                    <button 
+                      onClick={() => setCreditcard("no")}
+                      className={`px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${creditcard === 'no' ? 'bg-blue-500 text-white shadow-lg' : 'text-slate-400 hover:bg-white/5'}`}
+                    >
+                      No
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              {creditcard === "yes" && (
-                <form onSubmit={handlecreditsubmit} className="animate-in fade-in slide-in-from-top-4 duration-300 space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-sm font-semibold text-slate-700 block ml-1">Card Name</label>
-                      <input
-                        type="text"
-                        name="creditcardname"
-                        value={creditcardform.creditcardname}
-                        onChange={handlecreditchange}
-                        placeholder="e.g., Rewards Visa"
-                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-semibold text-slate-700 block ml-1">Limit Amount</label>
-                      <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium">₹</span>
+              <div className="p-8 sm:p-10">
+                {creditcard === "yes" ? (
+                  <form onSubmit={handlecreditsubmit} className="space-y-8 animate-in fade-in zoom-in-95 duration-500">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className="space-y-3">
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-500 ml-1">Card Title</label>
+                        <input
+                          type="text"
+                          name="creditcardname"
+                          value={creditcardform.creditcardname}
+                          onChange={handlecreditchange}
+                          placeholder="e.g., Rewards Visa"
+                          className="w-full px-6 py-4 rounded-2xl bg-white/5 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                        />
+                      </div>
+                      <div className="space-y-3">
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-500 ml-1">Limit (₹)</label>
                         <input
                           type="number"
                           name="limit"
                           value={creditcardform.limit}
                           onChange={handlecreditchange}
                           placeholder="0.00"
-                          className="w-full pl-8 pr-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
+                          className="w-full px-6 py-4 rounded-2xl bg-white/5 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-bold"
                         />
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-semibold text-slate-700 block ml-1">Interest Rate (%)</label>
-                      <input
-                        type="text"
-                        name="interest"
-                        value={creditcardform.interest}
-                        onChange={handlecreditchange}
-                        placeholder="12.5"
-                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
-                      />
+                    <div className="flex justify-between items-center pt-4">
+                      {creditcardamount > 0 && (
+                        <button onClick={handleClearCredit} type="button" className="text-xs font-black text-red-400 uppercase tracking-widest hover:underline">
+                          Clear Current Card
+                        </button>
+                      )}
+                      <button type="submit" className="ml-auto bg-blue-500 hover:bg-blue-600 text-white font-black py-4 px-10 rounded-2xl shadow-xl shadow-blue-500/20 transition-all active:scale-95">
+                        Link Card
+                      </button>
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-semibold text-slate-700 block ml-1">Due Date</label>
-                      <input
-                        type="date"
-                        name="duedate"
-                        value={creditcardform.duedate}
-                        onChange={handlecreditchange}
-                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
-                      />
-                    </div>
+                  </form>
+                ) : (
+                  <div className="text-center py-12 text-slate-500 font-medium italic border-2 border-dashed border-white/5 rounded-3xl">
+                    No credit card configured for this cycle.
                   </div>
-                  <div className="flex justify-end">
-                    <button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg shadow-indigo-600/20 transition-all hover:-translate-y-0.5 active:translate-y-0">
-                      Add Card
-                    </button>
-                  </div>
-                </form>
-              )}
+                )}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Financial Summary */}
-        <div className="lg:col-span-4 space-y-6">
-          <div className="bg-black rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden group lg:sticky lg:top-24">
-            {/* Background elements */}
-            <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all duration-700"></div>
-          
-            <div className="relative space-y-6 sm:space-y-8">
-              <h3 className="text-white font-bold text-base sm:text-lg tracking-wide uppercase opacity-60">Financial Preview</h3>
-              
-              <div className="space-y-6">
-                <div className="flex justify-between items-end border-b border-white/10 pb-4">
-                  <div className="space-y-1">
-                    <p className="text-white/60 text-xs font-bold uppercase">Income Added</p>
-                    <p className="text-white text-xl font-semibold">₹{sessionIncome.toLocaleString()}</p>
+          {/* Financial Summary */}
+          <div className="lg:col-span-4 lg:sticky lg:top-24">
+            <div className="bg-slate-900 border border-white/10 rounded-3xl lg:rounded-[48px] p-6 sm:p-8 lg:p-10 shadow-3xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-blue-500/10 rounded-full blur-[100px] group-hover:bg-blue-500/20 transition-all duration-700"></div>
+              <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-60 h-60 bg-emerald-500/5 rounded-full blur-[80px]"></div>
+            
+              <div className="relative space-y-10">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-white font-black text-xs uppercase tracking-[0.2em] opacity-40">Financial Ledger</h3>
+                  <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center">
+                    <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+                  </div>
+                </div>
+                
+                <div className="space-y-8">
+                  <div className="space-y-2 group/item">
+                    <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest group-hover/item:text-emerald-400 transition-colors">Direct Income</p>
+                    <p className="text-white text-3xl font-bold tabular-nums">₹{budgetamount.toLocaleString()}</p>
+                  </div>
+
+                  <div className="space-y-2 group/item">
+                    <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest group-hover/item:text-blue-400 transition-colors">Credit Capacity</p>
+                    <p className="text-white text-3xl font-bold tabular-nums">₹{creditcardamount.toLocaleString()}</p>
+                  </div>
+
+                  <div className="pt-8 border-t border-white/5">
+                    <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-3">Adjusted Liquidity</p>
+                    <p className="text-white font-black text-4xl sm:text-6xl tracking-tight leading-none tabular-nums">
+                      ₹{updatednettotal.toLocaleString()}
+                    </p>
                   </div>
                 </div>
 
-                <div className="flex justify-between items-end border-b border-white/10 pb-4">
-                  <div className="space-y-1">
-                    <p className="text-white/60 text-xs font-bold uppercase">Credit Allocated</p>
-                    <p className="text-white text-xl font-semibold">₹{sessionCreditAmount.toLocaleString()}</p>
-                  </div>
-                </div>
-
-                <div className="pt-4">
-                  <p className="text-white/60 text-xs font-bold uppercase mb-2">Adjusted Net Total</p>
-                  <p className="text-white text-5xl font-black tracking-tight">
-                    <span className="text-2xl font-normal opacity-40 mr-1">₹</span>
-                    {nettotal.toLocaleString()}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex gap-4 pt-4">
                 <button 
                   onClick={handleamount}
-                  className="flex-1 bg-white hover:bg-slate-100 text-slate-900 font-black py-4 rounded-2xl shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2"
+                  className="w-full bg-white hover:bg-slate-100 text-slate-900 font-black py-5 rounded-[24px] shadow-2xl transition-all active:scale-95 flex items-center justify-center gap-3"
                 >
-                    Save Changes
-                </button>
-                <button className="p-4 rounded-2xl bg-white/5 hover:bg-white/10 text-white/40 hover:text-white transition-all">
-                  
+                  Confirm & Save Cycle
                 </button>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Budget Details Table Section */}
-      <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-        <div className="p-8 space-y-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <h2 className="text-2xl font-black text-slate-800 flex items-center gap-3">
-              Budget History
-            </h2>
-            
-            <div className="flex flex-wrap items-center gap-4 p-2 bg-slate-50 rounded-2xl border border-slate-100">
-              <div className="flex items-center gap-2 px-3">
-                <span className="text-xs font-bold text-slateuppercase">Source</span>
+        {/* History Table */}
+        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl lg:rounded-[48px] overflow-hidden shadow-2xl">
+          <div className="p-5 sm:p-10 space-y-6 sm:space-y-10">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-8">
+              <div>
+                <h2 className="text-3xl font-black text-white tracking-tight">Ledger History</h2>
+                <p className="text-slate-500 text-sm mt-1">Audit trail of all income entries</p>
+              </div>
+              
+              <div className="flex flex-wrap items-center gap-4 p-2 bg-white/5 rounded-[24px] border border-white/10">
                 <select 
                   value={filterSource}
                   onChange={(e) => setFilterSource(e.target.value)}
-                  className="bg-transparent font-bold text-slate-700 outline-none cursor-pointer"
+                  className="bg-transparent font-bold text-slate-400 text-xs uppercase tracking-widest px-4 py-2 outline-none cursor-pointer"
                 >
-                  <option value="All">All Sources</option>
-                  <option value="Salary">Salary</option>
-                  <option value="Family income">Family income</option>
-                  <option value="Business">Business</option>
-                  <option value="Other">Other</option>
+                  <option value="All" className="bg-slate-900">All Sources</option>
+                  <option value="Salary" className="bg-slate-900">Salary</option>
+                  <option value="Family income" className="bg-slate-900">Family income</option>
+                  <option value="Business" className="bg-slate-900">Business</option>
+                  <option value="Other" className="bg-slate-900">Other</option>
                 </select>
-              </div>
-              <div className="w-px h-8 bg-slate-200 hidden md:block"></div>
-              <div className="flex items-center gap-2 px-3">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Month</span>
-                <select 
-                  value={filterMonth}
-                  onChange={(e) => setFilterMonth(e.target.value)}
-                  className="bg-transparent font-bold text-slate-700 outline-none cursor-pointer"
+                <div className="w-px h-6 bg-white/10" />
+                <button 
+                  onClick={handleClearHistory}
+                  className="text-[10px] font-black text-red-400 hover:text-red-300 uppercase tracking-widest px-4 py-2 transition-colors"
                 >
-                  <option value="All">Select Month</option>
-                  {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map((m, i) => (
-                    <option key={m} value={i}>{m}</option>
-                  ))}
-                </select>
+                  Clear History
+                </button>
               </div>
             </div>
-          </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-slate-100 bg-slate-50/50">
-                  <th className="px-6 py-4 text-left text-xs font-black text-slate-400 uppercase tracking-widest">#</th>
-                  <th className="px-6 py-4 text-left text-xs font-black text-slate-400 uppercase tracking-widest">Category / Source</th>
-                  <th className="px-6 py-4 text-right text-xs font-black text-slate-400 uppercase tracking-widest">Amount</th>
-                  <th className="px-6 py-4 text-right text-xs font-black text-slate-400 uppercase tracking-widest">Created Date</th>
-                  <th className="px-6 py-4 text-center"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-50">
-                {filteredBudgets.map((item, index) => (
-                  <tr key={index} className="group hover:bg-slate-50/80 transition-all cursor-default">
-                    <td className="px-6 py-4 text-slate-400 font-medium">{index + 1}</td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        {/* <span className={`w-2 h-2 rounded-full ${index % 2 === 0 ? 'bg-emerald-400' : 'bg-indigo-400'}`}></span> */}
-                        <span className="font-bold text-slate-700 ms-6">{item.source}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <span className="font-black text-slate-800">₹{Number(item.amount).toLocaleString()}</span>
-                    </td>
-                    <td className="px-6 py-4 text-right text-slate-500 font-medium">
-                      {new Date(item.createddate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
-                    </td>
-                    {/* <td className="px-6 py-4 text-center opacity-0 group-hover:opacity-100 transition-all">
-                      <button className="text-slate-300 hover:text-red-500 transition-colors">🗑️</button>
-                    </td> */}
+            <div className="overflow-x-auto rounded-[32px] border border-white/5">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-white/5">
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Ref</th>
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Classification</th>
+                    <th className="px-8 py-5 text-right text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Amount (INR)</th>
+                    <th className="px-8 py-5 text-right text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Timestamp</th>
+                    <th className="px-8 py-5 text-center text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Actions</th>
                   </tr>
-                ))}
-                {filteredBudgets.length === 0 && (
-                  <tr>
-                    <td colSpan="5" className="px-6 py-12 text-center text-slate-400 italic">
-                      No budget entries found matching your filters.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {filteredBudgets.map((item, index) => (
+                    <tr key={index} className="group hover:bg-white/5 transition-all">
+                      <td className="px-8 py-6 text-slate-600 font-bold tabular-nums">{(index + 1).toString().padStart(2, '0')}</td>
+                      <td className="px-8 py-6">
+                        <div className="flex items-center gap-3">
+                          <div className="w-2 h-2 rounded-full bg-emerald-500/40 group-hover:bg-emerald-500 transition-colors" />
+                          <span className="font-bold text-white tracking-wide">{item.source}</span>
+                        </div>
+                      </td>
+                      <td className="px-8 py-6 text-right font-black text-white tabular-nums">
+                        ₹{Number(item.amount).toLocaleString()}
+                      </td>
+                      <td className="px-8 py-6 text-right text-slate-400 text-sm font-medium">
+                        {new Date(item.createddate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </td>
+                      <td className="px-8 py-6 text-center">
+                        <button onClick={() => handledeletebudget(item._id)} className="p-2 text-slate-600 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all">
+                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {filteredBudgets.length === 0 && (
+                    <tr>
+                      <td colSpan="5" className="px-8 py-20 text-center text-slate-600 italic font-medium">
+                        No financial records found matching your current filters.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>

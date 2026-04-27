@@ -1,21 +1,30 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { userContext } from "../App";
+import { UserContext } from "../context/UserContext";
 import { useContext, useEffect, useState } from "react";
 
 function Navbar({ setGetstarted }) {
   const {
-    setActive,
     dropdown,
     setDropdown,
-  } = useContext(userContext);
+  } = useContext(UserContext);
 
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   const handleDropdown = (dropdownKey) => {
     setDropdown(dropdown === dropdownKey ? "" : dropdownKey);
   };
+
+  // Handle scroll for navbar dynamic background
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -36,9 +45,13 @@ function Navbar({ setGetstarted }) {
   }, [dropdown, setDropdown]);
 
   // Close mobile menu when route changes
-  useEffect(() => {
-    setMobileMenuOpen(false);
-  }, [location.pathname]);
+  const [prevPath, setPrevPath] = useState(location.pathname);
+  if (location.pathname !== prevPath) {
+    setPrevPath(location.pathname);
+    if (mobileMenuOpen) {
+      setMobileMenuOpen(false);
+    }
+  }
 
   const handlelogout=()=>{
      const Logout=window.confirm("do you want to logout?")
@@ -51,384 +64,139 @@ function Navbar({ setGetstarted }) {
   }
 
   return (
-    <div
-      className="bg-green-200 p-3 fixed top-0 left-0 right-0 z-50"
-      style={{ backgroundImage: "linear-gradient(to bottom, rgba(128, 143, 135, 1), rgba(128, 143, 135, 1))" }}
-    >
-      <div className="flex flex-row items-center justify-between p-4 h-16 relative text-white">
-        {/* Left side - Ayudar text */}
-        <div className="text-2xl font-bold text-emerald-100">Ayudar</div>
-
-        {/* Hamburger Menu Button - visible on md and smaller screens */}
-        <button
-          className="lg:hidden text-white p-2 hover:bg-yellow-800 rounded transition-colors"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label="Toggle menu"
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      scrolled ? "bg-[#0f172a]/80 backdrop-blur-2xl border-b border-white/10 py-4 shadow-2xl" : "bg-white/5 backdrop-blur-lg py-8"
+    }`}>
+      <div className="w-full max-w-7xl mx-auto px-6 flex items-center justify-between">
+        
+        {/* Logo */}
+        <div 
+          className="text-3xl font-black tracking-[0.15em] uppercase text-white cursor-pointer hover:scale-105 transition-transform"
+          onClick={() => navigate("/home")}
         >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            {mobileMenuOpen ? (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-            ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-            )}
-          </svg>
-        </button>
-
-        {/* Desktop Navigation - visible on lg screens and above */}
-        <div className="hidden lg:flex items-center space-x-6 relative">
-          {/* Home menu navbar */}
-          <button
-            className={`${location.pathname === "/home" ? "text-white font-bold" : "text-black"} rounded px-3 py-2 text-lg font-medium hover:bg-yellow-800 hover:text-white transition-colors`}
-            onClick={() => {
-              navigate("/home");
-              setDropdown(dropdown === "A" ? "" : "A");
-              localStorage.setItem("currentpage", "home");
-            }}
-          >
-            Home
-          </button>
-
-          {/* Budget menu navbar */}
-          <div className="relative dropdown-button">
-            <button
-               className={`${location.pathname.includes("/budget") ? "text-white font-bold" : "text-black"} rounded px-3 py-2 text-lg font-medium hover:bg-yellow-800 hover:text-white transition-colors flex items-center gap-1`}
-              onClick={() => handleDropdown("B")}
-            >
-              Budget
-              <svg
-                className={`w-4 h-4 transform transition-transform duration-200 ${dropdown === "B" ? "rotate-180" : ""}`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </button>
-            {dropdown === "B" && (
-              <div className="absolute top-full left-0 mt-1 min-w-[140px] z-50 dropdown-menu">
-                <div className="bg-green-900 rounded shadow-lg py-1">
-                  <button
-                    className="block w-full text-left text-white px-4 py-2 hover:bg-green-800"
-                    onClick={() => {
-                      navigate("/budget");
-                      setActive("A");
-                      setDropdown("");
-                      localStorage.setItem("currentpage", "showbudget");
-                    }}
-                  >
-                    Show budget
-                  </button>
-                  <button
-                    className="block w-full text-left text-white px-4 py-2 hover:bg-green-800"
-                    onClick={() => {
-                      navigate("/budget");
-                      setDropdown("");
-                      setActive("B");
-                      navigate('/budget/create')
-                      localStorage.setItem("currentpage", "createbudget");
-                    }}
-                  >
-                    Create budget
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Documents menu navbar */}
-          <div className="relative dropdown-button">
-            <button
-               className={`${location.pathname.includes("/document") ? "text-white font-bold" : "text-black"} rounded px-3 py-2 text-lg font-medium hover:bg-yellow-800 hover:text-white transition-colors flex items-center gap-1`}
-              onClick={() => handleDropdown("C")}
-            >
-              Documents
-              <svg
-                className={`w-4 h-4 transform transition-transform duration-200 ${dropdown === "C" ? "rotate-180" : ""}`}
-                fill="none"
-                stroke="black"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </button>
-            {dropdown === "C" && (
-              <div className="absolute top-full left-0 mt-1 min-w-[160px] z-50 dropdown-menu">
-                <div className="bg-green-900 rounded shadow-lg py-1">
-                  <button
-                    className="block w-full text-left text-white px-4 py-2 hover:bg-green-800"
-                    onClick={() => {
-                      navigate("/document/viewdocuments")
-                      setDropdown("");
-                      localStorage.setItem("currentpage", "viewdocuments");
-                    }}
-                  >
-                    View documents
-                  </button>
-                  <button
-                    className="block w-full text-left text-white px-4 py-2 hover:bg-green-800"
-                    onClick={() => {
-                      setDropdown("");
-                      navigate('/document/uploaddocuments')
-                      localStorage.setItem("currentpage", "uploaddocuments");
-                    }}
-                  >
-                    Upload documents
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Shopping menu navbar */}
-          <div className="relative dropdown-button">
-            <button
-               className={`${location.pathname.includes("/shopping") ? "text-white font-bold" : "text-black"} rounded px-3 py-2 text-lg font-medium hover:bg-yellow-800 hover:text-white transition-colors flex items-center gap-1`}
-              onClick={() => handleDropdown("D")}
-            >
-              Shopping
-              <svg
-                className={`w-4 h-4 transform transition-transform duration-200 ${dropdown === "D" ? "rotate-180" : ""}`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </button>
-            {dropdown === "D" && (
-              <div className="absolute top-full left-0 mt-1 min-w-[140px] z-50 dropdown-menu">
-                <div className="bg-green-900 rounded shadow-lg py-1">
-                  <button
-                    className="block w-full text-left text-white px-4 py-2 hover:bg-green-800"
-                    onClick={() => {
-                      navigate("/shopping/createshopping");
-                      setDropdown("");
-                      localStorage.setItem("currentpage", "createshopping");
-                    }}
-                  >
-                    Createshopping
-                  </button>
-                  <button
-                    className="block w-full text-left text-white px-4 py-2 hover:bg-green-800"
-                    onClick={() => {
-                      navigate("/shopping/viewshopping");
-                      setDropdown("");
-                      localStorage.setItem("currentpage", "viewshopping");
-                    }}
-                  >
-                    Viewshopping
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Events menu navbar */}
-          <button
-             className={`${location.pathname.includes("/events") ? "text-white font-bold" : "text-black"} rounded px-3 py-2 text-lg font-medium hover:bg-yellow-800 hover:text-white transition-colors`}
-            onClick={() => {
-              navigate("/events");
-              setDropdown(dropdown === "E" ? "" : "E");
-              
-            }}
-          >
-            Events
-          </button>
-
-          {/* Profile menu navbar */}
-          <div className="relative dropdown-button">
-            <button
-               className={`${location.pathname.includes("/profile") ? "text-white font-bold" : "text-black"} rounded px-3 py-2 text-lg font-medium hover:bg-yellow-800 hover:text-white transition-colors flex items-center gap-1`}
-              onClick={() => handleDropdown("F")}
-            >
-              Profile
-              <svg
-                className={`w-4 h-4 transform transition-transform duration-200 ${dropdown === "F" ? "rotate-180" : ""}`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </button>
-            {dropdown === "F" && (
-              <div className="absolute top-full left-0 mt-1 min-w-[120px] z-50 dropdown-menu">
-                <div className="bg-green-900 rounded shadow-lg py-1">
-                  <button className="block w-full text-left text-white px-4 py-2 hover:bg-green-800 rounded"
-                  onClick={() => {
-                    navigate("/profile/personal");
-                    setDropdown("");
-                    localStorage.setItem("currentpage", "personal");
-                  }}
-                  >
-                    Settings
-                  </button>
-                  <button
-                    className="block w-full text-left text-white px-4 py-2 hover:bg-green-800 rounded"
-                    onClick={handlelogout}
-                  >
-                    Logout
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
+          <span className="bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent">Ayudar</span>
         </div>
-      </div>
 
-      {/* Mobile Navigation Menu - visible on md and smaller screens */}
-      <div
-        className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${
-          mobileMenuOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
-        }`}
-      >
-        <div className="px-4 pb-4 space-y-2">
+        {/* Desktop Navigation */}
+        <div className="hidden lg:flex items-center gap-1">
           {/* Home */}
           <button
-            className={`${location.pathname === "/home" ? "text-white font-bold bg-yellow-800" : "text-black"} w-full text-left rounded px-3 py-2 text-lg font-medium hover:bg-yellow-800 hover:text-white transition-colors`}
-            onClick={() => {
-              navigate("/home");
-              setDropdown("");
-              localStorage.setItem("currentpage", "home");
-            }}
+            onClick={() => navigate("/home")}
+            className={`px-5 py-2.5 rounded-2xl text-sm font-semibold transition-all duration-300 flex items-center gap-2 ${
+              location.pathname === "/home" 
+                ? "bg-white/20 text-white shadow-inner" 
+                : "text-white/70 hover:bg-white/10 hover:text-white"
+            }`}
           >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
             Home
           </button>
 
-          {/* Budget Dropdown */}
-          <div className="w-full dropdown-button">
+          {/* Budget */}
+          <div className="relative dropdown-button">
             <button
-              className={`${location.pathname.includes("/budget") ? "text-white font-bold bg-yellow-800" : "text-black"} w-full text-left rounded px-3 py-2 text-lg font-medium hover:bg-yellow-800 hover:text-white transition-colors flex items-center justify-between`}
               onClick={() => handleDropdown("B")}
+              className={`px-5 py-3 rounded-2xl text-lg font-bold transition-all duration-300 flex items-center gap-2 ${
+                location.pathname.includes("/budget") 
+                  ? "bg-white/20 text-white" 
+                  : "text-white/70 hover:bg-white/10 hover:text-white"
+              }`}
             >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
               Budget
-              <svg
-                className={`w-4 h-4 transform transition-transform duration-200 ${dropdown === "B" ? "rotate-180" : ""}`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+              <svg className={`w-4 h-4 transition-transform duration-300 ${dropdown === "B" ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </button>
             {dropdown === "B" && (
-              <div className="ml-4 mt-1 space-y-1 dropdown-menu">
+              <div className="absolute top-full left-0 mt-3 min-w-[200px] bg-gray-900/90 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden animate-fade-in dropdown-menu p-2">
                 <button
-                  className="block w-full text-left text-white px-4 py-2 hover:bg-green-800 rounded"
-                  onClick={() => {
-                    navigate("/budget");
-                    setActive("A");
-                    setDropdown("");
-                    localStorage.setItem("currentpage", "showbudget");
-                  }}
+                  onClick={() => { navigate("/budget/overview"); setDropdown(""); }}
+                  className="w-full text-left px-4 py-3 text-white/80 hover:text-white hover:bg-white/10 rounded-2xl transition-all text-sm font-medium"
                 >
-                  Show budget
+                  Show Budget
                 </button>
                 <button
-                  className="block w-full text-left text-white px-4 py-2 hover:bg-green-800 rounded"
-                  onClick={() => {
-                    navigate("/budget");
-                    setDropdown("");
-                    setActive("B");
-                    navigate('/budget/create');
-                    localStorage.setItem("currentpage", "createbudget");
-                  }}
+                  onClick={() => { navigate("/budget/create"); setDropdown(""); }}
+                  className="w-full text-left px-4 py-3 text-white/80 hover:text-white hover:bg-white/10 rounded-2xl transition-all text-sm font-medium"
                 >
-                  Create budget
+                  Create Budget
                 </button>
               </div>
             )}
           </div>
 
-          {/* Documents Dropdown */}
-          <div className="w-full dropdown-button">
+          {/* Documents */}
+          <div className="relative dropdown-button">
             <button
-              className={`${location.pathname.includes("/document") ? "text-white font-bold bg-yellow-800" : "text-black"} w-full text-left rounded px-3 py-2 text-lg font-medium hover:bg-yellow-800 hover:text-white transition-colors flex items-center justify-between`}
               onClick={() => handleDropdown("C")}
+              className={`px-5 py-3 rounded-2xl text-lg font-bold transition-all duration-300 flex items-center gap-2 ${
+                location.pathname.includes("/document") 
+                  ? "bg-white/20 text-white" 
+                  : "text-white/70 hover:bg-white/10 hover:text-white"
+              }`}
             >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
               Documents
-              <svg
-                className={`w-4 h-4 transform transition-transform duration-200 ${dropdown === "C" ? "rotate-180" : ""}`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+              <svg className={`w-4 h-4 transition-transform duration-300 ${dropdown === "C" ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </button>
             {dropdown === "C" && (
-              <div className="ml-4 mt-1 space-y-1 dropdown-menu">
+              <div className="absolute top-full left-0 mt-3 min-w-[200px] bg-gray-900/90 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden animate-fade-in dropdown-menu p-2">
                 <button
-                  className="block w-full text-left text-white px-4 py-2 hover:bg-green-800 rounded"
-                  onClick={() => {
-                    navigate("/document/viewdocuments");
-                    setDropdown("");
-                    localStorage.setItem("currentpage", "viewdocuments");
-                  }}
+                  onClick={() => { navigate("/document/viewdocuments"); setDropdown(""); }}
+                  className="w-full text-left px-4 py-3 text-white/80 hover:text-white hover:bg-white/10 rounded-2xl transition-all text-sm font-medium"
                 >
-                  View documents
+                  View Documents
                 </button>
                 <button
-                  className="block w-full text-left text-white px-4 py-2 hover:bg-green-800 rounded"
-                  onClick={() => {
-                    setDropdown("");
-                    navigate('/document/uploaddocuments');
-                    localStorage.setItem("currentpage", "uploaddocuments");
-                  }}
+                  onClick={() => { navigate("/document/uploaddocuments"); setDropdown(""); }}
+                  className="w-full text-left px-4 py-3 text-white/80 hover:text-white hover:bg-white/10 rounded-2xl transition-all text-sm font-medium"
                 >
-                  Upload documents
+                  Upload Documents
                 </button>
               </div>
             )}
           </div>
 
-          {/* Shopping Dropdown */}
-          <div className="w-full dropdown-button">
+          {/* Shopping */}
+          <div className="relative dropdown-button">
             <button
-              className={`${location.pathname.includes("/shopping") ? "text-white font-bold bg-yellow-800" : "text-black"} w-full text-left rounded px-3 py-2 text-lg font-medium hover:bg-yellow-800 hover:text-white transition-colors flex items-center justify-between`}
               onClick={() => handleDropdown("D")}
+              className={`px-5 py-3 rounded-2xl text-lg font-bold transition-all duration-300 flex items-center gap-2 ${
+                location.pathname.includes("/shopping") 
+                  ? "bg-white/20 text-white" 
+                  : "text-white/70 hover:bg-white/10 hover:text-white"
+              }`}
             >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
               Shopping
-              <svg
-                className={`w-4 h-4 transform transition-transform duration-200 ${dropdown === "D" ? "rotate-180" : ""}`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+              <svg className={`w-4 h-4 transition-transform duration-300 ${dropdown === "D" ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </button>
             {dropdown === "D" && (
-              <div className="ml-4 mt-1 space-y-1 dropdown-menu">
+              <div className="absolute top-full left-0 mt-3 min-w-[200px] bg-gray-900/90 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden animate-fade-in dropdown-menu p-2">
                 <button
-                  className="block w-full text-left text-white px-4 py-2 hover:bg-green-800 rounded"
-                  onClick={() => {
-                    navigate("/shopping/createshopping");
-                    setDropdown("");
-                    localStorage.setItem("currentpage", "createshopping");
-                  }}
+                  onClick={() => { navigate("/shopping/viewshopping"); setDropdown(""); }}
+                  className="w-full text-left px-4 py-3 text-white/80 hover:text-white hover:bg-white/10 rounded-2xl transition-all text-sm font-medium"
                 >
-                  Createshopping
+                  Shopping List
                 </button>
                 <button
-                  className="block w-full text-left text-white px-4 py-2 hover:bg-green-800 rounded"
-                  onClick={() => {
-                    navigate("/shopping/viewshopping");
-                    setDropdown("");
-                    localStorage.setItem("currentpage", "viewshopping");
-                  }}
+                  onClick={() => { navigate("/shopping/createshopping"); setDropdown(""); }}
+                  className="w-full text-left px-4 py-3 text-white/80 hover:text-white hover:bg-white/10 rounded-2xl transition-all text-sm font-medium"
                 >
-                  Viewshopping
+                  Create List
                 </button>
               </div>
             )}
@@ -436,55 +204,93 @@ function Navbar({ setGetstarted }) {
 
           {/* Events */}
           <button
-            className={`${location.pathname.includes("/events") ? "text-white font-bold bg-yellow-800" : "text-black"} w-full text-left rounded px-3 py-2 text-lg font-medium hover:bg-yellow-800 hover:text-white transition-colors`}
-            onClick={() => {
-              navigate("/events");
-              setDropdown("");
-            }}
+            onClick={() => navigate("/events")}
+            className={`px-5 py-3 rounded-2xl text-lg font-bold transition-all duration-300 flex items-center gap-2 ${
+              location.pathname === "/events" 
+                ? "bg-white/20 text-white" 
+                : "text-white/70 hover:bg-white/10 hover:text-white"
+            }`}
           >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
             Events
           </button>
+        </div>
 
-          {/* Profile Dropdown */}
-          <div className="w-full dropdown-button">
-            <button
-              className={`${location.pathname.includes("/profile") ? "text-white font-bold bg-yellow-800" : "text-black"} w-full text-left rounded px-3 py-2 text-lg font-medium hover:bg-yellow-800 hover:text-white transition-colors flex items-center justify-between`}
-              onClick={() => handleDropdown("F")}
+        {/* Profile & Mobile Toggle */}
+        <div className="flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-3 pr-4 border-r border-white/10">
+             <button
+              onClick={() => navigate("/profile/personal")}
+              className="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-all duration-300"
             >
-              Profile
-              <svg
-                className={`w-4 h-4 transform transition-transform duration-200 ${dropdown === "F" ? "rotate-180" : ""}`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             </button>
-            {dropdown === "F" && (
-              <div className="ml-4 mt-1 space-y-1 dropdown-menu">
-                <button
-                  className="block w-full text-left text-white px-4 py-2 hover:bg-green-800 rounded"
-                  onClick={() => {
-                    navigate("/profile/personal");
-                    setDropdown("");
-                    localStorage.setItem("currentpage", "personal");
-                  }}
-                >
-                  Settings
-                </button>
-                <button
-                  className="block w-full text-left text-white px-4 py-2 hover:bg-green-800 rounded"
-                   onClick={handlelogout}
-                >
-                  Logout
-                </button>
-              </div>
-            )}
           </div>
+          
+          <button
+            onClick={handlelogout}
+            className="hidden lg:flex items-center gap-2 px-6 py-3 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white rounded-2xl transition-all duration-300 text-lg font-bold"
+          >
+            Logout
+          </button>
+
+          <button
+            className="lg:hidden w-12 h-12 flex items-center justify-center text-white bg-white/10 rounded-full hover:bg-white/20 transition-all"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              {mobileMenuOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+              )}
+            </svg>
+          </button>
         </div>
       </div>
-    </div>
+
+      {/* Mobile Menu */}
+      <div
+        className={`lg:hidden fixed inset-x-0 top-[72px] sm:top-[88px] bottom-0 z-40 bg-[#0f172a]/98 backdrop-blur-2xl overflow-y-auto transition-all duration-500 ${
+          mobileMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-10 pointer-events-none"
+        }`}
+      >
+        <div className="p-4 space-y-1 pb-24">
+          <button className="w-full text-left px-6 py-4 text-white font-bold hover:bg-white/10 rounded-2xl transition-all text-lg" onClick={() => { navigate("/home"); setMobileMenuOpen(false); }}>🏠 Home</button>
+          
+          <div className="border-t border-white/5 my-2"></div>
+          <p className="px-6 py-2 text-[10px] font-black text-slate-500 uppercase tracking-widest">Budget Center</p>
+          <button className="w-full text-left px-6 py-3 text-white/80 hover:text-white hover:bg-white/10 rounded-2xl transition-all font-medium" onClick={() => { navigate("/budget/overview"); setMobileMenuOpen(false); }}>📊 Show Budget</button>
+          <button className="w-full text-left px-6 py-3 text-white/80 hover:text-white hover:bg-white/10 rounded-2xl transition-all font-medium" onClick={() => { navigate("/budget/create"); setMobileMenuOpen(false); }}>➕ Create Budget</button>
+          
+          <div className="border-t border-white/5 my-2"></div>
+          <p className="px-6 py-2 text-[10px] font-black text-slate-500 uppercase tracking-widest">Documents</p>
+          <button className="w-full text-left px-6 py-3 text-white/80 hover:text-white hover:bg-white/10 rounded-2xl transition-all font-medium" onClick={() => { navigate("/document/viewdocuments"); setMobileMenuOpen(false); }}>📁 View Documents</button>
+          <button className="w-full text-left px-6 py-3 text-white/80 hover:text-white hover:bg-white/10 rounded-2xl transition-all font-medium" onClick={() => { navigate("/document/uploaddocuments"); setMobileMenuOpen(false); }}>📤 Upload Documents</button>
+          
+          <div className="border-t border-white/5 my-2"></div>
+          <p className="px-6 py-2 text-[10px] font-black text-slate-500 uppercase tracking-widest">Shopping</p>
+          <button className="w-full text-left px-6 py-3 text-white/80 hover:text-white hover:bg-white/10 rounded-2xl transition-all font-medium" onClick={() => { navigate("/shopping/viewshopping"); setMobileMenuOpen(false); }}>🛒 Shopping List</button>
+          <button className="w-full text-left px-6 py-3 text-white/80 hover:text-white hover:bg-white/10 rounded-2xl transition-all font-medium" onClick={() => { navigate("/shopping/createshopping"); setMobileMenuOpen(false); }}>✏️ Create List</button>
+          
+          <div className="border-t border-white/5 my-2"></div>
+          <button className="w-full text-left px-6 py-4 text-white font-bold hover:bg-white/10 rounded-2xl transition-all text-lg" onClick={() => { navigate("/events"); setMobileMenuOpen(false); }}>📅 Events</button>
+          <button className="w-full text-left px-6 py-4 text-white font-bold hover:bg-white/10 rounded-2xl transition-all text-lg" onClick={() => { navigate("/profile/personal"); setMobileMenuOpen(false); }}>⚙️ Profile</button>
+          
+          <div className="border-t border-white/5 my-2"></div>
+          <button
+            onClick={() => { handlelogout(); setMobileMenuOpen(false); }}
+            className="w-full text-left px-6 py-4 text-red-400 hover:bg-red-500/10 rounded-2xl transition-all font-bold text-lg"
+          >
+            🚪 Logout
+          </button>
+        </div>
+      </div>
+    </nav>
   );
 }
 

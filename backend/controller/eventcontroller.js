@@ -3,8 +3,8 @@ const Events = require("../model/eventmodel")
 exports.createevent = async (req, res, next) => {
     try {
         const { title, description, date, color, time, category } = req.body;
-        if (!title || !description || !date || !color) {
-            return next(new Error("All fields are required"))
+        if (!title || !date || !color) {
+            return next(new Error("Title, date, and color are required"))
         };
         const eventdetails = await Events.create({
             title,

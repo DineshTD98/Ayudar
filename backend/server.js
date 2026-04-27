@@ -47,9 +47,18 @@ if (!MONGODB_URI) {
   throw new Error("MONGODB_URI not set");
 }
 
+// Log connection attempt (masking sensitive parts)
+const maskedUri = MONGODB_URI.replace(/:([^@]+)@/, ':****@');
+console.log(`Attempting to connect to MongoDB: ${maskedUri}`);
+
 mongoose.connect(MONGODB_URI)
-  .then(() => console.log("MongoDB Atlas connected"))
-  .catch(err => console.error("MongoDB error:", err));
+  .then(() => console.log("MongoDB Atlas connected successfully"))
+  .catch(err => {
+    console.error("MongoDB connection error:", err);
+    if (err.message.includes('ENOTFOUND')) {
+      console.error("DNS Error: Your system cannot resolve the MongoDB Atlas hostname. Try using a standard connection string or check your internet/DNS settings.");
+    }
+  });
 
 if (!process.env.JWT_SECRET) {
   console.warn("JWT_SECRET is missing");

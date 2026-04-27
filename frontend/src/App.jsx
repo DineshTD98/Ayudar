@@ -3,7 +3,7 @@ import "./index.css";
 import "./css/loginform.css";
 
 import { BrowserRouter } from "react-router-dom";
-import { createContext, useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useApi from "./customehooks/useapi";
 
@@ -16,8 +16,7 @@ import { setCreatebudget } from "./redux/slices/createbudgetslice";
 
 
 import AppRoutes from "./approute";
-
-export const userContext = createContext();
+import { UserContext } from "./context/UserContext";
 
 const formatLocalDate = (date) => {
   const year = date.getFullYear();
@@ -34,7 +33,6 @@ function App() {
   const [getstarted, setGetstarted] = useState(false);
   const [active, setActive] = useState("A");
   const [dropdown, setDropdown] = useState("");
-  const [remainingbudget, setRemainingbudget] = useState(0);
   const [creditcardamount, setCreditcardamount] = useState(0);
 
   // Derived events from Redux Store
@@ -106,10 +104,10 @@ function App() {
   const totalBudget = useSelector((state) => state.Totalbudget.value);
   const totalExpenseList = useSelector((state) => state.Expense.value);
   const subscriptionList = useSelector((state) => state.Subscriptionlist.value);
+  const pendingBudgets = useSelector((state) => state.Createbudget.value);
 
-
-
-  useEffect(() => {
+  // Global Remaining Budget Calculation memoized to avoid cascading renders
+  const remainingbudget = useMemo(() => {
     const totalAmount = Array.isArray(totalBudget)
       ? totalBudget.reduce((sum, item) => sum + Number(item.nettotal || 0), 0)
       : 0;
@@ -122,19 +120,22 @@ function App() {
       ? subscriptionList.reduce((sum, sub) => sum + Number(sub.price || 0), 0)
       : 0;
 
-    setRemainingbudget(totalAmount - (overallExpense + totalSubMoney));
-  }, [totalBudget, totalExpenseList, subscriptionList]);
+    const totalPendingBudget = Array.isArray(pendingBudgets)
+      ? pendingBudgets.reduce((sum, item) => sum + Number(item.amount || 0), 0)
+      : 0;
+
+    return (totalAmount + totalPendingBudget) - (overallExpense + totalSubMoney);
+  }, [totalBudget, totalExpenseList, subscriptionList, pendingBudgets]);
 
   return (
     <BrowserRouter>
-      <userContext.Provider
+      <UserContext.Provider
         value={{
           active,
           setActive,
           dropdown,
           setDropdown,
           remainingbudget,
-          setRemainingbudget,
           creditcardamount,
           setCreditcardamount,
           alerts: tomorrowEvents,
@@ -147,7 +148,7 @@ function App() {
           getstarted={getstarted}
           setGetstarted={setGetstarted}
         />
-      </userContext.Provider>
+      </UserContext.Provider>
     </BrowserRouter>
   );
 }
