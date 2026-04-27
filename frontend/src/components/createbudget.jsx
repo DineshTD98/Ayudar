@@ -5,16 +5,28 @@ import { updateTotalbudget } from "../redux/slices/totalbudgetslice";
 import { useDispatch, useSelector } from "react-redux";
 import useapi from "../customehooks/useapi";
 import { useOutletContext } from "react-router-dom";
+import ConfirmationModal from "./ConfirmationModal";
+import toast from "react-hot-toast";
+
 function Createbudget() {
   const {setCreditcardamount,creditcardamount}=useOutletContext();
-  const Createbudget = useSelector((state) => state.Createbudget.value);
+  const CreatebudgetList = useSelector((state) => state.Createbudget.value);
   const { request } = useapi();
   const [creditcard, setCreditcard] = useState("");
   const dispatch = useDispatch();
   const [filterSource, setFilterSource] = useState("All");
   const [filterMonth, setFilterMonth] = useState("All");
-  const [alert , setAlert]=useState(false)
- // form state creation to add the budget
+  const [isStatusUpdated, setIsStatusUpdated] = useState(false);
+
+  // Modal State
+  const [modalConfig, setModalConfig] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    onConfirm: () => {},
+  });
+
+  // form state creation to add the budget
   const [form, setForm] = useState({
     amount: "",
     createddate: "",
@@ -56,8 +68,7 @@ function Createbudget() {
     }
   };
 
-  let budgetamount=Createbudget.length >0 ? Createbudget[Createbudget.length-1].amount:0;
-  let updatednettotal=budgetamount + creditcardamount
+
   // Derive session totals from Redux and Context
   const sessionIncome = useMemo(() => {
     return Createbudget.reduce((sum, item) => sum + Number(item.amount || 0), 0);
@@ -81,8 +92,9 @@ function Createbudget() {
       });
       console.log(response.creditbudget);
       setCreditcardamount(response.creditbudget.limit);
+      toast.success("Credit card linked");
     } catch (err) {
-      return console.log(err.message);
+      toast.error("Failed to link credit card");
     }
   };
 
@@ -95,48 +107,54 @@ function Createbudget() {
             method:'post',
             data:{nettotal}
           })
-          console.log(response.activebudget)
           dispatch(setCreatebudget([]))
           dispatch(updateTotalbudget(response.activebudget))
-          setCreditcardamount('')
+          setCreditcardamount(0)
+          toast.success("Financial cycle saved successfully");
         }
       catch(err){
-        console.log(err.message)
+        toast.error("Failed to save cycle");
       }
   }
 
-  const handleClearHistory = async () => {
-    if (!window.confirm("Are you sure you want to clear your entire budget history? This cannot be undone.")) return;
-    try {
-      await request({
-        url: '/budget/deletetotalbudget',
-        method: 'delete'
-      });
-      dispatch(setTotalbudget([]));
-      alert("Budget history cleared");
-    } catch (err) {
-      console.log(err.message);
-    }
+  const handleClearHistory = () => {
+    setModalConfig({
+      isOpen: true,
+      title: "Clear History",
+      message: "Are you sure you want to clear your entire budget history? This action cannot be undone.",
+      onConfirm: async () => {
+        try {
+          await request({ url: '/budget/deletetotalbudget', method: 'delete' });
+          dispatch(setTotalbudget([]));
+          toast.success("Budget history cleared");
+        } catch (err) {
+          toast.error("Failed to clear history");
+        }
+      }
+    });
   };
 
-  const handleClearCredit = async () => {
-    if (!window.confirm("Are you sure you want to clear your credit card allocation?")) return;
-    try {
-      await request({
-        url: '/budget/clearcreditcard',
-        method: 'delete'
-      });
-      setCreditcardamount(0);
-      alert("Credit card cleared");
-    } catch (err) {
-      console.log(err.message);
-    }
+  const handleClearCredit = () => {
+    setModalConfig({
+      isOpen: true,
+      title: "Clear Credit",
+      message: "Are you sure you want to clear your credit card allocation?",
+      onConfirm: async () => {
+        try {
+          await request({ url: '/budget/clearcreditcard', method: 'delete' });
+          setCreditcardamount(0);
+          toast.success("Credit allocation cleared");
+        } catch (err) {
+          toast.error("Failed to clear credit");
+        }
+      }
+    });
   };
 
   // filtering for the table
 
   const filteredBudgets = useMemo(() => {
-    return Createbudget.filter((item) => {
+    return CreatebudgetList.filter((item) => {
       const sourceMatch = filterSource === "All" || item.source === filterSource;
       
       const itemDate = item.createddate ? new Date(item.createddate) : null;
@@ -145,33 +163,40 @@ function Createbudget() {
       
       return sourceMatch && monthMatch;
     });
-  }, [Createbudget, filterSource, filterMonth]);
+  }, [CreatebudgetList, filterSource, filterMonth]);
 
 
   // deleting budget from the table
 
-    const handledeletebudget = async (id) => {
-        const confirmdelete=window.confirm("do you want to delete the budget")
-        if(!confirmdelete){
-            return;
+  const handledeletebudget = (id) => {
+    setModalConfig({
+      isOpen: true,
+      title: "Delete Entry",
+      message: "Are you sure you want to delete this specific income entry?",
+      onConfirm: async () => {
+        try {
+          await request({ url: `/budget/deletebudget/${id}`, method: "delete" });
+          const updated = CreatebudgetList.filter((item) => item._id !== id);
+          dispatch(setCreatebudget(updated));
+          toast.success("Entry removed");
+        } catch (err) {
+          toast.error("Failed to delete entry");
         }
-        setAlert(!alert);
-
-      const updated = Createbudget.filter((item) => item._id !== id)
-      dispatch(setCreatebudget(updated));
-         try{
-            await request({
-               url:`budget/deletebudget/${id}`,
-               method:"delete"
-            })
-            
-            }
-            catch(err){
-                console.log(err.message)
-             }
-        }
+      }
+    });
+  };
   return (
     <div className="min-h-screen bg-[#0f172a] text-slate-200">
+      <ConfirmationModal
+        isOpen={modalConfig.isOpen}
+        onClose={() => setModalConfig({ ...modalConfig, isOpen: false })}
+        onConfirm={() => {
+          modalConfig.onConfirm();
+          setModalConfig({ ...modalConfig, isOpen: false });
+        }}
+        title={modalConfig.title}
+        message={modalConfig.message}
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-8 sm:space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
         
         {/* Header Section */}
@@ -349,7 +374,7 @@ function Createbudget() {
                 <div className="space-y-8">
                   <div className="space-y-2 group/item">
                     <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest group-hover/item:text-emerald-400 transition-colors">Direct Income</p>
-                    <p className="text-white text-3xl font-bold tabular-nums">₹{budgetamount.toLocaleString()}</p>
+                    <p className="text-white text-3xl font-bold tabular-nums">₹{sessionIncome.toLocaleString()}</p>
                   </div>
 
                   <div className="space-y-2 group/item">
@@ -360,7 +385,7 @@ function Createbudget() {
                   <div className="pt-8 border-t border-white/5">
                     <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-3">Adjusted Liquidity</p>
                     <p className="text-white font-black text-4xl sm:text-6xl tracking-tight leading-none tabular-nums">
-                      ₹{updatednettotal.toLocaleString()}
+                      ₹{nettotal.toLocaleString()}
                     </p>
                   </div>
                 </div>
@@ -396,6 +421,17 @@ function Createbudget() {
                   <option value="Family income" className="bg-slate-900">Family income</option>
                   <option value="Business" className="bg-slate-900">Business</option>
                   <option value="Other" className="bg-slate-900">Other</option>
+                </select>
+                <div className="w-px h-6 bg-white/10" />
+                <select 
+                  value={filterMonth}
+                  onChange={(e) => setFilterMonth(e.target.value)}
+                  className="bg-transparent font-bold text-slate-400 text-xs uppercase tracking-widest px-4 py-2 outline-none cursor-pointer"
+                >
+                  <option value="All" className="bg-slate-900">Entire History</option>
+                  {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map((m, i) => (
+                    <option key={m} value={i} className="bg-slate-900">{m}</option>
+                  ))}
                 </select>
                 <div className="w-px h-6 bg-white/10" />
                 <button 

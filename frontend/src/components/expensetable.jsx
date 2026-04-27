@@ -21,7 +21,7 @@ function Expensetable({expense}) {
       }
     };
     fetchCategories();
-  }, []);
+  }, [request]);
 
   const filteredExpenses = useMemo(() => {
     return expense.filter((item) => {

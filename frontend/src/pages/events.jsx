@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addnewEvent, addevent } from "../redux/slices/eventslice";
 import useApi from "../customehooks/useapi";
+import toast from "react-hot-toast";
+import ConfirmationModal from "../components/ConfirmationModal";
 
 const COLORS = [
   "bg-blue-500",
@@ -38,6 +40,8 @@ function Events() {
   const [showForm, setShowForm] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [deleteId, setDeleteId] = useState(null);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -48,23 +52,20 @@ function Events() {
     category: "Personal",
   });
 
-  // Fetch events on load
   useEffect(() => {
-    const fetchEvents = async () => {
+    async function fetchEvents() {
       try {
         const response = await request({
-          url: "/event/getevents",
+          url: "/event/getevent",
           method: "GET",
         });
-        if (response.events) {
-          dispatch(addevent(response.events));
-        }
+        dispatch(addevent(response.eventdetails));
       } catch (err) {
-        console.log("Error fetching events:", err);
+        console.log(err.message);
       }
-    };
+    }
     fetchEvents();
-  }, []);
+  }, [request, dispatch]);
 
   // Calendar helpers
   const year = selectedDate.getFullYear();
@@ -99,6 +100,7 @@ function Events() {
           evt._id === editingEvent._id ? response.eventdetails : evt
         );
         dispatch(addevent(updatedEvents));
+        toast.success("Event updated");
       } else {
         const response = await request({
           url: "/event/createevent",
@@ -106,6 +108,7 @@ function Events() {
           data: formData,
         });
         dispatch(addnewEvent(response.eventdetails));
+        toast.success("Event created");
       }
 
       setFormData({
@@ -121,7 +124,7 @@ function Events() {
       setEditingEvent(null);
     } catch (err) {
       console.log(err);
-      alert("Failed to save event. Please try again.");
+      toast.error("Failed to save event");
     }
   };
 
@@ -138,20 +141,28 @@ function Events() {
     setShowForm(true);
   };
 
-  const handleDeleteEvent = async (eventId) => {
-    if (!window.confirm("Are you sure you want to delete this event?")) return;
-
+  const confirmDelete = async () => {
+    if (!deleteId) return;
     try {
       await request({
-        url: `/event/deleteevent/${eventId}`,
+        url: `/event/deleteevent/${deleteId}`,
         method: "DELETE",
       });
-      const filteredEvents = events.filter((e) => e._id !== eventId);
+      const filteredEvents = events.filter((e) => e._id !== deleteId);
       dispatch(addevent(filteredEvents));
+      toast.success("Event deleted");
     } catch (err) {
       console.log(err);
-      alert("Failed to delete event. Please try again.");
+      toast.error("Failed to delete event");
+    } finally {
+      setIsConfirmOpen(false);
+      setDeleteId(null);
     }
+  };
+
+  const handleDeleteEvent = (eventId) => {
+    setDeleteId(eventId);
+    setIsConfirmOpen(true);
   };
 
   const selectedDateString = formatLocalDate(selectedDate);
@@ -394,6 +405,13 @@ function Events() {
             )}
           </div>
         </div>
+        <ConfirmationModal 
+          isOpen={isConfirmOpen}
+          onClose={() => setIsConfirmOpen(false)}
+          onConfirm={confirmDelete}
+          title="Delete Event"
+          message="Are you sure you want to remove this event from your calendar? This cannot be undone."
+        />
       </div>
     </div>
   );

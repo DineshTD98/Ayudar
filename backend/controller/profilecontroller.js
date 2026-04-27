@@ -88,8 +88,23 @@ exports.updatepassword=async(req,res,next)=>{
             
          )
     }
-    catch(error){
-        next(error)
+// update profile
+exports.updateprofile = async (req, res, next) => {
+    try {
+        const { firstname, lastname, email, mobileno, language, currency, notifications } = req.body;
+        const updatedUser = await User.findByIdAndUpdate(
+            req.user.id,
+            { $set: { firstname, lastname, email, mobileno, language, currency, notifications } },
+            { new: true }
+        );
+
+        res.json({
+            message: "Profile updated successfully",
+            updatedUser
+        });
+    }
+    catch (err) {
+        next(err)
     }
 }
 

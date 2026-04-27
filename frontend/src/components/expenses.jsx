@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import useapi from "../customehooks/useapi";
-
 import { addExpense } from "../redux/slices/expenseslice";
 import { useDispatch } from "react-redux";
+import toast from "react-hot-toast";
+import ConfirmationModal from "./ConfirmationModal";
+
 function Expenses() {
   const { request } = useapi();
 
@@ -12,25 +14,28 @@ function Expenses() {
     { title: "", category: "", amount: "", date: "" },
   ]);
 
-  // NEW STATE (only for category list)
   const [categories, setCategories] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [deleteIndex, setDeleteIndex] = useState(null);
 
-  // FETCH CATEGORIES
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await request({
-          url: "/Budget/categories",
-          method: "get",
-        });
-        setCategories(res.categories);
+        const response = await request({ url: "/Budget/getcategories" });
+        setCategories(response.categories || []);
       } catch (err) {
         console.log(err.message);
       }
     };
-
     fetchCategories();
-  }, []);
+  }, [request]);
+
+  const confirmDelete = () => {
+    if (deleteIndex === null) return;
+    setRows(rows.filter((_, i) => i !== deleteIndex));
+    setDeleteIndex(null);
+    setIsModalOpen(false);
+  };
 
   const addRow = () => {
     setRows([...rows, { title: "", category: "", amount: "", date: "" }]);
@@ -43,16 +48,21 @@ function Expenses() {
   };
 
   const deleteRow = (index) => {
-    if(rows[index].title !== ""|| rows.length === 1){
-    const confirmdelete = window.confirm("Are you sure you want to delete this row?");
-    if (!confirmdelete) return;
+    if (rows.length === 1) {
+      setRows([{ title: "", category: "", amount: "", date: "" }]);
+      return;
     }
-    setRows(rows.filter((_, i) => i !== index));
+
+    if (rows[index].title !== "" || rows[index].amount !== "") {
+      setDeleteIndex(index);
+      setIsModalOpen(true);
+    } else {
+      setRows(rows.filter((_, i) => i !== index));
+    }
   };
 
   const submitExpenses = async (e) => {
     e.preventDefault();
-    console.log(rows);
 
     try {
       const response = await request({
@@ -63,17 +73,24 @@ function Expenses() {
 
       const newexpense = response.expense;
       dispatch(addExpense(newexpense));
+      toast.success("Expenditures committed successfully");
+      setRows([{ title: "", category: "", amount: "", date: "" }]);
     } 
     catch (err) {
-      console.log(err.message);
+      toast.error("Failed to save expenses");
     }
-
-    setRows([{ title: "", category: "", amount: "", date: "" }]);
   };
 
   return (
     <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[32px] p-6 lg:p-10 shadow-2xl animate-in fade-in slide-in-from-top-4 duration-500">
-      {/* Header with buttons */}
+      <ConfirmationModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        onConfirm={confirmDelete} 
+        title="Delete Entry" 
+        message="Are you sure you want to delete this row?" 
+      />
+
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-10">
         <div>
           <h1 className="text-3xl font-black text-white tracking-tight">Log <span className="text-emerald-400">Outlays</span></h1>

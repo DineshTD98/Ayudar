@@ -18,6 +18,9 @@ const Userschema = new mongoose.Schema(
     resetPasswordToken: String,
     resetPasswordExpires: Date,
     userprofile: String,
+    language: { type: String, default: "English" },
+    currency: { type: String, default: "INR" },
+    notifications: { type: Boolean, default: true },
   },
   {
     timestamps: true,

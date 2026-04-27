@@ -41,7 +41,7 @@ function MyPieChart({ expense }) {
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
           ))}
         </Pie>
-        <Tooltip formatter={(value) => `Rs ${value}`} />
+        <Tooltip formatter={(value) => `${value}%`} />
         <Legend verticalAlign="bottom" height={36}/>
       </PieChart>
     </div>

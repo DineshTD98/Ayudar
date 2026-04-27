@@ -44,24 +44,25 @@ function Navbar({ setGetstarted }) {
     };
   }, [dropdown, setDropdown]);
 
-  // Close mobile menu when route changes
-  const [prevPath, setPrevPath] = useState(location.pathname);
-  if (location.pathname !== prevPath) {
-    setPrevPath(location.pathname);
+  // Close mobile menu and dropdowns when route changes
+  useEffect(() => {
     if (mobileMenuOpen) {
       setMobileMenuOpen(false);
     }
-  }
+    setDropdown("");
+  }, [location.pathname]);
 
-  const handlelogout=()=>{
-     const Logout=window.confirm("do you want to logout?")
-     if(!Logout) return;
+  const handlelogout = () => {
+    setIsLogoutModalOpen(true);
+  };
 
-      navigate("/");
-      setGetstarted(false);
-      localStorage.removeItem("currentpage");
-      localStorage.removeItem("token");
-  }
+  const confirmLogout = () => {
+    navigate("/");
+    setGetstarted(false);
+    localStorage.removeItem("currentpage");
+    localStorage.removeItem("token");
+    setIsLogoutModalOpen(false);
+  };
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
@@ -290,6 +291,13 @@ function Navbar({ setGetstarted }) {
           </button>
         </div>
       </div>
+      <ConfirmationModal 
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={confirmLogout}
+        title="Logout"
+        message="Are you sure you want to log out from Ayudar?"
+      />
     </nav>
   );
 }

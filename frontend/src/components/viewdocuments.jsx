@@ -3,8 +3,12 @@ import { setDocument } from "../redux/slices/documentslice";
 import useapi from "../customehooks/useapi";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { useEffect, useState, useMemo } from "react";
+import ConfirmationModal from "./ConfirmationModal";
+import toast from "react-hot-toast";
 
 function Viewdocuments() {
+  const [deleteId, setDeleteId] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const BASE_URL = import.meta.env.VITE_API_URL;
   const { reload, setReload } = useOutletContext();
   const { request } = useapi();
@@ -50,19 +54,28 @@ function Viewdocuments() {
     documentfetch();
   }, [reload]);
 
-  const handledelete = async (id) => {
-    const confirmdelete = window.confirm("Are you sure you want to delete this document?");
-    if (!confirmdelete) return;
+  const confirmDelete = async () => {
+    if (!deleteId) return;
     try {
       const response = await request({
-        url: `/documents/deletedocument/${id}`,
+        url: `/documents/deletedocument/${deleteId}`,
         method: "delete",
       });
       const updatedlist = Documentlist.filter((data) => data._id !== response.deletedid);
       dispatch(setDocument(updatedlist));
+      toast.success("Document deleted successfully");
     } catch (err) {
       console.error("Delete error:", err.message);
+      toast.error("Failed to delete document");
+    } finally {
+      setIsModalOpen(false);
+      setDeleteId(null);
     }
+  };
+
+  const handledelete = (id) => {
+    setDeleteId(id);
+    setIsModalOpen(true);
   };
 
   const handledownload = (fileUrl, filename) => {
@@ -196,6 +209,14 @@ function Viewdocuments() {
             <p className="text-slate-500 mt-2 font-medium">Try a different filter or search term.</p>
           </div>
         )}
+
+        <ConfirmationModal 
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onConfirm={confirmDelete}
+          title="Delete Document"
+          message="Are you sure you want to permanently remove this document? This action cannot be undone."
+        />
       </div>
     </div>
   );

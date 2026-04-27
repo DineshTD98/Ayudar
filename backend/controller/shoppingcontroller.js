@@ -138,4 +138,44 @@ exports.deleteshoppinglist = async (req, res, next) => {
     next(error);
   }
 };
+
+// atomic complete shopping
+exports.completeShopping = async (req, res, next) => {
+  try {
+    const data = Array.isArray(req.body) ? req.body : [req.body];
+
+    if (data.length === 0) {
+      const error = new Error("No completed items found");
+      error.statuscode = 400;
+      return next(error);
+    }
+
+    const completedDate = new Date();
+    const historyItems = data.map((item) => ({
+      productname: item.productname,
+      quantity: item.quantity,
+      completedDate,
+      userId: req.user.id,
+    }));
+
+    // 1. Save to History
+    const savedHistory = await History.insertMany(historyItems);
+
+    // 2. Delete completed items from Shoppinglist
+    // We use the productname and userId to match. Ideally, we'd use _id.
+    const productNames = data.map(item => item.productname);
+    const deletedShoppinglist = await Shoppinglist.deleteMany({ 
+      userId: req.user.id,
+      productname: { $in: productNames }
+    });
+
+    res.status(201).json({
+      message: "Shopping session completed successfully",
+      savedHistory,
+      deletedShoppinglist
+    });
+  } catch (err) {
+    next(err);
+  }
+};
   

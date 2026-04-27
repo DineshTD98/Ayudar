@@ -20,7 +20,13 @@ function Historymodal({ data, onClose }) {
             </div>
             <div>
               <h2 className="text-xl font-black text-white tracking-tight">Shopping Details</h2>
-              <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">{data.date}</p>
+              <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest">
+                {new Date(data.date).toLocaleDateString(undefined, { 
+                  month: 'short', 
+                  day: 'numeric', 
+                  year: 'numeric' 
+                })}
+              </p>
             </div>
           </div>
           <button

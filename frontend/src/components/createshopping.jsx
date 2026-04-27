@@ -1,8 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useApi from "../customehooks/useapi";
+import toast from "react-hot-toast";
+import ConfirmationModal from "./ConfirmationModal";
 
 function Createshopping() {
+  const [deleteIndex, setDeleteIndex] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [editQty, setEditQty] = useState('');
   const [editIndex, setEditIndex] = useState(null);
 
@@ -42,8 +46,9 @@ function Createshopping() {
     if (!exists) {
       setList([...list, form]);
       setForm({ productname: "", category: "", quantity: "" });
+      toast.success("Item added to queue");
     } else {
-      alert("Item already exists in the queue");
+      toast.error("Item already exists in the queue");
     }
   };
 
@@ -59,11 +64,18 @@ function Createshopping() {
     setEditQty('');
   };
 
-  const handledelete = (index) => {
-    const confirmdelete = window.confirm("Are you sure you want to delete this item?");
-    if (!confirmdelete) return;
-    const updated = list.filter((_, i) => i !== index);
+  const confirmDelete = () => {
+    if (deleteIndex === null) return;
+    const updated = list.filter((_, i) => i !== deleteIndex);
     setList(updated);
+    toast.success("Item removed from list");
+    setDeleteIndex(null);
+    setIsModalOpen(false);
+  };
+
+  const handledelete = (index) => {
+    setDeleteIndex(index);
+    setIsModalOpen(true);
   };
 
   const handlesave = async () => {
@@ -74,15 +86,22 @@ function Createshopping() {
         data: list
       });
       setList([]);
-      alert("Shopping list saved successfully!");
+      toast.success("Shopping list saved successfully!");
     } catch (err) {
       console.error("Save error:", err.message);
-      alert("Failed to save shopping list.");
+      toast.error("Failed to save shopping list.");
     }
   };
 
   return (
     <div className="min-h-screen text-slate-200 p-6 pt-32">
+      <ConfirmationModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={confirmDelete}
+        title="Remove Item"
+        message="Are you sure you want to remove this item from your shopping queue?"
+      />
       <div className="max-w-7xl mx-auto space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
         
         {/* Header Section */}

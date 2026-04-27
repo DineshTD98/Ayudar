@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 import useApi from "../customehooks/useapi";
 import { useDispatch, useSelector } from "react-redux";
 import { setprofile } from "../redux/slices/profile";
 
 import Profiledb from "../assets/profiledb.webp";
-import Editimage from "../assets/editimageprofile.jpg";
 
 export default function Personal() {
   const { request } = useApi();
@@ -16,6 +16,14 @@ export default function Personal() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [uploading, setUploading] = useState(false);
+  
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    firstname: "",
+    lastname: "",
+    email: "",
+    mobileno: "",
+  });
 
   // fetch user
   useEffect(() => {
@@ -27,16 +35,22 @@ export default function Personal() {
         });
 
         dispatch(setprofile(response.userdetails));
+        setFormData({
+          firstname: response.userdetails.firstname || "",
+          lastname: response.userdetails.lastname || "",
+          email: response.userdetails.email || "",
+          mobileno: response.userdetails.mobileno || "",
+        });
       } catch (err) {
         console.log(err.message);
       }
     }
     fetchuser();
-  }, []);
+  }, [request, dispatch]);
 
   // edit image click
   function handleEditClick() {
-      fileInputRef.current.click();
+    fileInputRef.current.click();
   }
 
   // image select
@@ -51,12 +65,12 @@ export default function Personal() {
   // upload image
   async function uploadProfileImage() {
     if (!selectedImage) {
-      alert("Please select an image first");
+      toast.error("Please select an image first");
       return;
     }
 
-    const formData = new FormData();
-    formData.append("profile", selectedImage);
+    const formDataUpload = new FormData();
+    formDataUpload.append("profile", selectedImage);
 
     try {
       setUploading(true);
@@ -64,51 +78,76 @@ export default function Personal() {
       const response = await request({
         url: "/profile/upload",
         method: "POST",
-        data: formData,
-       });
-      
-      alert("Profile image updated successfully");
+        data: formDataUpload,
+      });
+
+      toast.success("Profile image updated successfully");
       dispatch(setprofile(response.updatedUser));
-      
+
       // refresh user details
       setSelectedImage(null);
       setPreview(null);
-      
     } catch (err) {
       console.log(err.message);
+      toast.error("Failed to update image");
     } finally {
       setUploading(false);
     }
   }
-  
-  const BASE_URL = import.meta.env.VITE_API_URL;  
+
+  const handleUpdateProfile = async (e) => {
+    e.preventDefault();
+    try {
+      setUploading(true);
+      const response = await request({
+        url: "/profile/updateprofile",
+        method: "PATCH",
+        data: formData,
+      });
+      dispatch(setprofile(response.updatedUser));
+      setIsEditing(false);
+      toast.success("Profile updated successfully");
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to update profile");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const BASE_URL = import.meta.env.VITE_API_URL;
 
   return (
-    <div className="max-w-2xl mx-auto mt-10 mb-10 overflow-hidden bg-white border border-gray-100 shadow-2xl rounded-2xl">
+    <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl lg:rounded-[40px] overflow-hidden shadow-2xl">
       {/* Header Gradient */}
-      <div className="h-32 bg-gradient-to-r from-green-600 to-green-200"></div>
+      <div className="h-40 bg-gradient-to-r from-indigo-500/20 via-purple-500/20 to-blue-500/20 relative">
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
+      </div>
 
       {profile && Object.keys(profile).length > 0 && (
-        <div className="relative px-6 pb-8">
+        <div className="relative px-5 sm:px-10 pb-10 sm:pb-12">
           {/* Profile Image Section */}
-          <div className="flex flex-col items-center -mt-16">
+          <div className="flex flex-col sm:flex-row items-center sm:items-end gap-6 -mt-20">
             <div className="relative group">
-              <div className="relative overflow-hidden border-4 border-white rounded-full shadow-lg h-32 w-32 bg-gray-50">
+              <div className="relative overflow-hidden border-4 border-slate-900 rounded-full shadow-2xl h-32 w-32 sm:h-40 sm:w-40 bg-slate-800">
                 <img
                   src={preview || (profile.userprofile ? `${BASE_URL}/${profile.userprofile}` : Profiledb)}
                   alt="profile"
-                  className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
+                  className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
                 />
-                
+
                 {/* Overlay for Edit */}
-                <div 
+                <div
                   onClick={handleEditClick}
-                  className="absolute inset-0 flex items-center justify-center transition-opacity duration-300 bg-black/40 opacity-0 group-hover:opacity-100 cursor-pointer"
+                  className="absolute inset-0 flex items-center justify-center transition-opacity duration-300 bg-black/60 opacity-0 group-hover:opacity-100 cursor-pointer backdrop-blur-sm"
                 >
-                  <img src={Editimage} alt="edit" className="w-8 h-8 brightness-0 invert" />
+                  <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
                 </div>
               </div>
-              
+
               {/* Hidden File Input */}
               <input
                 type="file"
@@ -119,60 +158,117 @@ export default function Personal() {
               />
             </div>
 
-            <div className="mt-4 text-center">
-              <h2 className="text-2xl font-bold text-gray-800">@{profile.username}</h2>
-              <p className="text-gray-500 font-medium">Personal Account</p>
+            <div className="flex-1 text-center sm:text-left mb-2">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-3xl font-black text-white tracking-tight">@{profile.username}</h2>
+                  <div className="flex items-center gap-2 mt-1 justify-center sm:justify-start">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Verified Profile</p>
+                  </div>
+                </div>
+                {!isEditing && (
+                  <button 
+                    onClick={() => setIsEditing(true)}
+                    className="px-6 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl font-bold transition-all shadow-lg shadow-indigo-500/20 active:scale-95"
+                  >
+                    Edit Profile
+                  </button>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* User Details Grid */}
-          <div className="grid grid-cols-1 gap-6 mt-8 md:grid-cols-2">
-            <div className="p-4 transition-all border border-gray-50 rounded-xl bg-gray-50/50 hover:bg-white hover:shadow-md">
-              <label className="text-xs font-bold tracking-wider text-indigo-600 uppercase">First Name</label>
-              <p className="mt-1 text-lg font-semibold text-gray-700">{profile.firstname || 'Not set'}</p>
+          {/* User Details Form / Grid */}
+          <form onSubmit={handleUpdateProfile} className="mt-12">
+            <div className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2">
+              {[
+                { label: "First Name", key: "firstname", placeholder: "Enter first name" },
+                { label: "Last Name", key: "lastname", placeholder: "Enter last name" },
+                { label: "Email Address", key: "email", placeholder: "Enter email", type: "email" },
+                { label: "Phone Number", key: "mobileno", placeholder: "Enter phone number" },
+              ].map((field) => (
+                <div key={field.key} className="p-5 transition-all border border-white/5 rounded-2xl bg-white/5 group focus-within:bg-white/10 focus-within:border-indigo-500/50">
+                  <label className="text-[10px] font-black tracking-[0.2em] text-indigo-400 uppercase ml-1 opacity-70">
+                    {field.label}
+                  </label>
+                  {isEditing ? (
+                    <input
+                      type={field.type || "text"}
+                      value={formData[field.key]}
+                      onChange={(e) => setFormData({ ...formData, [field.key]: e.target.value })}
+                      className="w-full mt-2 bg-transparent text-lg font-bold text-white outline-none placeholder-slate-600"
+                      placeholder={field.placeholder}
+                    />
+                  ) : (
+                    <p className="mt-2 text-lg font-bold text-white tracking-wide truncate">
+                      {profile[field.key] || "Not configured"}
+                    </p>
+                  )}
+                </div>
+              ))}
             </div>
 
-            <div className="p-4 transition-all border border-gray-50 rounded-xl bg-gray-50/50 hover:bg-white hover:shadow-md">
-              <label className="text-xs font-bold tracking-wider text-indigo-600 uppercase">Last Name</label>
-              <p className="mt-1 text-lg font-semibold text-gray-700">{profile.lastname || 'Not set'}</p>
-            </div>
+            {isEditing && (
+              <div className="flex gap-4 mt-8 animate-in slide-in-from-bottom-2 duration-300">
+                <button
+                  type="submit"
+                  disabled={uploading}
+                  className="flex-1 px-8 py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-black rounded-2xl shadow-xl shadow-emerald-500/20 transition-all active:scale-95 disabled:opacity-50"
+                >
+                  {uploading ? "Saving..." : "Save Changes"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsEditing(false);
+                    setFormData({
+                      firstname: profile.firstname || "",
+                      lastname: profile.lastname || "",
+                      email: profile.email || "",
+                      mobileno: profile.mobileno || "",
+                    });
+                  }}
+                  className="px-8 py-4 bg-white/5 hover:bg-white/10 text-white font-black rounded-2xl transition-all"
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
+          </form>
 
-            <div className="p-4 transition-all border border-gray-50 rounded-xl bg-gray-50/50 hover:bg-white hover:shadow-md">
-              <label className="text-xs font-bold tracking-wider text-indigo-600 uppercase">Email Address</label>
-              <p className="mt-1 text-lg font-semibold text-gray-700 truncate">{profile.email || 'Not set'}</p>
-            </div>
-
-            <div className="p-4 transition-all border border-gray-50 rounded-xl bg-gray-50/50 hover:bg-white hover:shadow-md">
-              <label className="text-xs font-bold tracking-wider text-indigo-600 uppercase">Phone Number</label>
-              <p className="mt-1 text-lg font-semibold text-gray-700">{profile.mobileno || 'Not set'}</p>
-            </div>
-          </div>
-
-          {/* Upload Button */}
-          {selectedImage && (
-            <div className="flex flex-col items-center mt-10 space-y-3 animate-in fade-in slide-in-from-bottom-4">
-              <p className="text-sm text-amber-600 font-medium italic">New image selected!</p>
-              <button
-                onClick={uploadProfileImage}
-                disabled={uploading}
-                className="w-full max-w-xs px-8 py-3 font-bold text-white transition-all transform rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
-              >
-                {uploading ? (
-                  <span className="flex items-center justify-center">
-                    <svg className="w-5 h-5 mr-3 animate-spin text-white" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          {/* Upload Button Section (Image only) */}
+          {selectedImage && !isEditing && (
+            <div className="mt-10 p-6 rounded-[32px] bg-indigo-500/10 border border-indigo-500/20 animate-in zoom-in-95 duration-300">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 flex items-center justify-center">
+                    <svg className="w-6 h-6 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                     </svg>
-                    Uploading...
-                  </span>
-                ) : "Save Changes"}
-              </button>
-              <button 
-                onClick={() => {setSelectedImage(null); setPreview(null);}}
-                className="text-sm font-medium text-gray-400 hover:text-gray-600"
-              >
-                Cancel
-              </button>
+                  </div>
+                  <div>
+                    <p className="text-white font-bold">New Image Ready</p>
+                    <p className="text-slate-400 text-xs">Ready to sync with your account</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3 w-full sm:w-auto">
+                  <button
+                    onClick={() => { setSelectedImage(null); setPreview(null); }}
+                    className="flex-1 sm:flex-none px-6 py-3 font-bold text-slate-400 hover:text-white transition-all"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={uploadProfileImage}
+                    disabled={uploading}
+                    className="flex-1 sm:flex-none px-8 py-3 font-black text-white rounded-2xl bg-indigo-500 hover:bg-indigo-600 shadow-xl shadow-indigo-500/20 transition-all active:scale-95 disabled:opacity-50"
+                  >
+                    {uploading ? "Updating..." : "Confirm Sync"}
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </div>

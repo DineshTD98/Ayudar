@@ -75,15 +75,31 @@ function Budgetcards({ totalexpense }) {
       </div>
 
       {/* Net Balance Card */}
-      <div className="group bg-slate-900 backdrop-blur-2xl border border-indigo-500/30 rounded-2xl sm:rounded-[32px] p-4 sm:p-8 shadow-2xl relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent opacity-50"></div>
-        <p className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] mb-2 relative z-10">Remaining</p>
-        <h3 className="text-2xl sm:text-4xl font-black text-white tabular-nums relative z-10 tracking-tight">
-          ₹{(remainingbudget > 0 ? remainingbudget : 0).toLocaleString()}
+      <div className={`group backdrop-blur-2xl border rounded-2xl sm:rounded-[32px] p-4 sm:p-8 shadow-2xl relative overflow-hidden transition-all duration-500 ${
+        remainingbudget < 0 
+          ? "bg-rose-500/10 border-rose-500/50" 
+          : "bg-slate-900 border-indigo-500/30"
+      }`}>
+        <div className={`absolute inset-0 bg-gradient-to-br opacity-50 ${
+          remainingbudget < 0 ? "from-rose-500/20" : "from-indigo-500/10"
+        }`}></div>
+        <p className={`text-[10px] font-black uppercase tracking-[0.2em] mb-2 relative z-10 ${
+          remainingbudget < 0 ? "text-rose-400" : "text-indigo-400"
+        }`}>Remaining</p>
+        <h3 className={`text-2xl sm:text-4xl font-black tabular-nums relative z-10 tracking-tight transition-colors ${
+          remainingbudget < 0 ? "text-rose-500" : "text-white"
+        }`}>
+          ₹{remainingbudget.toLocaleString()}
         </h3>
         <div className="mt-4 flex items-center gap-2 relative z-10">
-          <div className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></div>
-          <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest">Liquidity Status</span>
+          <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${
+            remainingbudget < 0 ? "bg-rose-500" : "bg-blue-400"
+          }`}></div>
+          <span className={`text-[10px] font-bold uppercase tracking-widest ${
+            remainingbudget < 0 ? "text-rose-400" : "text-blue-400"
+          }`}>
+            {remainingbudget < 0 ? "Overspent" : "Liquidity Status"}
+          </span>
         </div>
       </div>
 

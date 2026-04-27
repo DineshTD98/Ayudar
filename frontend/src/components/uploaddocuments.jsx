@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import useapi from "../customehooks/useapi";
 import { useOutletContext } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -46,8 +47,8 @@ function Uploaddocuments() {
 
   const handleupload = async (e) => {
     e.preventDefault();
-    if (!files) return alert("Please select a file first.");
-    if (!category) return alert("Please select a category.");
+    if (!files) return toast.error("Please select a file first.");
+    if (!category) return toast.error("Please select a category.");
     
     const formData = new FormData();
     formData.append("name", name);
@@ -67,11 +68,11 @@ function Uploaddocuments() {
       setDate("");
       setPreview("");
       setFiles(null);
-      alert("Document uploaded successfully!");
+      toast.success("Document uploaded successfully!");
       setReload(true);
     } catch (err) {
       console.error("Upload error:", err);
-      alert(err.response?.data?.message || err.message || "Failed to upload document.");
+      toast.error(err.response?.data?.message || err.message || "Failed to upload document.");
     }
   };
 

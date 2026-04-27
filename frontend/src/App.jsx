@@ -15,6 +15,7 @@ import { addevent } from "./redux/slices/eventslice";
 import { setCreatebudget } from "./redux/slices/createbudgetslice";
 
 
+import { Toaster } from "react-hot-toast";
 import AppRoutes from "./approute";
 import { UserContext } from "./context/UserContext";
 
@@ -147,6 +148,19 @@ function App() {
           setIsloggedin={setIsloggedin}
           getstarted={getstarted}
           setGetstarted={setGetstarted}
+        />
+        <Toaster 
+          position="top-center"
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: '#0f172a',
+              color: '#fff',
+              border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: '16px',
+              backdropFilter: 'blur(16px)',
+            },
+          }}
         />
       </UserContext.Provider>
     </BrowserRouter>

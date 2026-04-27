@@ -14,8 +14,9 @@ const Shoppingslice=createSlice({
             }))
         },
         togglecomplete:(state,action)=>{
-            const index=action.payload;
-            state.value[index].completed=!state.value[index].completed
+            const id=action.payload;
+            const item = state.value.find(i => i._id === id);
+            if (item) item.completed = !item.completed;
         },
         clearshoppingcart:(state)=>{
             state.value=[]

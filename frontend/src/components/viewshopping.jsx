@@ -26,8 +26,8 @@ function Viewshopping() {
     datafetch()
   },[])
    
-   const toggleshopping=(index)=>{
-       dispatch(togglecomplete(index))
+   const toggleshopping=(id)=>{
+       dispatch(togglecomplete(id))
   }
 
  const handlecomplete=async()=>{
@@ -36,17 +36,10 @@ function Viewshopping() {
     console.log(Shoppedlist)
      try{
         const response=await request({
-          url:"/shopping/createhistory",
+          url:"/shopping/completeshopping",
           method:"post",
           data:Shoppedlist
         })
-
-        const deleteshoppinglist = await request({
-          url:"/shopping/deleteshoppinglist",
-          method:"post",
-          data:Shoppedlist
-        })  
-        console.log(deleteshoppinglist) 
         console.log(response)
         dispatch(clearshoppingcart())
      }
@@ -86,9 +79,9 @@ function Viewshopping() {
         <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[32px] p-2 shadow-2xl overflow-hidden">
           {shoppingitems.length > 0 ? (
             <div className="divide-y divide-white/5">
-              {shoppingitems.map((items, index) => (
+              {shoppingitems.map((items) => (
                 <div
-                  key={index}
+                  key={items._id}
                   className={`flex items-center gap-4 p-6 transition-all duration-300 ${
                     items.completed ? "bg-white/5 opacity-50" : "hover:bg-white/5"
                   }`}
@@ -97,7 +90,7 @@ function Viewshopping() {
                     <input
                       type="checkbox"
                       checked={items.completed}
-                      onChange={() => toggleshopping(index)}
+                      onChange={() => toggleshopping(items._id)}
                       className="peer w-8 h-8 rounded-full bg-white/5 border-2 border-white/20 checked:bg-emerald-500 checked:border-emerald-500 appearance-none cursor-pointer transition-all"
                     />
                     <svg className="w-5 h-5 absolute text-white opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={4}>
