@@ -5,17 +5,38 @@ const app = express();
 const cors = require("cors");
 
 const allowedOrigins = [
+
   "http://localhost:5173",
-  "https://ayudar-delta.vercel.app"
+
+  "http://localhost:5174",
+
 ];
 
 app.use(cors({
-  origin: allowedOrigins,
-  credentials: true,
-  methods: ["GET", "POST", "PUT","PATCH", "DELETE", "OPTIONS"], 
-  allowedHeaders: ["Content-Type", "Authorization"] 
-}));
 
+  origin: function (origin, callback) {
+
+    // Allow requests with no origin (Postman, curl, etc.)
+
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+
+      return callback(null, true);
+
+    }
+
+    return callback(new Error("Not allowed by CORS"));
+
+  },
+
+  credentials: true,
+
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+
+  allowedHeaders: ["Content-Type", "Authorization"],
+
+}));
 app.use(express.json());
 
 const mongoose = require("mongoose");
