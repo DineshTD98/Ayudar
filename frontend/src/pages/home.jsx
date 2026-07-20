@@ -6,9 +6,12 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 function Home() {
-  const { remainingbudget, alerts, todayevents } = useContext(UserContext);
+  const { remainingbudget, alerts, todayevents, updateRemainingBudgetAmount } = useContext(UserContext);
   const [opennav,setOpennav] = useState(false);
   const navigate = useNavigate();
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [tempAmount, setTempAmount] = useState("");
 
   return (
     <div className="relative z-10 pt-28 sm:pt-32 max-w-7xl mx-auto w-full px-4 sm:px-6 pb-12">
@@ -133,12 +136,59 @@ function Home() {
             }
             content={
               <div className="flex flex-col">
-                <span className="text-sm uppercase tracking-wider text-white/40 mb-1">
-                  Remaining
+                <span className="text-sm uppercase tracking-wider text-white/40 mb-1 flex items-center justify-between">
+                  <span>Remaining</span>
+                  {!isEditing && (
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setTempAmount(remainingbudget);
+                        setIsEditing(true);
+                      }}
+                      className="p-1 rounded hover:bg-white/10 text-emerald-400 transition-colors"
+                      title="Edit Total Budget"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-4 h-4">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                      </svg>
+                    </button>
+                  )}
                 </span>
-                <span className="text-3xl font-bold text-emerald-400">
-                  ₹{remainingbudget.toLocaleString()}
-                </span>
+                {isEditing ? (
+                  <div className="flex flex-col gap-3 mt-2 w-full" onClick={(e) => e.stopPropagation()}>
+                    <input
+                      type="number"
+                      value={tempAmount}
+                      onChange={(e) => setTempAmount(e.target.value)}
+                      className="w-full bg-white/10 border border-white/20 rounded-2xl px-4 py-3 text-white text-xl sm:text-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500 font-black tracking-tight"
+                      autoFocus
+                    />
+                    <div className="flex items-center gap-2 justify-end w-full">
+                      <button 
+                        onClick={() => setIsEditing(false)}
+                        className="px-3 py-2 bg-white/5 hover:bg-white/10 text-slate-400 rounded-xl text-xs font-bold transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button 
+                        onClick={async () => {
+                          const parsed = parseFloat(tempAmount);
+                          if (!isNaN(parsed) && parsed >= 0) {
+                            await updateRemainingBudgetAmount(parsed);
+                          }
+                          setIsEditing(false);
+                        }}
+                        className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold transition-colors shadow-lg shadow-emerald-500/20"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <span className="text-4xl sm:text-5xl font-black text-emerald-400 tracking-tight leading-none mt-1">
+                    ₹{remainingbudget.toLocaleString()}
+                  </span>
+                )}
               </div>
             }
             link="/budget"

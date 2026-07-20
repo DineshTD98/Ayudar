@@ -61,6 +61,10 @@ const createbudgetschema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    status: {
+      type: String,
+      default: "pending",
+    },
   },
   { timestamps: true },
 );

@@ -21,7 +21,7 @@ function Expenses() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await request({ url: "/Budget/getcategories" });
+        const response = await request({ url: "/budget/categories" });
         setCategories(response.categories || []);
       } catch (err) {
         console.log(err.message);

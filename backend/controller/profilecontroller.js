@@ -87,7 +87,14 @@ exports.updatepassword=async(req,res,next)=>{
             }
             
          )
+         res.status(200).json({
+             message: "Password updated successfully",
+             updatedpassword
+         })
+    } catch(err) {
+        next(err)
     }
+}
 // update profile
 exports.updateprofile = async (req, res, next) => {
     try {

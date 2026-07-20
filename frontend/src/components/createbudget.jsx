@@ -62,7 +62,7 @@ function Createbudget() {
         data: form,
       });
       console.log(response.Createdbudget);
-      dispatch(setCreatebudget([...Createbudget, response.Createdbudget]));
+      dispatch(setCreatebudget([...CreatebudgetList, response.Createdbudget]));
     } catch (err) {
       console.log(err.message);
     }
@@ -71,8 +71,12 @@ function Createbudget() {
 
   // Derive session totals from Redux and Context
   const sessionIncome = useMemo(() => {
-    return Createbudget.reduce((sum, item) => sum + Number(item.amount || 0), 0);
-  }, [Createbudget]);
+    return Array.isArray(CreatebudgetList)
+      ? CreatebudgetList
+          .filter((item) => item.status !== "confirmed")
+          .reduce((sum, item) => sum + Number(item.amount || 0), 0)
+      : 0;
+  }, [CreatebudgetList]);
 
   const sessionCreditAmount = Number(creditcardamount || 0);
 
@@ -107,9 +111,19 @@ function Createbudget() {
             method:'post',
             data:{nettotal}
           })
-          dispatch(setCreatebudget([]))
+          // Clear pending budget entries from backend DB
+          await request({ url: '/budget/clearallcreatebudget', method: 'delete' })
+          // Clear credit card from backend DB
+          await request({ url: '/budget/clearcreditcard', method: 'delete' })
+          // Update local state entries to confirmed status so they stay in history
+          const updatedList = CreatebudgetList.map(item => ({ ...item, status: "confirmed" }));
+          dispatch(setCreatebudget(updatedList))
           dispatch(updateTotalbudget(response.activebudget))
           setCreditcardamount(0)
+          // Reset the forms
+          setForm({ amount: "", createddate: "", source: "" })
+          setcreditcardForm({ creditcardname: "", interest: "", limit: "", duedate: "" })
+          setCreditcard("")
           toast.success("Financial cycle saved successfully");
         }
       catch(err){
@@ -460,8 +474,15 @@ function Createbudget() {
                       <td className="px-8 py-6 text-slate-600 font-bold tabular-nums">{(index + 1).toString().padStart(2, '0')}</td>
                       <td className="px-8 py-6">
                         <div className="flex items-center gap-3">
-                          <div className="w-2 h-2 rounded-full bg-emerald-500/40 group-hover:bg-emerald-500 transition-colors" />
+                          <div className={`w-2 h-2 rounded-full transition-colors ${item.status === 'confirmed' ? 'bg-slate-500' : 'bg-emerald-500'}`} />
                           <span className="font-bold text-white tracking-wide">{item.source}</span>
+                          <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${
+                            item.status === 'confirmed' 
+                              ? 'bg-slate-500/10 text-slate-400 border border-slate-500/20' 
+                              : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                          }`}>
+                            {item.status === 'confirmed' ? 'Confirmed' : 'Pending'}
+                          </span>
                         </div>
                       </td>
                       <td className="px-8 py-6 text-right font-black text-white tabular-nums">

@@ -122,11 +122,69 @@ function App() {
       : 0;
 
     const totalPendingBudget = Array.isArray(pendingBudgets)
-      ? pendingBudgets.reduce((sum, item) => sum + Number(item.amount || 0), 0)
+      ? pendingBudgets
+          .filter((item) => item.status !== "confirmed")
+          .reduce((sum, item) => sum + Number(item.amount || 0), 0)
       : 0;
 
     return (totalAmount + totalPendingBudget) - (overallExpense + totalSubMoney);
   }, [totalBudget, totalExpenseList, subscriptionList, pendingBudgets]);
+
+  const updateTotalBudgetAmount = async (targetTotal) => {
+    try {
+      const totalPendingBudget = Array.isArray(pendingBudgets)
+        ? pendingBudgets
+            .filter((item) => item.status !== "confirmed")
+            .reduce((sum, item) => sum + Number(item.amount || 0), 0)
+      : 0;
+
+      const requiredNettotal = Number(targetTotal) - totalPendingBudget;
+
+      await request({ url: '/budget/deletetotalbudget', method: 'delete' });
+      const response = await request({
+        url: '/budget/monthlybudget',
+        method: 'post',
+        data: { nettotal: requiredNettotal }
+      });
+      dispatch(setTotalbudget([response.activebudget]));
+      return true;
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+  };
+
+  const updateRemainingBudgetAmount = async (targetRemaining) => {
+    try {
+      const overallExpense = Array.isArray(totalExpenseList)
+        ? totalExpenseList.reduce((sum, exp) => sum + Number(exp.amount || 0), 0)
+        : 0;
+
+      const totalSubMoney = Array.isArray(subscriptionList)
+        ? subscriptionList.reduce((sum, sub) => sum + Number(sub.price || 0), 0)
+        : 0;
+
+      const totalPendingBudget = Array.isArray(pendingBudgets)
+        ? pendingBudgets
+            .filter((item) => item.status !== "confirmed")
+            .reduce((sum, item) => sum + Number(item.amount || 0), 0)
+        : 0;
+
+      const requiredNettotal = Number(targetRemaining) + overallExpense + totalSubMoney - totalPendingBudget;
+
+      await request({ url: '/budget/deletetotalbudget', method: 'delete' });
+      const response = await request({
+        url: '/budget/monthlybudget',
+        method: 'post',
+        data: { nettotal: requiredNettotal }
+      });
+      dispatch(setTotalbudget([response.activebudget]));
+      return true;
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+  };
 
   return (
     <BrowserRouter>
@@ -141,6 +199,8 @@ function App() {
           setCreditcardamount,
           alerts: tomorrowEvents,
           todayevents: todayEvents,
+          updateTotalBudgetAmount,
+          updateRemainingBudgetAmount,
         }}
       >
         <AppRoutes

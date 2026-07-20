@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import useapi from "../customehooks/useapi";
 
-function Expensetable({expense}) {
+function Expensetable({expense = []}) {
   const { request } = useapi();
   const [filterCategory, setFilterCategory] = useState("All");
   const [filterMonth, setFilterMonth] = useState("All");
@@ -12,10 +12,10 @@ function Expensetable({expense}) {
     const fetchCategories = async () => {
       try {
         const res = await request({
-          url: "/Budget/categories",
+          url: "/budget/categories",
           method: "get",
         });
-        setCategories(res.categories);
+        setCategories(res?.categories || []);
       } catch (err) {
         console.log(err.message);
       }

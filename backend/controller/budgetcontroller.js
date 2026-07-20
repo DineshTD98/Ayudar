@@ -425,3 +425,16 @@ exports.deletemonthlybudget = async (req, res, next) => {
     next(error);
   }
 };
+
+// clear all pending createbudget entries for a user (after cycle confirm)
+exports.clearallcreatebudget = async (req, res, next) => {
+  try {
+    await createbudget.updateMany(
+      { userId: req.user.id, status: "pending" },
+      { $set: { status: "confirmed" } }
+    );
+    res.status(200).json({ message: "All pending budget entries confirmed" });
+  } catch (error) {
+    next(error);
+  }
+};

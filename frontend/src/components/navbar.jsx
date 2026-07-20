@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import { useContext, useEffect, useState } from "react";
+import ConfirmationModal from "./ConfirmationModal";
 
 function Navbar({ setGetstarted }) {
   const {
@@ -12,6 +13,7 @@ function Navbar({ setGetstarted }) {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   const handleDropdown = (dropdownKey) => {
     setDropdown(dropdown === dropdownKey ? "" : dropdownKey);

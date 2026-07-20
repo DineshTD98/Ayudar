@@ -1,11 +1,14 @@
 import { useSelector } from "react-redux";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { UserContext } from "../context/UserContext";
 
 function Budgetcards({ totalexpense }) {
   const Createbudget = useSelector((state) => state.Createbudget.value);
   const Totalbudget = useSelector((state) => state.Totalbudget.value);
-  const { remainingbudget, creditcardamount } = useContext(UserContext);
+  const { remainingbudget, creditcardamount, updateTotalBudgetAmount } = useContext(UserContext);
+  
+  const [isEditing, setIsEditing] = useState(false);
+  const [tempAmount, setTempAmount] = useState("");
 
   const monthlydate = new Date();
 
@@ -35,7 +38,9 @@ function Budgetcards({ totalexpense }) {
   const totalamount = (Array.isArray(Totalbudget)
     ? Totalbudget.reduce((sum, item) => sum + Number(item.nettotal || 0), 0)
     : 0) + (Array.isArray(Createbudget)
-      ? Createbudget.reduce((sum, item) => sum + Number(item.amount || 0), 0)
+      ? Createbudget
+          .filter((item) => item.status !== "confirmed")
+          .reduce((sum, item) => sum + Number(item.amount || 0), 0)
       : 0);
 
   return (
@@ -47,10 +52,58 @@ function Budgetcards({ totalexpense }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2">Total Amount</p>
-        <h3 className="text-xl sm:text-3xl font-bold text-white tabular-nums">
-          ₹{(totalamount > 0 ? totalamount : 0).toLocaleString()}
-        </h3>
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Total Amount</p>
+          {!isEditing && (
+            <button 
+              onClick={() => {
+                setTempAmount(totalamount);
+                setIsEditing(true);
+              }}
+              className="p-1 rounded hover:bg-white/10 text-emerald-400 transition-colors relative z-10"
+              title="Edit Total Budget"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-4 h-4">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+              </svg>
+            </button>
+          )}
+        </div>
+        {isEditing ? (
+          <div className="flex flex-col gap-3 mt-2 w-full relative z-10">
+            <input
+              type="number"
+              value={tempAmount}
+              onChange={(e) => setTempAmount(e.target.value)}
+              className="w-full bg-white/10 border border-white/20 rounded-2xl px-4 py-3 text-white text-lg sm:text-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 font-black tracking-tight"
+              autoFocus
+            />
+            <div className="flex items-center gap-2 justify-end w-full">
+              <button 
+                onClick={() => setIsEditing(false)}
+                className="px-3 py-2 bg-white/5 hover:bg-white/10 text-slate-400 rounded-xl text-xs font-bold transition-colors"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={async () => {
+                  const parsed = parseFloat(tempAmount);
+                  if (!isNaN(parsed) && parsed >= 0) {
+                    await updateTotalBudgetAmount(parsed);
+                  }
+                  setIsEditing(false);
+                }}
+                className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold transition-colors shadow-lg shadow-emerald-500/20"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        ) : (
+          <h3 className="text-2xl sm:text-4xl font-black text-white tracking-tight leading-none mt-1 tabular-nums">
+            ₹{(totalamount > 0 ? totalamount : 0).toLocaleString()}
+          </h3>
+        )}
         <div className="mt-4 flex items-center gap-2">
           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
           <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Active Funds</span>
