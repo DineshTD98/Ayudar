@@ -14,16 +14,24 @@ function MyPieChart({ expense }) {
     return acc;
   }, {});
 
-  const totalexpenseamount=expense.reduce((acc,curr)=>acc+Number(curr.amount),0)
+  const totalexpenseamount = expense.reduce((acc,curr) => acc + Number(curr.amount), 0);
   
-  const percentage=Object.entries(categoryStats).map(([category,amount])=>({
+  const percentage = Object.entries(categoryStats).map(([category, amount]) => ({
     category,
-    percentage:Math.floor((amount/totalexpenseamount*100)*100)/100
-  }))
+    percentage: totalexpenseamount === 0 ? 0 : Math.floor((amount / totalexpenseamount * 100) * 100) / 100
+  }));
   
-  
-  console.log(percentage)
-  
+  if (totalexpenseamount === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[300px] text-slate-500">
+        <svg className="w-12 h-12 mb-4 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+        </svg>
+        <span className="italic font-medium">No expenses for this period.</span>
+      </div>
+    );
+  }
 
   return (
     <div className="flex justify-center">

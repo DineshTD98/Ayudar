@@ -1,5 +1,5 @@
 import Budgetcards from "../components/budgetcards";
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import MyPieChart from "../components/piechart";
 import useapi from "../customehooks/useapi";
 import Expensetable from "../components/expensetable";
@@ -10,13 +10,85 @@ import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
 
 function Budget() {
-  const { error, loading } = useapi();
+  const { request, error, loading } = useapi();
   const location = useLocation();
   const dispatch = useDispatch();
 
-  const expense = useSelector((state) => state.Expense.value);
+  const expense = useSelector((state) => state.Expense.value) || [];
   const subscriptionlist = useSelector((state) => state.Subscriptionlist.value);
   
+  const [filterCategory, setFilterCategory] = useState("All");
+  const [filterMonth, setFilterMonth] = useState(new Date().getMonth().toString());
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await request({
+          url: "/budget/categories",
+          method: "get",
+        });
+        setCategories(res?.categories || []);
+      } catch (err) {
+        console.log(err.message);
+      }
+    };
+    fetchCategories();
+  }, [request]);
+
+  const filteredExpenses = useMemo(() => {
+    return expense.filter((item) => {
+      // Handle both populated (object) and non-populated (string) category
+      const itemCategoryId = item.category?._id || item.category;
+      const categoryMatch = filterCategory === "All" || itemCategoryId === filterCategory;
+      
+      const itemDate = item.date ? new Date(item.date) : null;
+      const itemMonth = itemDate ? itemDate.getMonth() : -1;
+      const monthMatch = filterMonth === "All" || itemMonth === Number(filterMonth);
+      
+      return categoryMatch && monthMatch;
+    });
+  }, [expense, filterCategory, filterMonth]);
+
+  const downloadStatement = () => {
+    if (filteredExpenses.length === 0) {
+      alert("No expenses to download for the selected filters.");
+      return;
+    }
+    
+    // Create CSV header
+    let csvContent = "data:text/csv;charset=utf-8,";
+    csvContent += "Title,Amount,Category,Date\n";
+
+    // Add rows
+    filteredExpenses.forEach((exp) => {
+      const title = exp.title ? exp.title.replace(/,/g, "") : ""; // remove commas to avoid breaking csv
+      const amount = exp.amount;
+      const categoryName = typeof exp.category === 'object' 
+        ? (exp.category?.name || "Others") 
+        : (categories.find(c => c._id === exp.category)?.name || "Others");
+      const date = new Date(exp.date).toLocaleDateString();
+      
+      csvContent += `${title},${amount},${categoryName},${date}\n`;
+    });
+
+    // Download file
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    
+    let monthName = "All";
+    if (filterMonth !== "All") {
+      monthName = new Date(0, Number(filterMonth)).toLocaleString('default', { month: 'long' });
+    }
+    link.setAttribute("download", `Expense_Statement_${monthName}.csv`);
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+
   const { creditcardamount, setCreditcardamount } = useContext(UserContext);
 
   const totalsubmoney = useMemo(() => {
@@ -96,13 +168,54 @@ function Budget() {
                 <div className="space-y-10">
                   <Budgetcards totalexpense={totalexpense}/>
 
+                  <div className="flex flex-col md:flex-row justify-between items-center gap-6 p-4 mb-6 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[24px]">
+                    <div className="flex flex-col md:flex-row items-center gap-6 w-full md:w-auto">
+                      <div className="flex items-center gap-3">
+                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Category</span>
+                        <select 
+                          value={filterCategory}
+                          onChange={(e) => setFilterCategory(e.target.value)}
+                          className="bg-transparent font-bold text-white outline-none cursor-pointer text-sm"
+                        >
+                          <option value="All" className="bg-slate-900">All Categories</option>
+                          {categories.map((cat) => (
+                            <option key={cat._id} value={cat._id} className="bg-slate-900">{cat.name}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="w-full md:w-px h-px md:h-8 bg-white/10" />
+                      <div className="flex items-center gap-3">
+                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Timeline</span>
+                        <select 
+                          value={filterMonth}
+                          onChange={(e) => setFilterMonth(e.target.value)}
+                          className="bg-transparent font-bold text-white outline-none cursor-pointer text-sm"
+                        >
+                          <option value="All" className="bg-slate-900">Entire History</option>
+                          {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map((m, i) => (
+                            <option key={m} value={i} className="bg-slate-900">{m}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                    <button 
+                      onClick={downloadStatement}
+                      className="px-5 py-2 bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 rounded-xl text-sm font-bold shadow-lg shadow-indigo-500/10 hover:bg-indigo-500/30 transition-all flex items-center gap-2"
+                    >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                      </svg>
+                      Download Statement
+                    </button>
+                  </div>
+
                   <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 sm:gap-10">
                     <div className="xl:col-span-7 bg-white/5 backdrop-blur-2xl rounded-3xl lg:rounded-[40px] border border-white/10 p-5 sm:p-10 shadow-2xl">
                       <div className="flex items-center justify-between mb-10">
                         <h2 className="text-2xl font-black text-white tracking-tight">Recent Activity</h2>
                         <button className="text-indigo-400 text-sm font-black uppercase tracking-widest hover:text-indigo-300 transition-colors">View All</button>
                       </div>
-                      <Expensetable expense={expense} />
+                      <Expensetable expense={filteredExpenses} categories={categories} />
                     </div>
 
                     <div className="xl:col-span-5 bg-white/5 backdrop-blur-2xl rounded-3xl lg:rounded-[40px] border border-white/10 p-5 sm:p-10 shadow-2xl">
@@ -113,7 +226,7 @@ function Budget() {
                             Synthesizing analytics...
                           </div>
                         ) : (
-                          <MyPieChart expense={expense} />
+                          <MyPieChart expense={filteredExpenses} />
                         )}
                       </div>
                     </div>
