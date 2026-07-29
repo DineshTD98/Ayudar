@@ -220,9 +220,9 @@ function Budget() {
                       <Expensetable expense={filteredExpenses} categories={categories} />
                     </div>
 
-                    <div className="xl:col-span-5 bg-white/5 backdrop-blur-2xl rounded-3xl lg:rounded-[40px] border border-white/10 p-5 sm:p-10 shadow-2xl">
+                    <div className="xl:col-span-5 bg-white/5 backdrop-blur-2xl rounded-3xl lg:rounded-[40px] border border-white/10 p-5 sm:p-10 shadow-2xl flex flex-col">
                       <h2 className="text-2xl font-black text-white tracking-tight mb-10">Analytics</h2>
-                      <div className="flex justify-center p-6 bg-white/5 rounded-[32px] border border-white/5">
+                      <div className="flex-1 flex justify-center items-center">
                         {loading ? (
                           <div className="h-[300px] flex items-center justify-center text-slate-500 italic font-medium">
                             Synthesizing analytics...

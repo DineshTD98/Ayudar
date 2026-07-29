@@ -1,4 +1,4 @@
-import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
 function MyPieChart({ expense }) {
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#AF19FF", "#FF1919"];
@@ -34,24 +34,26 @@ function MyPieChart({ expense }) {
   }
 
   return (
-    <div className="flex justify-center w-full">
-      <PieChart width={600} height={500} className="p-1">
-        <Pie
-          data={percentage}
-          cx={300}
-          cy={220}
-          outerRadius={200}
-          dataKey="percentage"
-          nameKey="category"
-          label={({ name, percentage }) => `${name}: ${percentage.toFixed(2)}%`}
-        >
-          {percentage.map((_, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-          ))}
-        </Pie>
-        <Tooltip formatter={(value) => `${value}%`} />
-        <Legend verticalAlign="bottom" height={36}/>
-      </PieChart>
+    <div className="w-full h-[500px]">
+      <ResponsiveContainer width="100%" height="100%">
+        <PieChart>
+          <Pie
+            data={percentage}
+            cx="50%"
+            cy="50%"
+            outerRadius="80%"
+            dataKey="percentage"
+            nameKey="category"
+            label={({ name, percentage }) => `${name}: ${percentage.toFixed(2)}%`}
+          >
+            {percentage.map((_, index) => (
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            ))}
+          </Pie>
+          <Tooltip formatter={(value) => `${value}%`} />
+          <Legend verticalAlign="bottom" height={36}/>
+        </PieChart>
+      </ResponsiveContainer>
     </div>
   );
 }
