@@ -10,29 +10,12 @@ function Budgetcards({ totalexpense }) {
   const [isEditing, setIsEditing] = useState(false);
   const [tempAmount, setTempAmount] = useState("");
 
-  const monthlydate = new Date();
-
-  // Find the latest income entry (any source) to calculate the next cycle date
-  const latestIncome = Array.isArray(Createbudget)
-    ? [...Createbudget].reverse().find((item) => item.createddate)
-    : null;
-
-  let nextCycleDate;
-  if (latestIncome && latestIncome.createddate) {
-    const entryDate = new Date(latestIncome.createddate);
-    nextCycleDate = new Date(entryDate);
-    nextCycleDate.setDate(entryDate.getDate() + 30);
-  } else {
-    // Default to 30 days from today if no income found
-    nextCycleDate = new Date();
-    nextCycleDate.setDate(nextCycleDate.getDate() + 30);
-  }
-
-  nextCycleDate.setHours(0, 0, 0, 0);
-  monthlydate.setHours(0, 0, 0, 0);
-
-  const remainingdays = nextCycleDate - monthlydate;
-  const remainingdaysinmonth = Math.max(0, Math.ceil(remainingdays / (1000 * 60 * 60 * 24)));
+  const today = new Date();
+  const todayLabel = today.toLocaleDateString(undefined, {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
 
   // Total funds available (saved total + current pending income)
   const totalamount = (Array.isArray(Totalbudget)
@@ -165,10 +148,10 @@ function Budgetcards({ totalexpense }) {
         </div>
         <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2">Date</p>
         <h3 className="text-xl font-bold text-white tracking-tight">
-          {monthlydate.toDateString()}
+          {todayLabel}
         </h3>
         <div className="mt-4 flex items-center gap-2">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Remaining days: {remainingdaysinmonth}</span>
+          <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">3 days remaining</span>
         </div>
       </div>
 

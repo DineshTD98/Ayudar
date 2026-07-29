@@ -153,6 +153,9 @@ function Expenses() {
                       required
                     >
                       <option value="" className="bg-slate-900">Select Category</option>
+                      {!categories.some((cat) => cat.name?.toLowerCase() === "family purchase") && (
+                        <option value="Family Purchase" className="bg-slate-900">Family Purchase</option>
+                      )}
                       {categories.map((cat) => (
                         <option key={cat._id} value={cat._id} className="bg-slate-900">{cat.name}</option>
                       ))}
@@ -232,6 +235,9 @@ function Expenses() {
                       required
                     >
                       <option value="" className="bg-slate-900">Category</option>
+                      {!categories.some((cat) => cat.name?.toLowerCase() === "family purchase") && (
+                        <option value="Family Purchase" className="bg-slate-900">Family Purchase</option>
+                      )}
                       {categories.map((cat) => (
                         <option key={cat._id} value={cat._id} className="bg-slate-900">{cat.name}</option>
                       ))}
