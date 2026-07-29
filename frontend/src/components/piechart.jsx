@@ -35,12 +35,12 @@ function MyPieChart({ expense }) {
 
   return (
     <div className="flex justify-center w-full">
-      <PieChart width={500} height={450} className="p-1">
+      <PieChart width={600} height={500} className="p-1">
         <Pie
           data={percentage}
-          cx={250}
-          cy={200}
-          outerRadius={160}
+          cx={300}
+          cy={220}
+          outerRadius={200}
           dataKey="percentage"
           nameKey="category"
           label={({ name, percentage }) => `${name}: ${percentage.toFixed(2)}%`}
