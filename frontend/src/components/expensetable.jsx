@@ -3,14 +3,14 @@ function Expensetable({expense = [], categories = []}) {
   return (
     <>
     <div className="space-y-6">
-      <div className="overflow-x-auto rounded-[32px] border border-white/5">
+      <div className="overflow-x-auto overflow-y-auto max-h-[400px] rounded-[32px] border border-white/5 scrollbar-hide">
         <table className="min-w-full">
-          <thead className="bg-white/5">
+          <thead className="bg-[#1e2335]/95 backdrop-blur-md sticky top-0 z-10 border-b border-white/10">
             <tr>
-              <th className="px-6 py-4 text-left text-[10px] font-black text-slate-500 uppercase tracking-widest">Descriptor</th>
-              <th className="px-6 py-4 text-left text-[10px] font-black text-slate-500 uppercase tracking-widest">Amount</th>
-              <th className="px-6 py-4 text-left text-[10px] font-black text-slate-500 uppercase tracking-widest">Classification</th>
-              <th className="px-6 py-4 text-left text-[10px] font-black text-slate-500 uppercase tracking-widest">Date</th>
+              <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Descriptor</th>
+              <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Amount</th>
+              <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Classification</th>
+              <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Date</th>
             </tr>
           </thead>
 
