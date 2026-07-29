@@ -7,11 +7,43 @@ const {
   monthlybudget
 } = require("../model/budgetmodel");
 
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+const ensureCategory = async (categoryInput) => {
+  if (!categoryInput) return null;
+
+  if (typeof categoryInput === "string") {
+    const trimmedValue = categoryInput.trim();
+
+    if (!trimmedValue) return null;
+
+    if (trimmedValue.match(/^[0-9a-fA-F]{24}$/)) {
+      const existingById = await Categories.findOne({ _id: trimmedValue });
+      if (existingById) return existingById._id;
+    }
+
+    const existingByName = await Categories.findOne({
+      name: {
+        $regex: `^${escapeRegex(trimmedValue)}$`,
+        $options: "i",
+      },
+    });
+
+    if (existingByName) return existingByName._id;
+
+    const created = await Categories.create({ name: trimmedValue });
+    return created._id;
+  }
+
+  return categoryInput;
+};
+
 // CREATE EXPENSE (Single / Bulk)
 
 exports.createexpense = async (req, res) => {
   try {
     const data = Array.isArray(req.body) ? req.body : [req.body];
+    const preparedData = [];
 
     for (let exp of data) {
       const { title, category, amount, date } = exp;
@@ -22,24 +54,22 @@ exports.createexpense = async (req, res) => {
         });
       }
 
-      // Validate category
-      const categoryExists = await Categories.findOne({
-        _id: category,
-      });
+      const categoryId = await ensureCategory(category);
 
-      if (!categoryExists) {
+      if (!categoryId) {
         return res.status(400).json({
           message: "invalid category",
         });
       }
+
+      preparedData.push({
+        ...exp,
+        category: categoryId,
+        userId: req.user.id,
+      });
     }
 
-    const inserted = await expenses.insertMany(
-      data.map((item) => ({
-        ...item,
-        userId: req.user.id,
-      })),
-    );
+    const inserted = await expenses.insertMany(preparedData);
 
     const expense = await expenses.find({ _id: { $in: inserted.map(e => e._id) } }).populate("category", "name");
 
@@ -103,6 +133,18 @@ exports.createCategory = async (req, res) => {
 //GET CATEGORIES (for dropdown)
 exports.getCategories = async (req, res) => {
   try {
+    const defaultCategoryName = "Family Purchase";
+    const defaultCategory = await Categories.findOne({
+      name: {
+        $regex: `^${escapeRegex(defaultCategoryName)}$`,
+        $options: "i",
+      },
+    });
+
+    if (!defaultCategory) {
+      await Categories.create({ name: defaultCategoryName });
+    }
+
     const categories = await Categories.aggregate([
       {
         $addFields: {
