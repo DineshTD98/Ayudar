@@ -212,7 +212,7 @@ function Budget() {
                   </div>
 
                   <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 sm:gap-10">
-                    <div className="xl:col-span-7 sm:p-4">
+                    <div className="xl:col-span-7 bg-white/5 backdrop-blur-2xl rounded-3xl lg:rounded-[40px] border border-white/10 p-5 sm:p-10 shadow-2xl">
                       <div className="flex items-center justify-between mb-10">
                         <h2 className="text-2xl font-black text-white tracking-tight">Recent Activity</h2>
                         <button className="text-indigo-400 text-sm font-black uppercase tracking-widest hover:text-indigo-300 transition-colors">View All</button>
@@ -220,9 +220,9 @@ function Budget() {
                       <Expensetable expense={filteredExpenses} categories={categories} />
                     </div>
 
-                    <div className="xl:col-span-5 sm:p-4">
+                    <div className="xl:col-span-5 bg-white/5 backdrop-blur-2xl rounded-3xl lg:rounded-[40px] border border-white/10 p-5 sm:p-10 shadow-2xl">
                       <h2 className="text-2xl font-black text-white tracking-tight mb-10">Analytics</h2>
-                      <div className="flex justify-center p-2 rounded-[32px]">
+                      <div className="flex justify-center p-6 bg-white/5 rounded-[32px] border border-white/5">
                         {loading ? (
                           <div className="h-[300px] flex items-center justify-center text-slate-500 italic font-medium">
                             Synthesizing analytics...
