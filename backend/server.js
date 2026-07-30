@@ -1,43 +1,41 @@
 require("dotenv").config();
 const express = require("express");
-const app = express();
-
 const cors = require("cors");
 
+const app = express();
+
 const allowedOrigins = [
-
   "http://localhost:5173",
-
   "http://localhost:5174",
-  
-  "https://ayudar-delta.vercel.app"
-
+  "http://127.0.0.1:5173",
+  "http://127.0.0.1:5174",
+  "https://ayudar-delta.vercel.app",
 ];
 
+const isAllowedOrigin = (origin) => {
+  if (!origin) return true;
+
+  if (allowedOrigins.includes(origin)) return true;
+
+  if (/^http:\/\/localhost(:\d+)?$/.test(origin)) return true;
+  if (/^http:\/\/127\.0\.0\.1(:\d+)?$/.test(origin)) return true;
+  if (/^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin)) return true;
+  if (/^https:\/\/[a-z0-9-]+\.vercel\.dev$/i.test(origin)) return true;
+
+  return false;
+};
+
 app.use(cors({
-
   origin: function (origin, callback) {
-
-    // Allow requests with no origin (Postman, curl, etc.)
-
-    if (!origin) return callback(null, true);
-
-    if (allowedOrigins.includes(origin)) {
-
+    if (isAllowedOrigin(origin)) {
       return callback(null, true);
-
     }
 
-    return callback(new Error("Not allowed by CORS"));
-
+    return callback(null, false);
   },
-
   credentials: true,
-
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-
   allowedHeaders: ["Content-Type", "Authorization"],
-
 }));
 app.use(express.json());
 
