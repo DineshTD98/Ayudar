@@ -17,7 +17,7 @@ import { setCreatebudget } from "./redux/slices/createbudgetslice";
 
 import { Toaster } from "react-hot-toast";
 import AppRoutes from "./approute";
-import { UserContext } from "./context/UserContext";
+import { UserContext } from "./context/userContext";
 
 const formatLocalDate = (date) => {
   const year = date.getFullYear();
