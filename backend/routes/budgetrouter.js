@@ -20,9 +20,11 @@ const {
   deletetotalbudget,
   clearcreditcard,
   deletemonthlybudget,
-  clearallcreatebudget
+  clearallcreatebudget,
+  deleteexpense
 } = require("../controller/budgetcontroller");
 router.post("/createexpense", auth, createexpense);
+router.delete("/deleteexpense/:id", auth, deleteexpense);
 router.get("/getexpense", auth, getexpenses);
 
 router.post("/createcategory", auth, createCategory);

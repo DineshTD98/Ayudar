@@ -35,6 +35,7 @@ function App() {
   const [active, setActive] = useState("A");
   const [dropdown, setDropdown] = useState("");
   const [creditcardamount, setCreditcardamount] = useState(0);
+  const [lastMonthSavings, setLastMonthSavings] = useState(0);
 
   // Derived events from Redux Store
   const events = useSelector((state) => state.Events.value);
@@ -62,6 +63,9 @@ function App() {
         const budgetresponse = await request({ url: "/budget/gettotalbudget", method: "GET" });
         if (budgetresponse?.totalbudget) {
           dispatch(setTotalbudget(budgetresponse.totalbudget));
+          if (budgetresponse.lastMonthSavings !== undefined) {
+            setLastMonthSavings(budgetresponse.lastMonthSavings);
+          }
         }
 
         // 2. Fetch Expenses
@@ -113,8 +117,17 @@ function App() {
       ? totalBudget.reduce((sum, item) => sum + Number(item.nettotal || 0), 0)
       : 0;
 
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+
     const overallExpense = Array.isArray(totalExpenseList)
-      ? totalExpenseList.reduce((sum, exp) => sum + Number(exp.amount || 0), 0)
+      ? totalExpenseList.reduce((sum, exp) => {
+          const expDate = new Date(exp.date);
+          if (expDate.getMonth() === currentMonth && expDate.getFullYear() === currentYear) {
+            return sum + Number(exp.amount || 0);
+          }
+          return sum;
+        }, 0)
       : 0;
 
     const totalSubMoney = Array.isArray(subscriptionList)
@@ -156,8 +169,17 @@ function App() {
 
   const updateRemainingBudgetAmount = async (targetRemaining) => {
     try {
+      const currentMonth = new Date().getMonth();
+      const currentYear = new Date().getFullYear();
+
       const overallExpense = Array.isArray(totalExpenseList)
-        ? totalExpenseList.reduce((sum, exp) => sum + Number(exp.amount || 0), 0)
+        ? totalExpenseList.reduce((sum, exp) => {
+            const expDate = new Date(exp.date);
+            if (expDate.getMonth() === currentMonth && expDate.getFullYear() === currentYear) {
+              return sum + Number(exp.amount || 0);
+            }
+            return sum;
+          }, 0)
         : 0;
 
       const totalSubMoney = Array.isArray(subscriptionList)
@@ -201,6 +223,7 @@ function App() {
           todayevents: todayEvents,
           updateTotalBudgetAmount,
           updateRemainingBudgetAmount,
+          lastMonthSavings,
         }}
       >
         <AppRoutes

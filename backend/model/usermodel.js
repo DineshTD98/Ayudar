@@ -21,6 +21,8 @@ const Userschema = new mongoose.Schema(
     language: { type: String, default: "English" },
     currency: { type: String, default: "INR" },
     notifications: { type: Boolean, default: true },
+    lastRolloverMonth: { type: String, default: "" },
+    lastMonthSavings: { type: Number, default: 0 },
   },
   {
     timestamps: true,

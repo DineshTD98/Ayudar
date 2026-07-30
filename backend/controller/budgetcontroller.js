@@ -6,6 +6,7 @@ const {
   Creditcardbudget,
   monthlybudget
 } = require("../model/budgetmodel");
+const User = require("../model/usermodel");
 
 const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
@@ -133,16 +134,29 @@ exports.createCategory = async (req, res) => {
 //GET CATEGORIES (for dropdown)
 exports.getCategories = async (req, res) => {
   try {
-    const defaultCategoryName = "Family Purchase";
-    const defaultCategory = await Categories.findOne({
-      name: {
-        $regex: `^${escapeRegex(defaultCategoryName)}$`,
-        $options: "i",
-      },
+    const defaultCategories = [
+      "Food",
+      "Family purchase",
+      "Travel",
+      "Shopping",
+      "Entertainment",
+      "Work",
+      "Groceries",
+      "Others"
+    ];
+
+    const existingCats = await Categories.find({
+      name: { $in: defaultCategories.map(name => new RegExp(`^${escapeRegex(name)}$`, "i")) }
     });
 
-    if (!defaultCategory) {
-      await Categories.create({ name: defaultCategoryName });
+    const existingNames = existingCats.map(c => c.name.toLowerCase());
+    
+    const missingCats = defaultCategories
+      .filter(name => !existingNames.includes(name.toLowerCase()))
+      .map(name => ({ name }));
+
+    if (missingCats.length > 0) {
+      await Categories.insertMany(missingCats);
     }
 
     const categories = await Categories.aggregate([
@@ -368,10 +382,50 @@ exports.monthlybudget = async (req, res) => {
 
 exports.gettotalbudget = async (req, res) => {
   try {
-    const totalbudget = await monthlybudget.find({ userId: req.user.id })
+    const user = await User.findById(req.user.id);
+    const currentMonthStr = new Date().toISOString().slice(0, 7); // e.g., "2026-07"
+    let lastMonthSavings = user?.lastMonthSavings || 0;
+
+    // Process Rollover
+    if (user && user.lastRolloverMonth && user.lastRolloverMonth !== currentMonthStr) {
+      // Calculate remaining budget based on ALL lifetime data (since previous months tracked lifetime)
+      const totalBudgets = await monthlybudget.find({ userId: req.user.id });
+      const totalAmount = totalBudgets.reduce((sum, item) => sum + Number(item.nettotal || 0), 0);
+      
+      const pendingBudgets = await createbudget.find({ userId: req.user.id, status: { $ne: "confirmed" } });
+      const totalPendingIncome = pendingBudgets.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+
+      const allExpenses = await expenses.find({ userId: req.user.id });
+      const overallExpense = allExpenses.reduce((sum, exp) => sum + Number(exp.amount || 0), 0);
+      
+      const allSubscriptions = await subscriptions.find({ userId: req.user.id });
+      const totalSubMoney = allSubscriptions.reduce((sum, sub) => sum + Number(sub.price || 0), 0);
+      
+      const remaining = (totalAmount + totalPendingIncome) - (overallExpense + totalSubMoney);
+      
+      user.lastMonthSavings = remaining > 0 ? remaining : 0;
+      user.lastRolloverMonth = currentMonthStr;
+      await user.save();
+      
+      lastMonthSavings = user.lastMonthSavings;
+
+      // Reset monthlybudget to the saved amount
+      await monthlybudget.deleteMany({ userId: req.user.id });
+      await monthlybudget.create({ nettotal: user.lastMonthSavings, userId: req.user.id });
+      
+      // Confirm all pending budgets so they are moved to history
+      await createbudget.updateMany({ userId: req.user.id, status: "pending" }, { $set: { status: "confirmed" } });
+    } else if (user && !user.lastRolloverMonth) {
+      user.lastRolloverMonth = currentMonthStr;
+      await user.save();
+    }
+
+    const totalbudget = await monthlybudget.find({ userId: req.user.id });
+    
     return res.status(200).json({
       message: 'successfully received budget',
-      totalbudget: totalbudget || []
+      totalbudget: totalbudget || [],
+      lastMonthSavings
     })
   }
   catch (err) {
@@ -478,5 +532,18 @@ exports.clearallcreatebudget = async (req, res, next) => {
     res.status(200).json({ message: "All pending budget entries confirmed" });
   } catch (error) {
     next(error);
+  }
+};
+
+exports.deleteexpense = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedExpense = await expenses.findOneAndDelete({ _id: id, userId: req.user.id });
+    if (!deletedExpense) {
+      return res.status(404).json({ message: "Expense not found" });
+    }
+    return res.status(200).json({ message: "Successfully deleted expense", deletedExpense });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
   }
 };

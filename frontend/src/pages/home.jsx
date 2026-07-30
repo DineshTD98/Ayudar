@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 function Home() {
-  const { remainingbudget, alerts, todayevents, updateRemainingBudgetAmount } = useContext(UserContext);
+  const { remainingbudget, alerts, todayevents, updateRemainingBudgetAmount, lastMonthSavings } = useContext(UserContext);
   const [opennav,setOpennav] = useState(false);
   const navigate = useNavigate();
 
@@ -27,6 +27,15 @@ function Home() {
             <p className="text-white/70 text-base sm:text-lg font-light">
               Here's what's happening with your family today.
             </p>
+            {lastMonthSavings > 0 && (
+              <div className="mt-4 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-start gap-4 shadow-lg shadow-emerald-500/5">
+                <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0 text-emerald-400 text-xl">🎉</div>
+                <div>
+                  <h4 className="text-emerald-400 font-bold text-lg">Great job!</h4>
+                  <p className="text-emerald-400/80 text-sm mt-1">You saved <strong className="text-emerald-300 tracking-wide font-black">₹{lastMonthSavings.toLocaleString()}</strong> last month! We've automatically rolled this over to your new monthly budget.</p>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="mb-12 lg:w-1/2 w-full">
