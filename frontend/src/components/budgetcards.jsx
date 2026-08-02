@@ -17,6 +17,27 @@ function Budgetcards({ totalexpense }) {
     year: "numeric",
   });
 
+  const salaryDay = 1;
+  const daysUntilSalary = (() => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    let nextSalaryDate = new Date(currentYear, currentMonth, salaryDay);
+
+    if (now.getDate() >= salaryDay) {
+      nextSalaryDate = new Date(currentYear, currentMonth + 1, salaryDay);
+    }
+
+    if (now.getDate() === salaryDay) {
+      return 0;
+    }
+
+    const diffTime = nextSalaryDate - today;
+    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays > 0 ? diffDays : 0;
+  })();
+
   // Total funds available (saved total + current pending income)
   const totalamount = (Array.isArray(Totalbudget)
     ? Totalbudget.reduce((sum, item) => sum + Number(item.nettotal || 0), 0)
@@ -100,13 +121,13 @@ function Budgetcards({ totalexpense }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
           </svg>
         </div>
-        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2">Expenses</p>
+        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2">This Month</p>
         <h3 className="text-xl sm:text-3xl font-bold text-white tabular-nums">
           ₹{(totalexpense > 0 ? totalexpense : 0).toLocaleString()}
         </h3>
         <div className="mt-4 flex items-center gap-2">
           <div className="w-1.5 h-1.5 rounded-full bg-rose-500"></div>
-          <span className="text-[10px] font-bold text-rose-400 uppercase tracking-widest">Expenses + Subs</span>
+          <span className="text-[10px] font-bold text-rose-400 uppercase tracking-widest">Monthly Expenses</span>
         </div>
       </div>
 
@@ -146,12 +167,12 @@ function Budgetcards({ totalexpense }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2">Date</p>
+        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2">Today</p>
         <h3 className="text-xl font-bold text-white tracking-tight">
           {todayLabel}
         </h3>
         <div className="mt-4 flex items-center gap-2">
-          <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">3 days remaining</span>
+          <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">{daysUntilSalary} days to salary day</span>
         </div>
       </div>
 

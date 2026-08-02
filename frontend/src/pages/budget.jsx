@@ -97,12 +97,36 @@ function Budget() {
     return Array.isArray(subscriptionlist) ? subscriptionlist.reduce((sum, sub) => sum + (sub.price || 0), 0) : 0;
   }, [subscriptionlist]);
 
+  const currentMonth = useMemo(() => {
+    const now = new Date();
+    return { month: now.getMonth(), year: now.getFullYear() };
+  }, []);
+
   const totalexpense = useMemo(() => {
-    const overallexpense = Array.isArray(expense) ?
-      expense.reduce((sum, exp) => sum + (exp.amount || 0), 0) :
-      0;
-    return overallexpense + totalsubmoney;
-  }, [expense, totalsubmoney]);
+    if (!Array.isArray(expense)) return 0;
+
+    return expense.reduce((sum, exp) => {
+      const itemDate = exp.date ? new Date(exp.date) : null;
+      const isCurrentMonth = itemDate &&
+        itemDate.getFullYear() === currentMonth.year &&
+        itemDate.getMonth() === currentMonth.month;
+
+      return sum + (isCurrentMonth ? Number(exp.amount || 0) : 0);
+    }, 0) + totalsubmoney;
+  }, [expense, totalsubmoney, currentMonth.month, currentMonth.year]);
+
+  const selectedMonthTotal = useMemo(() => {
+    if (!Array.isArray(expense)) return 0;
+
+    return expense.reduce((sum, exp) => {
+      const itemDate = exp.date ? new Date(exp.date) : null;
+      const isSelectedMonth = itemDate && filterMonth !== "All"
+        ? itemDate.getFullYear() === new Date().getFullYear() && itemDate.getMonth() === Number(filterMonth)
+        : true;
+
+      return sum + (isSelectedMonth ? Number(exp.amount || 0) : 0);
+    }, 0);
+  }, [expense, filterMonth]);
 
   const navClass = ({ isActive }) =>
     `text-left px-5 py-4 rounded-2xl font-bold transition-all flex items-center gap-4 ${
@@ -198,6 +222,9 @@ function Budget() {
                             <option key={m} value={i} className="bg-slate-900">{m}</option>
                           ))}
                         </select>
+                        <span className="text-[11px] font-bold text-emerald-400 bg-emerald-400/10 px-3 py-1 rounded-full">
+                          ₹{selectedMonthTotal.toLocaleString()}
+                        </span>
                       </div>
                     </div>
                     <button 
